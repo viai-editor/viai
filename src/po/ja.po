@@ -3945,8 +3945,8 @@ msgstr "起動済のViAIで編集する"
 msgid "Edit with existing ViAI - "
 msgstr "起動済のViAIで編集する - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "選択したファイルをVimで編集する"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "選択したファイルをViAIで編集する"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "プロセスの作成に失敗: gviaiが環境変数PATH上にあるか確認してください!"

@@ -6410,8 +6410,8 @@ msgstr "빔으로 편집(&V)"
 msgid "Edit with existing ViAI - "
 msgstr "하나의 빔으로만 편집 - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "선택된 파일(들)을 빔으로 편집"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "선택된 파일(들)을 ViAI로 편집"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "프로세스 생성 에러: gviai이 path에 있는 지 확인하세요!"

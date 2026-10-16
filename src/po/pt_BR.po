@@ -6467,8 +6467,8 @@ msgstr "Editar com &ViAI"
 msgid "Edit with existing ViAI - "
 msgstr "Editar com ViAI existente - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Edita o(s) arquivo(s) selecionado(s) com o Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Edita o(s) arquivo(s) selecionado(s) com o ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "Erro ao criar processo: verifique se o gviai está no caminho de busca!"

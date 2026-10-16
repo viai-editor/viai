@@ -7024,8 +7024,8 @@ msgstr "Éditer dans le ViAI existant"
 msgid "Edit with existing ViAI - "
 msgstr "Éditer dans le ViAI existant - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Édites le(s) fichier(s) sélectionné(s) avec Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Édites le(s) fichier(s) sélectionné(s) avec ViAI"
 
 # DB - MessageBox win32, la longueur n'est pas un problème !
 msgid "Error creating process: Check if gviai is in your path!"

@@ -937,7 +937,7 @@ STDMETHODIMP CShellExt::GetCommandString(UINT_PTR  /* idCmd */,
     // Use UTF-8 for gettext.
     char *prev = set_gettext_codeset();
 
-    WCHAR *s = W(_("Edits the selected file(s) with Vim"));
+    WCHAR *s = W(_("Edits the selected file(s) with ViAI"));
     if (uFlags == GCS_HELPTEXTW && cchMax > wcslen(s))
 	wcscpy((WCHAR *)pszName, s);
     free(s);

@@ -3944,8 +3944,8 @@ msgstr "Var olan ViAI ile düzenle"
 msgid "Edit with existing ViAI - "
 msgstr "Var olan ViAI ile düzenle - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Seçili dosyaları Vim ile düzenler"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Seçili dosyaları ViAI ile düzenler"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "Süreç oluşturulurken hata: gviai'in yol üzerinde olduğundan emin olun!"

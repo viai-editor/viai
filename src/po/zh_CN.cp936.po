@@ -3927,8 +3927,8 @@ msgstr "用已有的 ViAI 编辑"
 msgid "Edit with existing ViAI - "
 msgstr "用当前的 ViAI 编辑 - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "用 Vim 编辑选中的文件"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "用 ViAI 编辑选中的文件"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "创建进程失败: 请检查 gviai 是否在路径中！"

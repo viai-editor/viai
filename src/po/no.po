@@ -5851,8 +5851,8 @@ msgstr "Rediger med &ViAI"
 msgid "Edit with existing ViAI - "
 msgstr "Rediger med eksisterende ViAI - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Redigerer de(n) valgte filen(e) med Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Redigerer de(n) valgte filen(e) med ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "Klarte ikke lage prosess: Sjekk at gviai er i stien!"

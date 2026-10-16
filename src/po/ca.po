@@ -3948,8 +3948,8 @@ msgstr "Edita amb un ViAI existent"
 msgid "Edit with existing ViAI - "
 msgstr "Edita amb un ViAI existent - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Edita el(s) fitxer(s) seleccionat(s) amb el Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Edita el(s) fitxer(s) seleccionat(s) amb el ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "Error en crear el procés: Comproveu que gviai es troba al path!"

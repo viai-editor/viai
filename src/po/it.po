@@ -4070,8 +4070,8 @@ msgstr "Apri con ViAI esistente"
 msgid "Edit with existing ViAI - "
 msgstr "Apri con ViAI esistente - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Apri i(l) file scelto(i) con Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Apri i(l) file scelto(i) con ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr ""

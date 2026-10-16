@@ -3958,8 +3958,8 @@ msgstr "ஏற்கனவே உள்ள ViAI மூலம் திருத�
 msgid "Edit with existing ViAI - "
 msgstr "ஏற்கனவே உள்ள ViAI மூலம் திருத்தவும் -"
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "தேர்ந்தெடுக்கப்பட்ட கோப்புகளைத் திருத்தவும்) Vim உடன்"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "தேர்ந்தெடுக்கப்பட்ட கோப்புகளைத் திருத்தவும்) ViAI உடன்"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "செயல்முறை உருவாக்குவதில் பிழை: gviai உங்கள் பாதையில் உள்ளதா எனச் சரிபார்க்கவும்!"

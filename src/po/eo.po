@@ -6731,8 +6731,8 @@ msgstr "Redakti per ekzistanta ViAI"
 msgid "Edit with existing ViAI - "
 msgstr "Redakti per ekzistanta ViAI - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Redakti la apartigita(j)n dosiero(j)n per Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Redakti la apartigita(j)n dosiero(j)n per ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "Eraro dum kreo de procezo: Kontrolu ĉu gviai estas en via serĉvojo!"
