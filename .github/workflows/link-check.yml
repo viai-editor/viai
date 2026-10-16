@@ -3,7 +3,7 @@ name: Check Links
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * 0' # Every Sunday at 03:00 UTC
+    - cron: '0 2 * * 0' # Every Sunday at 02:00 UTC
 jobs:
   lychee:
     runs-on: ubuntu-latest
