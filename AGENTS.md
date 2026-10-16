@@ -77,9 +77,34 @@ Before submitting any patch, at minimum:
 
 ## Relationship with Vim
 
-- **Vim patches are imported as separate commits.**  The subject is
-  `vim-patch:9.2.NNNN: ` followed by the subject of the Vim patch.  Never
-  mix a Vim patch with ViAI changes in one commit.
+- **Vim patches are imported as separate commits.**  Never mix a Vim patch
+  with ViAI changes in one commit.  Every Vim commit, imported or not, is
+  recorded in the git log with a `vim-patch:` token: `vim-patch:9.2.NNNN`
+  for a numbered patch, `vim-patch:<hash>` (the abbreviated Vim commit
+  hash) for a commit without a patch number, such as `runtime(...)`.
+- **An imported Vim commit** keeps the author and the message from Vim,
+  with these changes:
+    - The subject is the token followed by the subject from Vim without
+      its `patch 9.2.NNNN: ` prefix, e.g.
+      `vim-patch:9.2.1187: <subject>` or `vim-patch:1a2b3c4d5: <subject>`.
+    - Issue and pull request numbers refer to Vim:
+      `closes: vim/vim#NNNNN`, not `closes: #NNNNN`.
+    - The URL of the Vim commit follows the Problem/Solution header:
+      `https://github.com/vim/vim/commit/<full hash>`.
+    - When the patch had to be adapted to ViAI (e.g. renamed files), a
+      short paragraph describes the adaptation.
+  Its pull request links to the one of Vim (`vim/vim#NNNNN`).
+- **Vim commits that are not imported** are listed in the message of one
+  commit, one per line, each with a reason:
+
+      vim-patch:9.2.1188: <subject> -- N/A: CI of Vim only
+      vim-patch:1a2b3c4d5: <subject> -- N/A: netrw only
+      vim-patch:9.2.1190: <subject> -- Declined: <reason>
+
+  "N/A" means the commit does not apply to ViAI, "Declined" means ViAI does
+  not want the change.  The same commit adds the numbers of the N/A patches
+  to `included_patches[]` in `src/version.c`, so that `has('patch-...')` is
+  true for them.  Declined patches are not added.
 - **License**: ViAI's own changes are licensed under the Apache License 2.0,
   code imported from Vim (the initial import and every `vim-patch:` commit)
   under the Vim license.
@@ -320,6 +345,8 @@ the disclosure process described there.
 7. For multi-patch series: each commit compiles and passes its own
    tests. A known-broken intermediate state that a later patch fixes
    is not acceptable — squash instead.
+8. The branch is pushed to the fork and a pull request to viai-editor/viai
+   is opened.  It is merged only after CI passes.
 
 ## When in doubt
 
