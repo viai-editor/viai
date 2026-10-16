@@ -16,7 +16,7 @@
 
 # Correct the following line for the where executable file Vim is installed.
 # Please do not put the path in quotes.
-VIMPROG = ..\..\src\vim.exe
+VIMPROG = ..\..\src\viai.exe
 
 # Correct the following line for the directory where iconv installed.
 # Please do not put the path in quotes.
