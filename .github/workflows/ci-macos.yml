@@ -78,12 +78,12 @@ jobs:
 
       - name: Check version
         run: |
-          "${SRCDIR}"/vim --version
-          "${SRCDIR}"/vim -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-1.vim -c quit
-          "${SRCDIR}"/vim -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-2.vim -c quit
+          "${SRCDIR}"/viai --version
+          "${SRCDIR}"/viai -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-1.vim -c quit
+          "${SRCDIR}"/viai -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-2.vim -c quit
           if ${{ matrix.features == 'huge' }}; then
             # Also check that optional and dynamic features are configured and working
-            "${SRCDIR}"/vim -u NONE -i NONE --not-a-term -esNX -V1 \
+            "${SRCDIR}"/viai -u NONE -i NONE --not-a-term -esNX -V1 \
               -c "let g:required=['sound', 'perl', 'python3', 'lua', 'ruby', 'tcl']" \
               -S ci/if_feat_check.vim -c quit
           fi

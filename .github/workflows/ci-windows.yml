@@ -269,19 +269,19 @@ jobs:
         run: |
           PATH %LUA_DIR%;C:\msys64\%MSYSTEM%\bin;%PYTHON3_DIR%;%PATH%
           if "${{ matrix.GUI }}"=="yes" (
-            start /wait src\gvim -u NONE -i NONE -c "redir > version.txt | ver | q" || exit 1
+            start /wait src\gviai -u NONE -i NONE -c "redir > version.txt | ver | q" || exit 1
             type version.txt
             echo.
-            start /wait src\gvim -u NONE -i NONE -c "redir! > version.txt | so ci\if_ver-1.vim | q"
-            start /wait src\gvim -u NONE -i NONE -c "redir >> version.txt | so ci\if_ver-2.vim | q"
+            start /wait src\gviai -u NONE -i NONE -c "redir! > version.txt | so ci\if_ver-1.vim | q"
+            start /wait src\gviai -u NONE -i NONE -c "redir >> version.txt | so ci\if_ver-2.vim | q"
             type version.txt
             del version.txt
           ) else (
-            src\vim --version || exit 1
-            src\vim -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-1.vim -c quit
-            src\vim -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-2.vim -c quit
+            src\viai --version || exit 1
+            src\viai -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-1.vim -c quit
+            src\viai -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-2.vim -c quit
             if "${{ matrix.features }}"=="HUGE" (
-              src\vim -u NONE -i NONE --not-a-term -esNX -V1 ^
+              src\viai -u NONE -i NONE --not-a-term -esNX -V1 ^
                 -c "let g:required=['gettext', 'sodium', 'sound', 'python3', 'lua']" ^
                 -S ci/if_feat_check.vim -c quit
             )
@@ -313,9 +313,9 @@ jobs:
       #    fi
 
       - parallel:
-        # Run gvim tests and vim tests in parallel
+        # Run gviai tests and viai tests in parallel
 
-        - name: Test and show the result of testing gVim
+        - name: Test and show the result of testing GViAI
           if: matrix.GUI == 'yes' || matrix.VIMDLL == 'yes'
           shell: cmd
           timeout-minutes: 15
@@ -323,16 +323,16 @@ jobs:
             PATH %LUA_DIR%;C:\msys64\%MSYSTEM%\bin;%PYTHON3_DIR%;%PATH%;%SODIUM_LIB%
             call "%VCVARSALL%" %VCARCH%
 
-            echo %COL_GREEN%Test gVim:%COL_RESET%
+            echo %COL_GREEN%Test GViAI:%COL_RESET%
             cd src\testdir
             if "${{ matrix.features }}"=="TINY" (
               @rem Run only tiny tests.
-              nmake -nologo -f Make_mvc.mak tiny VIMPROG=..\gvim  || exit 1
+              nmake -nologo -f Make_mvc.mak tiny VIMPROG=..\gviai  || exit 1
             ) else (
-              nmake -nologo -f Make_mvc.mak VIMPROG=..\gvim || exit 1
+              nmake -nologo -f Make_mvc.mak VIMPROG=..\gviai || exit 1
             )
 
-        - name: Test and show the result of testing Vim
+        - name: Test and show the result of testing ViAI
           if: matrix.GUI == 'no' || matrix.VIMDLL == 'yes'
           shell: cmd
           timeout-minutes: 15
@@ -340,13 +340,13 @@ jobs:
             PATH %LUA_DIR%;C:\msys64\%MSYSTEM%\bin;%PYTHON3_DIR%;%PATH%;%SODIUM_LIB%
             call "%VCVARSALL%" %VCARCH%
 
-            echo %COL_GREEN%Test Vim:%COL_RESET%
+            echo %COL_GREEN%Test ViAI:%COL_RESET%
             cd src2\testdir
             if "${{ matrix.features }}"=="TINY" (
               @rem Run only tiny tests.
-              nmake -nologo -f Make_mvc.mak tiny VIMPROG=..\..\src\vim  || exit 1
+              nmake -nologo -f Make_mvc.mak tiny VIMPROG=..\..\src\viai  || exit 1
             ) else (
-              nmake -nologo -f Make_mvc.mak VIMPROG=..\..\src\vim || exit 1
+              nmake -nologo -f Make_mvc.mak VIMPROG=..\..\src\viai || exit 1
             )
 
       - name: Upload failed test artifacts

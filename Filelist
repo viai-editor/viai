@@ -18,7 +18,7 @@ SRC_ALL =	\
 		.github/workflows/codeql-analysis.yml \
 		.github/workflows/coverity.yml \
 		.github/workflows/link-check.yml \
-		.github/actions/build_vim_on_linux/action.yml \
+		.github/actions/build_viai_on_linux/action.yml \
 		.github/actions/test_artifacts/action.yml \
 		.github/dependabot.yml \
 		.gitignore \

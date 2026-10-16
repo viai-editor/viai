@@ -94,7 +94,7 @@ jobs:
 
       - name: Build
         timeout-minutes: 15
-        uses: ./.github/actions/build_vim_on_linux
+        uses: ./.github/actions/build_viai_on_linux
         with:
           features: ${{ matrix.features }}
           compiler: ${{ matrix.compiler }}
@@ -156,7 +156,7 @@ jobs:
         run: |
           # This will exit with an error code if the files differ from source
           (
-            "${SRCDIR}"/vim -u NONE --not-a-term -esNX +"cd runtime/tools" -S preproc_indent.vim
+            "${SRCDIR}"/viai -u NONE --not-a-term -esNX +"cd runtime/tools" -S preproc_indent.vim
             git diff --exit-code -- src/*.[ch] src/xxd/xxd.c
             true
           )
