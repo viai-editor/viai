@@ -2,7 +2,7 @@ name: CI for Cygwin
 
 on:
   schedule:
-    - cron: '30 23 * * *'  # Run once per day, Cygwin runners are slow
+    - cron: '56 22 * * *'  # 07:56 JST.  Run once per day, Cygwin runners are slow
   workflow_dispatch:
 
 permissions:
