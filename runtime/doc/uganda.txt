@@ -30,6 +30,9 @@ Kuwasha.
 
 License~
 
+ViAI is a modified version of Vim.  The changes made in ViAI are licensed
+under the Apache License 2.0, see |viai-license|.
+
 The Open Publication License applies to the Vim documentation, see
 |manual-copyright|.
 
