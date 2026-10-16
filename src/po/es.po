@@ -3924,8 +3924,8 @@ msgstr "Editar con un ViAI en ejecución"
 msgid "Edit with existing ViAI - "
 msgstr "Editar con un ViAI en ejecución - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Editar el(los) archivo(s) seleccionado(s) con Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Editar el(los) archivo(s) seleccionado(s) con ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr ""

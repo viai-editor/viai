@@ -4081,8 +4081,8 @@ msgstr "Խմբագրել գոյություն ունեցող ViAI-ի օգնու�
 msgid "Edit with existing ViAI - "
 msgstr "Խմբագրել գոյություն ունեցող ViAI-ի օգնությամբ - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Խմբագրում է ընտրված ֆայլ(եր)ը Vim-ով"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Խմբագրում է ընտրված ֆայլ(եր)ը ViAI-ով"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "Պրոցեսի ստեղծման սխալ. Ստուգեք, արդյոք gviai-ը գտնվում է ճանապարհին!"

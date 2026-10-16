@@ -4046,8 +4046,8 @@ msgstr "Редагувати у вже запущеному ViAI"
 msgid "Edit with existing ViAI - "
 msgstr "Редагувати у вже запущеному ViAI - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Редагує вибрані файли з допомогою Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Редагує вибрані файли з допомогою ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "Помилка створення процесу, перевірте чи є gviai у шляху пошуку!"

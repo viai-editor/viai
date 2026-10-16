@@ -3868,8 +3868,8 @@ msgstr "Muokkaa olemassa olevalla ViAI:lla"
 msgid "Edit with existing ViAI - "
 msgstr "Muokkaa olemassa olevalla ViAI:lla - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Muokkaa valittuja tiedostoja Vimillä"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Muokkaa valittuja tiedostoja ViAI:lla"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "Virhe prosessin käynnistämisessä: Varmista että gviai on polulla."

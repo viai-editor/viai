@@ -4027,8 +4027,8 @@ msgstr "Editiere mit vorhandenem ViAI"
 msgid "Edit with existing ViAI - "
 msgstr "Editiere mit vorhandenem ViAI - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Editiert die ausgewählte(n) Datei(en) mit Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Editiert die ausgewählte(n) Datei(en) mit ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr ""

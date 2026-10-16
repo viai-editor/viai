@@ -16,7 +16,7 @@ HKCR,CLSID\{F191A2A2-D786-484E-A3F4-8A75FDD9AC00}\InProcServer32
 HKCR,*\shellex\ContextMenuHandlers\gviai
 HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved",{F191A2A2-D786-484E-A3F4-8A75FDD9AC00}
 HKLM,Software\ViAI\Gviai
-HKLM,"Software\Microsoft\Windows\CurrentVersion\Uninstall\Vim 9.2"
+HKLM,"Software\Microsoft\Windows\CurrentVersion\Uninstall\ViAI 1.0"
 
 [Strings]
 ThisDll="gviaiext.dll"

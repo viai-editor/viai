@@ -4983,8 +4983,8 @@ msgstr "Открыть в работающей программе ViAI"
 msgid "Edit with existing ViAI - "
 msgstr "Открыть в работающей программе ViAI - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Открыть отмеченные файлы в программе Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Открыть отмеченные файлы в программе ViAI"
 
 # Restorer: текст окна сообщений
 msgid "Error creating process: Check if gviai is in your path!"

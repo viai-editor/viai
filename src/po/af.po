@@ -2508,8 +2508,8 @@ msgstr "Wysig met &ViAI"
 msgid "Edit with existing ViAI - "
 msgstr "Wysig met bestaande ViAI - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Wysig die gekose lêer(s) met Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Wysig die gekose lêer(s) met ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "FOut met die skep van proses: Kyk of gviai in jou pad is!"

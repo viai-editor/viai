@@ -5481,8 +5481,8 @@ msgstr "Upravi» s &ViAI"
 msgid "Edit with existing ViAI - "
 msgstr "Upravi» s existujúcim ViAI - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Upravi» vybrané súbory s Vimom"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Upravi» vybrané súbory s ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "Chyba vytvárania procesu: Skontrolujte, èi je gviai vo va¹ej ceste!"

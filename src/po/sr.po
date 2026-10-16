@@ -4017,8 +4017,8 @@ msgstr "Уређуј са постојећим програмом ViAI"
 msgid "Edit with existing ViAI - "
 msgstr "Уређуј са постојећим програмом ViAI - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Уређује селектован(е) фајл(ове) програмом Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Уређује селектован(е) фајл(ове) програмом ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr ""

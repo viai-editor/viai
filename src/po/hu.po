@@ -5799,7 +5799,8 @@ msgstr "Szerkesztés &ViAI-mel"
 msgid "Edit with existing ViAI - "
 msgstr "Szerkesztés meglévő ViAI-mel - "
 
-msgid "Edits the selected file(s) with Vim"
+#, fuzzy
+msgid "Edits the selected file(s) with ViAI"
 msgstr "A kiválasztott fájlok szerkesztése a Vim-mel"
 
 msgid "Error creating process: Check if gviai is in your path!"

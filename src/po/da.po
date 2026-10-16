@@ -6493,8 +6493,8 @@ msgstr "Rediger med &ViAI"
 msgid "Edit with existing ViAI - "
 msgstr "Rediger med eksisterende ViAI - "
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Redigerer den valgt fil(er) med Vim"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Redigerer den valgt fil(er) med ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "Fejl ved oprettelse af proces: Tjek om gviai er i din sti!"

@@ -4415,8 +4415,8 @@ msgstr "Editace &ViAI -em"
 msgid "Edit with existing Vim - &"
 msgstr "Editace existujícím Vimem - &"
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "Editace vybraných souborù Vimem"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "Editace vybraných souborù ViAI"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "Chyba pøi spouštìní procesu: Zkontrolujte zdali je gviai v $PATH!"

@@ -4897,8 +4897,8 @@ msgstr "使用 ViAI 編輯此檔(&V)"
 msgid "Edit with existing Vim - &"
 msgstr "使用執行中的 Vim session 編輯 - &"
 
-msgid "Edits the selected file(s) with Vim"
-msgstr "使用 Vim 編輯已選取的檔案"
+msgid "Edits the selected file(s) with ViAI"
+msgstr "使用 ViAI 編輯已選取的檔案"
 
 msgid "Error creating process: Check if gviai is in your path!"
 msgstr "無法執行程式: 請檢查 gviai 有沒有在你的 PATH 變數裡!"
