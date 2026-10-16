@@ -624,7 +624,6 @@ SRC_DOS =	\
 		src/Make_cyg_ming.mak \
 		src/Make_ming.mak \
 		src/Make_mvc.mak \
-		tools/rename.bat \
 		src/bigviai.bat \
 		src/bigviai64.bat \
 		src/msvc-latest.bat \
