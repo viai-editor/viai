@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 16
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 17
 
 
 		  VIM REFERENCE MANUAL
@@ -178,5 +178,18 @@ them.
 Changes made in ViAI after the initial import are licensed under the Apache
 License 2.0.  Code imported from Vim is licensed under the Vim license, see
 |license|.
+
+ViAI is distributed as a modified version of Vim under section II of the Vim
+license:
+- The source code with all the changes is available in the ViAI repository
+  (II.2.c):
+	https://github.com/viai-editor/viai
+- The executables are distributed without the source code of the changes
+  (II.2.d).  The changes stay available in the repository.
+- |:version| and the intro screen show that ViAI is a modified version of
+  Vim (II.3).
+
+To contact the ViAI maintainer, open an issue at:
+	https://github.com/viai-editor/viai/issues
 
  vim:tw=78:ts=8:noet:ft=help:norl:
