@@ -1,9 +1,9 @@
-name: Build Vim on Linux
-description: Build Vim on Linux
+name: Build ViAI on Linux
+description: Build ViAI on Linux
 
 inputs:
   features:
-    description: Vim features
+    description: ViAI features
     required: true
   compiler:
     description: Compiler
@@ -249,7 +249,7 @@ runs:
           echo "LSAN_OPTIONS=suppressions=${GITHUB_WORKSPACE}/src/testdir/lsan-suppress.txt"
         fi
         if ${{ contains(fromJSON(inputs.extra), 'vimtags') }}; then
-          echo "TEST=-C runtime/doc vimtags VIMEXE=../../${SRCDIR}/vim"
+          echo "TEST=-C runtime/doc vimtags VIMEXE=../../${SRCDIR}/viai"
         fi
         if ${{ contains(fromJSON(inputs.extra), 'proto') }}; then
           echo "TEST=-C src protoclean proto"
@@ -322,12 +322,12 @@ runs:
       shell: bash
       run: |
         echo '::group::Check version'
-        "${SRCDIR}"/vim --version
-        "${SRCDIR}"/vim -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-1.vim -c quit
-        "${SRCDIR}"/vim -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-2.vim -c quit
+        "${SRCDIR}"/viai --version
+        "${SRCDIR}"/viai -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-1.vim -c quit
+        "${SRCDIR}"/viai -u NONE -i NONE --not-a-term -esNX -V1 -S ci/if_ver-2.vim -c quit
         if ${{ inputs.features == 'huge' }}; then
           # Also check that optional and dynamic features are configured and working
-          "${SRCDIR}"/vim -u NONE -i NONE --not-a-term -esNX -V1 \
+          "${SRCDIR}"/viai -u NONE -i NONE --not-a-term -esNX -V1 \
             -c "let g:required=['gettext', 'sodium', 'sound', 'perl', 'python3', 'lua', 'ruby', 'tcl']" \
             -S ci/if_feat_check.vim -c quit
         fi

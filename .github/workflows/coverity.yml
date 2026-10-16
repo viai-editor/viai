@@ -24,7 +24,7 @@ jobs:
       - name: Download Coverity
         if: env.TOKEN
         run: |
-          wget -q https://scan.coverity.com/download/cxx/linux64 --post-data "token=$TOKEN&project=vim" -O coverity_tool.tgz
+          wget -q https://scan.coverity.com/download/cxx/linux64 --post-data "token=$TOKEN&project=viai" -O coverity_tool.tgz
           mkdir cov-scan
           tar ax -f coverity_tool.tgz --strip-components=1 -C cov-scan
 
@@ -66,7 +66,7 @@ jobs:
           # warning: function may return address of local variable [-Wreturn-local-addr]
           sed -i 's/-O2 \?//' src/auto/config.mk
 
-      - name: Build/scan vim
+      - name: Build/scan ViAI
         if: env.TOKEN
         run: |
           cov-build --dir cov-int make -j${NPROC}
@@ -80,6 +80,6 @@ jobs:
             --form file=@cov-scan.tgz \
             --form version="$(git rev-parse HEAD)" \
             --form description="Automatic GHA scan" \
-            'https://scan.coverity.com/builds?project=vim'
+            'https://scan.coverity.com/builds?project=viai'
         env:
           EMAIL: ${{ secrets.COVERITY_SCAN_EMAIL }}

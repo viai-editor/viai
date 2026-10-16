@@ -103,7 +103,7 @@ jobs:
 
       - name: Check version
         run: |
-          "${SRCDIR}"/vim --version
+          "${SRCDIR}"/viai --version
 
       # Run the tests from the src directory: the top level Makefile also runs
       # the indent and syntax tests, which the Linux runner already covers.
