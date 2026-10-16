@@ -11,7 +11,7 @@ LSFLAGS = /A:-D /B /O:N /L /S
 
 .SUFFIXES:
 
-VIMPROG = ..\..\src\vim.exe
+VIMPROG = ..\..\src\viai.exe
 VIMRUNTIME = ..
 
 # Run the tests that didn't run yet or failed previously.
