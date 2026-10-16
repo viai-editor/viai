@@ -12,7 +12,7 @@ on:
     # The branches below must be a subset of the branches above
     branches: [master]
   schedule:
-    - cron: '0 18 * * 1'
+    - cron: '0 2 * * 1' # Every Monday at 02:00 UTC
 
 # Cancels all previous workflow runs for pull requests that have not completed.
 concurrency:
