@@ -88,12 +88,17 @@ Before submitting any patch, at minimum:
     - The subject is the token followed by the subject from Vim without
       its `patch 9.2.NNNN: ` prefix, e.g.
       `vim-patch:9.2.1187: <subject>` or `vim-patch:1a2b3c4: <subject>`.
+    - When only part of the Vim commit is imported, `partial:` follows
+      the token, e.g. `vim-patch:9.2.1187:partial: <subject>` or
+      `vim-patch:1a2b3c4:partial: <subject>`.  Such a patch is not added
+      to `included_patches[]`.
     - Issue and pull request numbers refer to Vim:
       `closes: vim/vim#NNNNN`, not `closes: #NNNNN`.
     - The URL of the Vim commit follows the Problem/Solution header:
       `https://github.com/vim/vim/commit/<full hash>`.
     - The author of the Vim commit is credited with `Co-authored-by:`,
-      next to the `Co-authored-by:` lines from Vim.
+      next to the `Co-authored-by:` lines from Vim, unless that author is
+      the ViAI maintainer.
     - `Signed-off-by:` lines from Vim are dropped: they certify the
       contribution to Vim, not to ViAI.  The ViAI maintainer adds their
       own `Signed-off-by:`.
