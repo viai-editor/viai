@@ -83,8 +83,8 @@ Before submitting any patch, at minimum:
   for a numbered patch, `vim-patch:<hash>` (the first 7 characters of the
   Vim commit hash) for a commit without a patch number, such as
   `runtime(...)`.
-- **An imported Vim commit** keeps the author and the message from Vim,
-  with these changes:
+- **An imported Vim commit** is authored by the ViAI maintainer and keeps
+  the message from Vim, with these changes:
     - The subject is the token followed by the subject from Vim without
       its `patch 9.2.NNNN: ` prefix, e.g.
       `vim-patch:9.2.1187: <subject>` or `vim-patch:1a2b3c4: <subject>`.
@@ -92,9 +92,17 @@ Before submitting any patch, at minimum:
       `closes: vim/vim#NNNNN`, not `closes: #NNNNN`.
     - The URL of the Vim commit follows the Problem/Solution header:
       `https://github.com/vim/vim/commit/<full hash>`.
+    - The author of the Vim commit is credited with `Co-authored-by:`,
+      next to the `Co-authored-by:` lines from Vim.
+    - `Signed-off-by:` lines from Vim are dropped: they certify the
+      contribution to Vim, not to ViAI.  The ViAI maintainer adds their
+      own `Signed-off-by:`.
     - When the patch had to be adapted to ViAI (e.g. renamed files), a
       short paragraph describes the adaptation.
-  Its pull request links to the one of Vim (`vim/vim#NNNNN`).
+  Its pull request links to the one of Vim (`vim/vim#NNNNN`) and repeats
+  the `Co-authored-by:` lines in its description.  A pull request with
+  several imported commits is titled `vim-patch: <summary>` and lists the
+  message of each commit under a `#### <subject>` heading.
 - **Vim commits that are not imported** are listed in the message of one
   commit, one per line, each with a reason:
 
