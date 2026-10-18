@@ -99,10 +99,10 @@ Before submitting any patch, at minimum:
       own `Signed-off-by:`.
     - When the patch had to be adapted to ViAI (e.g. renamed files), a
       short paragraph describes the adaptation.
-  Its pull request links to the one of Vim (`vim/vim#NNNNN`) and repeats
-  the `Co-authored-by:` lines in its description.  A pull request with
-  several imported commits is titled `vim-patch: <summary>` and lists the
-  message of each commit under a `#### <subject>` heading.
+  The description of its pull request is the commit message without the
+  `Assisted-by:` and `Signed-off-by:` lines.  A pull request with several
+  imported commits is titled `vim-patch: <summary>` and lists such a
+  description for each commit under a `#### <subject>` heading.
 - **Vim commits that are not imported** are listed in the message of one
   commit, one per line, each with a reason:
 
