@@ -745,6 +745,8 @@ static char *(features[]) =
 static int viai_included_patches[] =
 {   /* Add new patch number below this line */
 /**/
+    20,
+/**/
     19,
 /**/
     18,
@@ -3461,8 +3463,12 @@ list_version(void)
      */
     init_longVersion();
     msg(longVersion);
+    list_patches(_("\nIncluded patches: "), viai_included_patches,
+			       (int)ARRAY_LENGTH(viai_included_patches));
     msg_puts(_("\nViAI is a modified version of Vim "));
     msg_puts(VIM_VERSION_SHORT);
+    list_patches(_("\nIncluded Vim patches: "), included_patches,
+				    (int)ARRAY_LENGTH(included_patches));
 #ifdef MSWIN
 # ifdef FEAT_GUI_MSWIN
 #  ifdef VIMDLL
@@ -3531,11 +3537,6 @@ list_version(void)
 # endif
 
 #endif
-
-    list_patches(_("\nIncluded patches: "), viai_included_patches,
-			       (int)ARRAY_LENGTH(viai_included_patches));
-    list_patches(_("\nIncluded Vim patches: "), included_patches,
-				    (int)ARRAY_LENGTH(included_patches));
 
     // Print the list of extra patch descriptions if there is at least one.
     if (extra_patches[0] != NULL)
