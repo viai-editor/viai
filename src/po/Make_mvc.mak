@@ -47,6 +47,7 @@ GETTEXT_PATH = D:\Programs\GetText\bin
 
 INSTALLDIR = $(VIMRUNTIME)\lang\$(LANGUAGE)\LC_MESSAGES
 PACKAGE = vim
+DOMAIN = viai
 
 # Starting from version 0.22, msgfmt forcibly converts text to UTF-8 regardless
 # of the value of the "charset" field.
@@ -439,14 +440,14 @@ $(LANGUAGES):
 
 install: $(LANGUAGE).mo
 	if not exist "$(INSTALLDIR)" $(MKD) "$(INSTALLDIR)"
-	$(CP) $(LANGUAGE).mo "$(INSTALLDIR)\$(PACKAGE).mo"
+	$(CP) $(LANGUAGE).mo "$(INSTALLDIR)\$(DOMAIN).mo"
 
 install-all: all
 	for %%l in ($(LANGUAGES)) do \
 		@if not exist "$(VIMRUNTIME)\lang\%%l\LC_MESSAGES" \
 		$(MKD) "$(VIMRUNTIME)\lang\%%l\LC_MESSAGES"
 	for %%l in ($(LANGUAGES)) do @$(CP) %%l.mo \
-		"$(VIMRUNTIME)\lang\%%l\LC_MESSAGES\$(PACKAGE).mo"
+		"$(VIMRUNTIME)\lang\%%l\LC_MESSAGES\$(DOMAIN).mo"
 
 cleanup-po: $(LANGUAGE).po
 	@ "$(VIMPROG)" -u NONE -e -s -S cleanup.vim -c wq $(LANGUAGE).po

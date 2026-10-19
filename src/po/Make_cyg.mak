@@ -16,6 +16,7 @@ endif
 include Make_all.mak
 
 PACKAGE = vim
+DOMAIN = viai
 VIMPROG = ../vim
 
 # Uncomment one of the lines below or modify it to put the path to your
@@ -89,7 +90,7 @@ $(LANGUAGES):
 install: $(MOFILES) $(MOCONVERTED)
 	for TARGET in $(LANGUAGES); do \
 		$(MKD) $(VIMRUNTIME)/lang/$$TARGET/LC_MESSAGES ; \
-		$(CP) $$TARGET.mo $(VIMRUNTIME)/lang/$$TARGET/LC_MESSAGES/$(PACKAGE).mo ; \
+		$(CP) $$TARGET.mo $(VIMRUNTIME)/lang/$$TARGET/LC_MESSAGES/$(DOMAIN).mo ; \
 	done
 
 install-all: install

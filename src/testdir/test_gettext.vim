@@ -4,7 +4,7 @@ CheckFeature gettext
 
 func Test_gettext()
   call assert_fails('call bindtextdomain("test")', 'E119:')
-  call assert_fails('call bindtextdomain("vim", "test")', 'E475:')
+  call assert_fails('call bindtextdomain("viai", "test")', 'E475:')
 
   call assert_fails('call gettext(1)', 'E1174:')
   call assert_equal('xxxTESTxxx', gettext("xxxTESTxxx"))
