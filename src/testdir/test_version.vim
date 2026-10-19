@@ -49,8 +49,9 @@ endfunc
 
 func Test_version_viai()
   let v = execute('version')
-  call assert_match("\nViAI is a modified version of Vim \\d\\+\\.\\d\\+\n", v)
-  call assert_match("\nIncluded Vim patches: 1-", v)
+  call assert_match("\nIncluded patches: 1-[^\n]*"
+        \ .. "\nViAI is a modified version of Vim \\d\\+\\.\\d\\+"
+        \ .. "\nIncluded Vim patches: 1-", v)
 endfunc
 
 func Test_has_viai()
