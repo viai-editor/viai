@@ -17,7 +17,7 @@ include Make_all.mak
 
 PACKAGE = vim
 DOMAIN = viai
-VIMPROG = ../vim
+VIMPROG = ../viai
 
 # Uncomment one of the lines below or modify it to put the path to your
 # gettext binaries

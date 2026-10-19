@@ -10,10 +10,10 @@
 # "de_CH": Swiss spelling
 
 # Use a freshly compiled Vim if it exists.
-@if os.path.exists('../../../src/vim'):
-    VIM = ../../../src/vim
+@if os.path.exists('../../../src/viai'):
+    VIM = ../../../src/viai
 @else:
-    :progsearch VIM vim
+    :progsearch VIM viai
 
 REGIONS = DE 19 20 AT CH
 DE_REGIONS = de_$*REGIONS

@@ -3,10 +3,10 @@
 # Maintainer: Mattias Winther <vim@mattias.winthernet.se>
 
 # Use a freshly compiled Vim if it exists.
-@if os.path.exists('../../../src/vim'):
-    VIM = ../../../src/vim
+@if os.path.exists('../../../src/viai'):
+    VIM = ../../../src/viai
 @else:
-    :progsearch VIM vim
+    :progsearch VIM viai
 
 SPELLDIR = ..
 FILES    = sv_SE.aff sv_SE.dic

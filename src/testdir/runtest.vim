@@ -4,7 +4,7 @@
 "
 " To execute only specific test functions, add a second argument.  It will be
 " matched against the names of the Test_ function.  E.g.:
-"	../vim -u NONE -S runtest.vim test_channel.vim open_delay
+"	../viai -u NONE -S runtest.vim test_channel.vim open_delay
 " The output can be found in the "messages" file.
 "
 " If the environment variable $TEST_FILTER is set then only test functions
