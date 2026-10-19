@@ -33,7 +33,7 @@
 # Please, do not change anything below without programming experience.
 #######################################################################
 
-VIMPROG = <->vim.exe
+VIMPROG = <->viai.exe
 
 .SUFFIXES : .out .in
 

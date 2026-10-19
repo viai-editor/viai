@@ -1476,7 +1476,7 @@ clean: testclean
 # If this fails because you don't have Vim yet, first build and install Vim
 # without changes.
 cmdidxs: ex_cmds.h
-	vim.exe --clean -N -X --not-a-term -u create_cmdidxs.vim -c quit
+	viai.exe --clean -N -X --not-a-term -u create_cmdidxs.vim -c quit
 
 # Run Vim script to generate the normal/visual mode command lookup table.
 # This only needs to be run when a new normal/visual mode command has been
@@ -1486,7 +1486,7 @@ cmdidxs: ex_cmds.h
 nvcmdidxs: nv_cmds.h
 	$(CC) /nologo -I. -Iproto -DNDEBUG create_nvcmdidxs.c \
 		-link -subsystem:$(SUBSYSTEM_TOOLS)
-	vim.exe --clean -N -X --not-a-term -u create_nvcmdidxs.vim -c quit
+	viai.exe --clean -N -X --not-a-term -u create_nvcmdidxs.vim -c quit
 	- $(RM) create_nvcmdidxs.exe
 
 test:

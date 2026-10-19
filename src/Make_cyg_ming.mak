@@ -1271,7 +1271,7 @@ endif
 # If this fails because you don't have Vim yet, first build and install Vim
 # without changes.
 cmdidxs: ex_cmds.h
-	vim --clean -N -X --not-a-term -u create_cmdidxs.vim -c quit
+	viai --clean -N -X --not-a-term -u create_cmdidxs.vim -c quit
 
 # Run Vim script to generate the normal/visual mode command lookup table.
 # This only needs to be run when a new normal/visual mode command has been
@@ -1280,7 +1280,7 @@ cmdidxs: ex_cmds.h
 #   - run "make nvcmdidxs" to generate nv_cmdidxs.h
 nvcmdidxs: nv_cmds.h
 	$(CC) $(CFLAGS) -o create_nvcmdidxs.exe create_nvcmdidxs.c $(LIB)
-	vim --clean -N -X --not-a-term -u create_nvcmdidxs.vim -c quit
+	viai --clean -N -X --not-a-term -u create_nvcmdidxs.vim -c quit
 	-$(DEL) create_nvcmdidxs.exe
 
 ###########################################################################

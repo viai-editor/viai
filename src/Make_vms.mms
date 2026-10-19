@@ -8,8 +8,8 @@
 # with MMS and MMK
 #
 # The following could be built:
-#	vim.exe:	standard (terminal, GUI/Motif, GUI/GTK)
-#	dvim.exe:	debug
+#	viai.exe:	standard (terminal, GUI/Motif, GUI/GTK)
+#	dviai.exe:	debug
 #
 ######################################################################
 #
@@ -62,7 +62,7 @@ MODEL = HUGE
 CCVER = YES                     # Unreliable with VAX C.
 .ENDIF                          # VAXC_OR_FORCE_VAXC [ELSE]
 
-# Uncomment if want a debug version. Resulting executable is DVIM.EXE
+# Uncomment if want a debug version. Resulting executable is DVIAI.EXE
 # Development purpose only! Normally, it should not be defined. !!!
 # DEBUG = YES
 
@@ -261,11 +261,11 @@ C_INC   = [.proto]
 
 .IFDEF DEBUG
 DEBUG_DEF = ,"DEBUG"
-TARGET    = [.$(DEST)]dvim.exe
+TARGET    = [.$(DEST)]dviai.exe
 CFLAGS    = /debug/noopt$(PREFIX)$(FLOAT)$(LIST_OPT)
 LDFLAGS   = /debug $(MAP_OPT)
 .ELSE
-TARGET    = [.$(DEST)]vim.exe
+TARGET    = [.$(DEST)]viai.exe
 CFLAGS    = $(OPTIMIZE)$(PREFIX)$(FLOAT)$(LIST_OPT)
 LDFLAGS   = $(MAP_OPT)
 .ENDIF
