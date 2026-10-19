@@ -22,6 +22,7 @@ endif
 include Make_all.mak
 
 PACKAGE = vim
+DOMAIN = viai
 ifeq (sh.exe, $(SHELL))
 VIMPROG = ..\vim
 else
@@ -102,18 +103,18 @@ $(LANGUAGES):
 install:
 	$(MKD) $(VIMRUNTIME)\lang\$(LANGUAGE)
 	$(MKD) $(VIMRUNTIME)\lang\$(LANGUAGE)\LC_MESSAGES
-	$(CP) $(LANGUAGE).mo $(VIMRUNTIME)\lang\$(LANGUAGE)\LC_MESSAGES\$(PACKAGE).mo
+	$(CP) $(LANGUAGE).mo $(VIMRUNTIME)\lang\$(LANGUAGE)\LC_MESSAGES\$(DOMAIN).mo
 
 ifeq (sh.exe, $(SHELL))
 install-all: all
 	FOR %%l IN ($(LANGUAGES)) DO @IF NOT EXIST $(VIMRUNTIME)\lang\%%l $(MKD) $(VIMRUNTIME)\lang\%%l
 	FOR %%l IN ($(LANGUAGES)) DO @IF NOT EXIST $(VIMRUNTIME)\lang\%%l\LC_MESSAGES $(MKD) $(VIMRUNTIME)\lang\%%l\LC_MESSAGES
-	FOR %%l IN ($(LANGUAGES)) DO @$(CP) %%l.mo $(VIMRUNTIME)\lang\%%l\LC_MESSAGES\$(PACKAGE).mo
+	FOR %%l IN ($(LANGUAGES)) DO @$(CP) %%l.mo $(VIMRUNTIME)\lang\%%l\LC_MESSAGES\$(DOMAIN).mo
 else
 install-all: all
 	for TARGET in $(LANGUAGES); do \
 		$(MKD) $(VIMRUNTIME)/lang/$$TARGET/LC_MESSAGES ; \
-		$(CP) $$TARGET.mo $(VIMRUNTIME)/lang/$$TARGET/LC_MESSAGES/$(PACKAGE).mo ; \
+		$(CP) $$TARGET.mo $(VIMRUNTIME)/lang/$$TARGET/LC_MESSAGES/$(DOMAIN).mo ; \
 	done
 endif
 

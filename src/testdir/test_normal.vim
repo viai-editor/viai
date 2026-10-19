@@ -4545,7 +4545,7 @@ func Test_pos_percentage_in_turkish_locale()
     let tr = '../po/tr.mo'
     call mkdir(dir, 'R')
     call mkdir(target, '')
-    call filecopy(tr, target .. 'vim.mo')
+    call filecopy(tr, target .. 'viai.mo')
     lang tr_TR.UTF-8
     let buf = RunVimInTerminal('', {'rows': 5, 'cols': 40})
     call term_sendkeys(buf, ":lang tr_TR.UTF-8\<cr>")

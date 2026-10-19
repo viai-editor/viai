@@ -10,6 +10,7 @@ include Make_all.mak
 # not installed on Unix.
 
 PACKAGE = vim
+DOMAIN = viai
 SHELL = /bin/sh
 VIMPROG = ../viai
 
@@ -60,8 +61,8 @@ install: $(MOFILES) $(MOCONVERTED)
 	    mkdir $$dir; chmod 755 $$dir; \
 	  fi; \
 	  if test -r $$lang.mo; then \
-	    $(INSTALL_DATA) $$lang.mo $$dir/$(PACKAGE).mo; \
-	    chmod $(FILEMOD) $$dir/$(PACKAGE).mo; \
+	    $(INSTALL_DATA) $$lang.mo $$dir/$(DOMAIN).mo; \
+	    chmod $(FILEMOD) $$dir/$(DOMAIN).mo; \
 	  fi; \
 	done
 
@@ -70,7 +71,7 @@ uninstall:
 	for cat in $(MOFILES) $(MOCONVERTED); do \
 	  cat=`basename $$cat`; \
 	  lang=`echo $$cat | $(SED) 's/\$(CATOBJEXT)$$//'`; \
-	  rm -f $(LOCALEDIR)/$$lang/LC_MESSAGES/$(PACKAGE).mo; \
+	  rm -f $(LOCALEDIR)/$$lang/LC_MESSAGES/$(DOMAIN).mo; \
 	done
 
 # Installing for local tryout into ../../runtime/lang.
@@ -86,8 +87,8 @@ tryoutinstall: $(MOFILES) $(MOCONVERTED)
 	    mkdir $$dir; chmod 755 $$dir; \
 	  fi; \
 	  if test -r $$lang.mo; then \
-	    cp $$lang.mo $$dir/$(PACKAGE).mo; \
-	    chmod 644 $$dir/$(PACKAGE).mo; \
+	    cp $$lang.mo $$dir/$(DOMAIN).mo; \
+	    chmod 644 $$dir/$(DOMAIN).mo; \
 	  fi; \
 	done
 

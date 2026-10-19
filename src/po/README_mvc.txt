@@ -147,7 +147,7 @@ editor (e.g. "optwin.vim") and for third-party plugin packages.
 To translate the plugins supplied with the Vim editor, you must specify a
 gettext() function call for the strings you want to translate.
 The translation of these strings will be retrieved by gettext() from the MO
-file "vim.mo".
+file "viai.mo".
 
 For third-party plugins, it is necessary to specify a one-time call to the
 bindtextdomain() function in scripts containing translation strings and for

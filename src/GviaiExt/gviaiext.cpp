@@ -225,7 +225,7 @@ IconToBitmap(HICON hIcon, HBRUSH hBackground, int width, int height)
 #else
 # define _(x)	    (*dyn_libintl_gettext)(x)
 # define W(x)	    utf8_to_utf16(x)
-# define VIMPACKAGE "vim"
+# define VIMPACKAGE "viai"
 # ifndef GETTEXT_DLL
 #  define GETTEXT_DLL "libintl.dll"
 #  define GETTEXT_DLL_ALT "libintl-8.dll"
@@ -363,7 +363,7 @@ dyn_gettext_load(void)
     DWORD   len;
 
     // Try to locate the runtime files.  The path is used to find libintl.dll
-    // and the vim.mo files.
+    // and the viai.mo files.
     getRuntimeDir(szBuff);
     if (szBuff[0] != 0)
     {

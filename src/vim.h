@@ -238,7 +238,7 @@
 
 // Can't use "PACKAGE" here, conflicts with a Perl include file.
 #ifndef VIMPACKAGE
-# define VIMPACKAGE	"vim"
+# define VIMPACKAGE	"viai"
 #endif
 
 /*

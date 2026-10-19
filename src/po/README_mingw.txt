@@ -81,13 +81,13 @@ the same as in the Unix case, only the commands change):
 
     Look out for syntax errors and fix them.
 
-(5) This is an extra step, ;-). If you want the vim.mo file installed in your
+(5) This is an extra step, ;-). If you want the viai.mo file installed in your
     system you must run:
 
 	make -f Make_ming.mak install
 
     This will create the xx\LC_MESSAGES directory (if it does not exist) and
-    will copy vim.po to it.
+    will copy viai.mo to it.
     You can also use the following command to install all languages:
 
 	make -f Make_ming.mak install-all

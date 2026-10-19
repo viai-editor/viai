@@ -37,7 +37,7 @@ You might have to do the commands manually.  Example:
 
    cd c:\vim\vim91
    mkdir runtime\lang\ja\LC_MESSAGES
-   msgfmt -o runtime\lang\ja\LC_MESSAGES\vim.mo src\po\ja.po
+   msgfmt -o runtime\lang\ja\LC_MESSAGES\viai.mo src\po\ja.po
 
 
 WHEN THERE IS A MISTAKE
@@ -134,7 +134,7 @@ language.
 
 (6) Local tryout:
     Vim normally picks up the .mo files from:
-	    $VIMRUNTIME/lang/{lang}/LC_MESSAGES/vim.mo
+	    $VIMRUNTIME/lang/{lang}/LC_MESSAGES/viai.mo
     To try out the messages with Vim use:
 	    make tryoutinstall
     And run Vim with $VIMRUNTIME set to ../runtime
@@ -171,7 +171,7 @@ editor (e.g. "optwin.vim") and for third-party plugin packages.
 To translate the plugins supplied with the Vim editor, you must specify a
 gettext() function call for the strings you want to translate.
 The translation of these strings will be retrieved by gettext() from the MO
-file "vim.mo".
+file "viai.mo".
 
 For third-party plugins, it is necessary to specify a one-time call to the
 bindtextdomain() function in scripts containing translation strings and for
