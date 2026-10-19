@@ -64,7 +64,7 @@ To use the precompiled binary version, you need one of these archives:
 and of course (optional)
   vim-XX-runtime.zip		runtime files
 
-The binary archives contain: vim.exe, ctags.exe, xxd.exe files.
+The binary archives contain: viai.exe, ctags.exe, xxd.exe files.
 
 For GTK executables you will need GTKLIB that is available for
 Alpha and IA64 platforms.
@@ -146,7 +146,7 @@ Use: >
 	define/nolog VIMRUNTIME device:[path.vim.vim60]
 	define/nolog TMP	device:[path.tmp]
 
-To get vim.exe to find its document, filetype, and syntax files, and to
+To get viai.exe to find its document, filetype, and syntax files, and to
 specify a directory where temporary files will be located.  Copy the "runtime"
 subdirectory of the Vim distribution to vimruntime.
 
@@ -179,10 +179,10 @@ Set up the logical $VIM as: >
 Set up some symbols: >
 
 	$ ! vi starts Vim in chr. mode.
-	$ vi*m  :== mcr VIM:VIM.EXE
+	$ vi*m  :== mcr VIM:VIAI.EXE
 
 	$ !gvi starts Vim in GUI mode.
-	$ gv*im :== spawn/nowait mcr VIM:VIM.EXE -g
+	$ gv*im :== spawn/nowait mcr VIM:VIAI.EXE -g
 
 Please, check the notes for customization and configuration of symbols.
 
@@ -212,8 +212,8 @@ You can check that everything is at the right place with the :version command.
 Example LOGIN.COM: >
 
 	$ define/nolog VIM DKA0:[UTIL.VIM81]
-	$ vi*m :== mcr VIM:VIM.EXE
-	$ gv*im:== spawn/nowait/input=NLA0 mcr VIM:VIM.EXE -g -GEOMETRY 80x40
+	$ vi*m :== mcr VIM:VIAI.EXE
+	$ gv*im:== spawn/nowait/input=NLA0 mcr VIM:VIAI.EXE -g -GEOMETRY 80x40
 	$ set term/inq/ins ! inquire the terminal capabilities
 	$ set disp/create/node=192.168.10.202/trans=tcpip
 
@@ -223,7 +223,7 @@ DECNET environment, it will satisfy as well.
 You just have to define the "whole" path: >
 
 	$ define VIM "<server_name>[""user password""]::device:<path>"
-	$ vi*m :== "mcr VIM:VIM.EXE"
+	$ vi*m :== "mcr VIM:VIAI.EXE"
 
 For example: >
 
@@ -244,8 +244,8 @@ then add to the SYS$STARTUP:SYLOGICALS.COM >
 
 And to the SYS$STARTUP:SYLOGIN.COM >
 
-	$ vi*m :== mcr VIM:VIM.EXE
-	$ gv*im:== spawn/nowait/input=NLA0 mcr VIM:VIM.EXE -g -GEOMETRY 80x40
+	$ vi*m :== mcr VIM:VIAI.EXE
+	$ gv*im:== spawn/nowait/input=NLA0 mcr VIM:VIAI.EXE -g -GEOMETRY 80x40
 
 
 It will set up a normal Vim work environment for every user on the system.
@@ -282,7 +282,7 @@ can be downloaded from http://www.polarhome.com/vim/).
 1) If you are working on the VMS X/Motif console:
    Start Vim with the command: >
 
-	$ mc device:<path>VIM.EXE -g
+	$ mc device:<path>VIAI.EXE -g
 <
    or type :gui as a command to the Vim command prompt.  For more info :help
    gui
@@ -417,8 +417,8 @@ and run the command procedure below: >
 	$ if (p1 .eqs. "") .OR. (p2 .eqs. "") then goto usage
 	$ set disp/create/node=<your_IP_here>/trans=tcpip
 	$ define "VIM "<vim_server>""''p1' ''p2'""::<device>:<vim_path>"
-	$  vi*m :== "mcr VIM:VIM.EXE"
-	$ gv*im :== "spawn/nowait mcr VIM:VIM.EXE -g"
+	$  vi*m :== "mcr VIM:VIAI.EXE"
+	$ gv*im :== "spawn/nowait mcr VIM:VIAI.EXE -g"
 	$ goto end
 	$ usage:
 	$ write sys$output " Please enter username and password as a parameter."
@@ -552,7 +552,7 @@ When I use gvim this way and press CTRL-Y in the parent terminal, gvim exits.
 I now use a different symbol that seems to work OK and fixes the problem.
 I suggest this instead: >
 
-	$ GV*IM:==SPAWN/NOWAIT/INPUT=NLA0: MCR VIM:VIM.EXE -G -GEOMETRY 80X40
+	$ GV*IM:==SPAWN/NOWAIT/INPUT=NLA0: MCR VIM:VIAI.EXE -G -GEOMETRY 80X40
 
 The /INPUT=NLA0: separates the standard input of the gvim process from the
 parent terminal, to block signals from the parent window.
@@ -682,16 +682,16 @@ both GUI/GTK build and just console build executables, like below: >
     |----- syntax
        vimrc    (system rc files)
        gvimrc
-       gvim.exe (the renamed GUI or GTK built vim.exe)
-       vim.exe  (the console only executable)
+       gviai.exe (the renamed GUI or GTK built viai.exe)
+       viai.exe  (the console only executable)
 
 Define system symbols like below in for ex in LOGIN.COM or SYLOGIN.COM: >
 
 	$ define/nolog VIM RF10:[UTIL.VIM73] ! where you VIM directory is
-	$ vi*m  :== mcr VIM:VIM.EXE
-	$ gvi*m :== mcr VIM:GVIM.EXE
+	$ vi*m  :== mcr VIM:VIAI.EXE
+	$ gvi*m :== mcr VIM:GVIAI.EXE
 	$ ! or you can try to spawn with
-	$ gv*im :== spawn/nowait/input=NLA0 mcr VIM:GVIM.EXE -g -GEOMETRY 80x40
+	$ gv*im :== spawn/nowait/input=NLA0 mcr VIM:GVIAI.EXE -g -GEOMETRY 80x40
 
 
 Like this, users that do not have X environment and want to use Vim just in
@@ -726,17 +726,17 @@ to the login.com or sylogin.com: >
 	$ if f$getsyi("NODE_HWTYPE") .eqs. "VAX"
 	$ then
 	$       say "VAX platform"
-	$       vi*m:== mcr vim:VIM.EXE_VAX
+	$       vi*m:== mcr vim:VIAI.EXE_VAX
 	$ endif
 	$ if f$getsyi("NODE_HWTYPE") .eqs. "ALPH"
 	$ then
 	$       say "ALPHA platform"
-	$       vi*m :== mcr vim:VIM.EXE_AXP
+	$       vi*m :== mcr vim:VIAI.EXE_AXP
 	$ endif
 	$ if f$getsyi("ARCH_NAME") .eqs. "IA64"
 	$ then
 	$      say "IA64 platform"
-	$      vi*m :== mcr vim:VIM.EXE_IA64
+	$      vi*m :== mcr vim:VIAI.EXE_IA64
 	$ endif
 
 Solution 2.  Different directories: >

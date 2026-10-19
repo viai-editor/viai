@@ -1,7 +1,7 @@
 #
 # Makefile for AROS, AmigaOS 3.x, AmigaOS 4 and MorphOS.
 #
-BIN = vim
+BIN = viai
 CC ?= gcc
 LD = $(CC)
 UNM ?= $(shell uname)

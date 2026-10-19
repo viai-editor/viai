@@ -3,7 +3,7 @@
 #
 # Requires "rm", "csh" and "diff"!
 
-VIMPROG = /vim
+VIMPROG = /viai
 
 default: nongui
 

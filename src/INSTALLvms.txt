@@ -113,7 +113,7 @@ from CVS mirror ftp://ftp.polarhome.com/pub/cvs/SOURCE/
 	Default		: CCVER = YES
 
 	Parameter name	: DEBUG
-	Description	: Building a debug version (DVIM.EXE)
+	Description	: Building a debug version (DVIAI.EXE)
 	Options:	: YES - debug version will be built
 			  Uncommented - building normal executable
 	Default		: Uncommented
@@ -258,7 +258,7 @@ from CVS mirror ftp://ftp.polarhome.com/pub/cvs/SOURCE/
 
 	define/nolog VIM device:[leading-path-here.vim]
 
-     to get vim.exe to find its document, filetype, and syntax files.
+     to get viai.exe to find its document, filetype, and syntax files.
 
      Now, if you are lucky you should have one own built, customized and
      working Vim.
