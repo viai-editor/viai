@@ -125,6 +125,11 @@ Before submitting any patch, at minimum:
 - **Keep the diff against Vim small**, so that Vim patches keep applying.
   Change existing Vim code only where needed.  Put ViAI-specific tests in
   their own files (e.g. `src/testdir/test_viai_config.vim`).
+- **The name ViAI** is used for what users see or run: messages, file
+  names, and the names and paths of programs, also in build files and in
+  example commands.  "Vim" naming the editor in comments of the code and
+  of build files is kept, since renaming it would make Vim patches
+  conflict.
 - **ViAI has its own version** (`VIAI_VERSION_MAJOR` and
   `VIAI_VERSION_MINOR` in `src/version.h`) and patch numbers (1.0.0001, ...).
   `v:version` and `has('patch-...')` keep reporting the Vim version.
