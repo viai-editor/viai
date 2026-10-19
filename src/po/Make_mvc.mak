@@ -33,10 +33,10 @@
 VIMRUNTIME = ..\..\runtime
 !ENDIF
 
-# Correct the following line for the where executable file vim is
+# Correct the following line for the where executable file viai is
 # installed.  Please do not put the path in quotes.
 !IFNDEF VIMPROG
-VIMPROG = ..\vim.exe
+VIMPROG = ..\viai.exe
 !ENDIF
 
 # Correct the following line for the directory where gettext et al is

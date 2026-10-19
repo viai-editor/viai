@@ -169,7 +169,7 @@ You may also wish to look at the whole batch of failed screendumps after
 running "make test".  Source the "viewdumps.vim" script for this task:
 
 	[VIMRUNTIME=../..] \
-	../../src/vim --clean -S testdir/viewdumps.vim \
+	../../src/viai --clean -S testdir/viewdumps.vim \
 				[testdir/dumps/java_*.dump ...]
 
 By default, all screendumps found in the "failed" directory will be added to
@@ -202,7 +202,7 @@ directory by creating a symlink:
 
 You can now examine the extracted screendumps:
 
-	./src/vim --clean -S runtime/syntax/testdir/viewdumps.vim \
+	./src/viai --clean -S runtime/syntax/testdir/viewdumps.vim \
 				/tmp/runtime/syntax/testdir/failed/*.dump
 
 
@@ -244,7 +244,7 @@ you can now examine the screendumps from the "failed" directory (note that new
 screendumps will be shown with no difference between their versions):
 
 	cd ..
-	../../../src/vim --clean -S viewdumps.vim
+	../../../src/viai --clean -S viewdumps.vim
 
 
 TODO: test syncing by jumping around

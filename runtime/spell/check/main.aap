@@ -2,10 +2,10 @@
 # This is used to check if the .spl file format changes.
 
 # Use a freshly compiled Vim if it exists.
-@if os.path.exists('../../../src/vim'):
-    VIM = ../../../src/vim
+@if os.path.exists('../../../src/viai'):
+    VIM = ../../../src/viai
 @else:
-    :progsearch VIM vim
+    :progsearch VIM viai
 
 all: check.latin1.spl
 

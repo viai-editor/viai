@@ -2,10 +2,10 @@
 # See README_sr.txt for instructions to get the .aff and .dic files.
 
 # Use a freshly compiled Vim if it exists.
-@if os.path.exists('../../../src/vim'):
-    VIM = ../../../src/vim
+@if os.path.exists('../../../src/viai'):
+    VIM = ../../../src/viai
 @else:
-    :progsearch VIM vim
+    :progsearch VIM viai
 
 SPELLDIR = ..
 FILES    = sr.aff sr.dic

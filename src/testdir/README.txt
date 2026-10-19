@@ -96,11 +96,11 @@ tests are successful, then this file will be an empty file.
 
 - To run a single test function from a test script:
 
-    $ ../vim -u NONE -S runtest.vim <test_file>.vim <function_name>
+    $ ../viai -u NONE -S runtest.vim <test_file>.vim <function_name>
 
 - To execute only specific test functions, add a second argument:
 
-    $ ../vim -u NONE -S runtest.vim test_channel.vim open_delay
+    $ ../viai -u NONE -S runtest.vim test_channel.vim open_delay
 
 - To run all the tests:
 
@@ -116,7 +116,7 @@ tests are successful, then this file will be an empty file.
 
     or
 
-    $ make VIMPROG=../gvim
+    $ make VIMPROG=../gviai
 
 - To cleanup the temporary files after running the tests:
 
@@ -128,7 +128,7 @@ VIEWING GENERATED SCREENDUMPS (local):
 You may also wish to look at the whole batch of failed screendumps after
 running "make".  Source the "viewdumps.vim" script for this task:
 
-    $ ../vim -u NONE -S viewdumps.vim \
+    $ ../viai -u NONE -S viewdumps.vim \
 				[dumps/Test_xxd_*.dump ...]
 
 By default, all screendumps found in the "failed" directory will be added to
@@ -159,7 +159,7 @@ directory by creating a symlink:
 
 You can now examine the extracted screendumps:
 
-    $ ./src/vim -u NONE -S src/testdir/viewdumps.vim \
+    $ ./src/viai -u NONE -S src/testdir/viewdumps.vim \
 				/tmp/src/testdir/failed/*.dump
 
 
@@ -201,5 +201,5 @@ you can now examine the screendumps from the "failed" directory (note that new
 screendumps will be shown with no difference between their versions):
 
     $ cd ..
-    $ ../vim -u NONE -S viewdumps.vim
+    $ ../viai -u NONE -S viewdumps.vim
 

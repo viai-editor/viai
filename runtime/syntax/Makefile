@@ -1,7 +1,7 @@
 # Portable Makefile for running syntax tests.
 
 # To run the test manually:
-# ../../src/vim -u 'testdir/runtest.vim' --cmd 'breakadd func RunTest'
+# ../../src/viai -u 'testdir/runtest.vim' --cmd 'breakadd func RunTest'
 
 # Override this if needed, the default assumes Vim was built in the src dir.
 #VIMPROG = vim

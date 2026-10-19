@@ -24,9 +24,9 @@ include Make_all.mak
 PACKAGE = vim
 DOMAIN = viai
 ifeq (sh.exe, $(SHELL))
-VIMPROG = ..\vim
+VIMPROG = ..\viai
 else
-VIMPROG = ../vim
+VIMPROG = ../viai
 endif
 
 # Uncomment one of the lines below or modify it to put the path to your

@@ -21,10 +21,10 @@ SETTING = 'set mkspellmem=7900000,30000,8000'
 
 
 # Use a freshly compiled Vim if it exists.
-@if os.path.exists('../../../src/vim'):
-    VIM = ../../../src/vim
+@if os.path.exists('../../../src/viai'):
+    VIM = ../../../src/viai
 @else:
-    :progsearch VIM vim
+    :progsearch VIM viai
 
 SPELLDIR = ..
 FILES    = eu_ES.aff eu_ES.dic

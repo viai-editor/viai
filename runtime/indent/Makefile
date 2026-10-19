@@ -3,7 +3,7 @@
 .SUFFIXES:
 .PHONY: test clean testclean
 
-VIMPROG = vim
+VIMPROG = viai
 VIMRUNTIME = ..
 
 # Run the tests that didn't run yet or failed previously.
