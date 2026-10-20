@@ -133,6 +133,13 @@ Before submitting any patch, at minimum:
 - **ViAI has its own version** (`VIAI_VERSION_MAJOR` and
   `VIAI_VERSION_MINOR` in `src/version.h`) and patch numbers (1.0.0001, ...).
   `v:version` and `has('patch-...')` keep reporting the Vim version.
+- **ViAI error numbers are E8000 to E8999.**  An error message added by
+  ViAI takes the next free number in this range, never the next free Vim
+  number, so that it does not collide with errors added by later Vim
+  patches.  Error messages from Vim keep their numbers.  ViAI's error
+  messages are defined in `src/errors_viai.h`, which `src/vim.h` includes
+  right after `errors.h`, since Vim patches append to `errors.h`.  The
+  file is created with the first ViAI error message.
 
 ## Commit format
 

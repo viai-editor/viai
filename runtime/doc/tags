@@ -11678,6 +11678,7 @@ vi:	options.txt	/*vi:*
 vi_diff.txt	vi_diff.txt	/*vi_diff.txt*
 viai	viai.txt	/*viai*
 viai-config	viai.txt	/*viai-config*
+viai-error-numbers	viai.txt	/*viai-error-numbers*
 viai-feature	viai.txt	/*viai-feature*
 viai-license	viai.txt	/*viai-license*
 viai-programs	viai.txt	/*viai-programs*

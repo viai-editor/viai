@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 17
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 20
 
 
 		  VIM REFERENCE MANUAL
@@ -16,7 +16,8 @@ file, this file is right.
 3. User configuration		|viai-config|
 4. The viminfo file		|viai-viminfo|
 5. $VIM and $VIMRUNTIME		|viai-vimruntime|
-6. License			|viai-license|
+6. Error numbers		|viai-error-numbers|
+7. License			|viai-license|
 
 ==============================================================================
 1. Programs					*viai-programs*
@@ -173,7 +174,13 @@ processes, e.g. started with |:!|, |system()| and |job_start()|, always get
 them.
 
 ==============================================================================
-6. License					*viai-license*
+6. Error numbers				*viai-error-numbers*
+
+Error messages that ViAI adds have the numbers E8000 to E8999.  Error
+messages from Vim keep their numbers.
+
+==============================================================================
+7. License					*viai-license*
 
 Changes made in ViAI after the initial import are licensed under the Apache
 License 2.0.  Code imported from Vim is licensed under the Vim license, see
