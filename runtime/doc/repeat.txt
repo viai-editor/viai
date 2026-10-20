@@ -245,11 +245,11 @@ For writing a Vim script, see chapter 41 of the user manual |usr_41.txt|.
 						*:source-dryrun*
 :so[urce] ++dryrun {file}
 :[range]so[urce] ++dryrun
-			Read the script without running it: only what defines
-			something is executed, then every |:def| function in
-			it is compiled and the errors are reported as usual.
+			Read the script without running it: only definitions
+			are made, then every |:def| function in it is
+			compiled and the errors are reported as usual.
 
-			What is executed: `vim9script`, `import`, `def`,
+			What takes effect: `vim9script`, `import`, `def`,
 			`function`, `class`, `interface`, `enum`, `type` and a
 			declaration with `var`, `const` or `final`.  The
 			declared variable gets the type from the declaration,
@@ -261,7 +261,7 @@ For writing a Vim script, see chapter 41 of the user manual |usr_41.txt|.
 
 			Everything else is skipped, also `finish` and the
 			condition of an `if`, `while` or `for`; a definition
-			inside such a block is executed whether the condition
+			inside such a block is made whether the condition
 			holds or not.  A function may therefore be defined
 			twice, the last definition counts.
 
