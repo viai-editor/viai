@@ -2587,6 +2587,7 @@ typedef int (*opt_expand_cb_T)(optexpand_T *args, int *numMatches, char_u ***mat
 
 #include "globals.h"	    // global variables and messages
 #include "errors.h"	    // error messages
+#include "errors_viai.h"    // error messages of ViAI
 
 #ifndef PROTO
 /*
