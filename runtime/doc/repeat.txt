@@ -281,8 +281,9 @@ For writing a Vim script, see chapter 41 of the user manual |usr_41.txt|.
 
 						*E8001*
 			Calling a function gives an error.  So do running a
-			shell command, writing a file and other things that
-			the |sandbox| does not allow.
+			shell command, a command of an interface such as
+			|:python3|, writing a file and other things that the
+			|sandbox| does not allow.
 
 						*E8002*
 			A function defined by a dry run cannot be called, also

@@ -1012,6 +1012,20 @@ func Test_source_dryrun_no_side_effect()
         \ 'Xdryrun_s_const.vim', 'D')
   call assert_fails('source ++dryrun Xdryrun_s_const.vim', 'E1268:')
 
+  " an interface command is not run
+  if has('python3')
+    let lines =<< trim END
+      vim9script
+      python3 << EOF
+      open('Xdryrun_out', 'w').close()
+      EOF
+      py3 open('Xdryrun_out', 'w').close()
+    END
+    call writefile(lines, 'Xdryrun_python3.vim', 'D')
+    source ++dryrun Xdryrun_python3.vim
+    call assert_false(filereadable('Xdryrun_out'))
+  endif
+
   call delete('Xdryrun_out')
 endfunc
 
