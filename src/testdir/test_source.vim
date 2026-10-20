@@ -1152,9 +1152,9 @@ func Test_source_dryrun_loaded_script()
   delfunc g:DryrunLoadedCount
 endfunc
 
-" Test that a timer that is due while a dry run waits at the more-prompt
-" fires after the dry run, its callback would fail in it.
-func Test_source_dryrun_timer()
+" Test that a dry run does not wait at the more-prompt, a timer or a job
+" callback would run in it and fail.
+func Test_source_dryrun_no_more_prompt()
   CheckRunVimInTerminal
   let lines = ['vim9script']
   for i in range(20)
@@ -1162,18 +1162,21 @@ func Test_source_dryrun_timer()
   endfor
   call writefile(lines, 'Xdryrun_errors.vim', 'D')
   let buf = RunVimInTerminal('', {'rows': 8})
-  call term_sendkeys(buf, ":call timer_start(10, "
-        \ .. "{-> writefile(['x'], 'Xdryrun_timer')})\<CR>")
-  call term_sendkeys(buf, ":source ++dryrun Xdryrun_errors.vim\<CR>")
-  call WaitForAssert({-> assert_match('-- More --', term_getline(buf, 8))})
-  call term_wait(buf, 200)
-  call assert_false(filereadable('Xdryrun_timer'))
-  call term_sendkeys(buf, 'G')
+  let cmd = ":call timer_start(0, {-> writefile(['x'], 'Xdryrun_timer')})"
+  if has('unix')
+    let cmd ..= " | let g:job = job_start(['echo', 'x'], "
+          \ .. "{'out_cb': {ch, msg -> writefile([msg], 'Xdryrun_job')}})"
+  endif
+  call term_sendkeys(buf, cmd .. " | source ++dryrun Xdryrun_errors.vim\<CR>")
   call WaitForAssert({-> assert_match('Press ENTER', term_getline(buf, 8))})
-  call term_sendkeys(buf, "\<CR>")
   call WaitForAssert({-> assert_true(filereadable('Xdryrun_timer'))})
+  if has('unix')
+    call WaitForAssert({-> assert_true(filereadable('Xdryrun_job'))})
+  endif
+  call term_sendkeys(buf, "\<CR>")
   call StopVimInTerminal(buf)
   call delete('Xdryrun_timer')
+  call delete('Xdryrun_job')
 endfunc
 
 " Test that a SourceCmd autocommand is used for sourcing a buffer.

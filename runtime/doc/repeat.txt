@@ -275,8 +275,9 @@ For writing a Vim script, see chapter 41 of the user manual |usr_41.txt|.
 			A script that is imported is read the same way, but an
 			autoload script is not loaded.  No |SourceCmd|,
 			|SourcePre| or |SourcePost| autocommand is triggered.
-			A |timer| that is due during the dry run, e.g. while
-			the |more-prompt| is shown, fires after it.
+			The messages do not stop at the |more-prompt|, thus a
+			|timer| or a |channel| callback does not run until the
+			dry run is done.
 			A class or enum in an autoload script is defined again
 			by a dry run, and after one by a normal load, since no
 			object was made from it; see |vim9-reload|.
