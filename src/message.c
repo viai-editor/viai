@@ -2632,8 +2632,13 @@ msg_puts_display(
 #ifdef HAS_MESSAGE_WINDOW
 	    }
 #endif
+	    // A dry run does not wait for a key, a callback would run in it.
 	    if (p_more && lines_left == 0 && State != MODE_HITRETURN
-					    && !msg_no_more && !exmode_active)
+					    && !msg_no_more && !exmode_active
+#ifdef FEAT_EVAL
+					    && !source_dryrun
+#endif
+					    )
 	    {
 #ifdef FEAT_CON_DIALOG
 		if (do_more_prompt(NUL))

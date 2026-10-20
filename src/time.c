@@ -546,11 +546,6 @@ check_due_timer(void)
     // debug prompt.
     if (exiting || aborting() || debug_mode)
 	return next_due;
-#  ifdef FEAT_EVAL
-    // A dry run would make the callback fail, it runs after the dry run.
-    if (source_dryrun)
-	return next_due;
-#  endif
 
     profile_start(&now);
     for (timer = first_timer; timer != NULL && !got_int; timer = timer_next)
