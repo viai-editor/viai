@@ -1795,6 +1795,12 @@ ex_let_option(
 	emsg(_(e_cannot_lock_option));
 	return NULL;
     }
+    // An option set by a dry run, such as 'shell', would be used after it.
+    if (source_dryrun)
+    {
+	emsg(_(e_not_allowed_in_dry_run));
+	return NULL;
+    }
 
     // Find the end of the name.
     p = find_option_end(&arg, &scope);

@@ -1247,6 +1247,15 @@ uc_add_command(
     char_u	*rep_buf = NULL;
     garray_T	*gap;
 
+#ifdef FEAT_EVAL
+    // A command defined by a dry run would run after it.
+    if (source_dryrun)
+    {
+	emsg(_(e_not_allowed_in_dry_run));
+	return FAIL;
+    }
+#endif
+
     replace_termcodes(rep, &rep_buf, 0, 0, NULL);
     if (rep_buf == NULL)
     {

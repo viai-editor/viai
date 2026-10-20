@@ -1778,6 +1778,14 @@ validate_opt_idx(
 	return FAIL;
     }
 #endif
+#ifdef FEAT_EVAL
+    // An option set by a dry run, such as 'shell', would be used after it.
+    if (source_dryrun)
+    {
+	*errmsg = e_not_allowed_in_dry_run;
+	return FAIL;
+    }
+#endif
 
     return OK;
 }

@@ -1006,6 +1006,15 @@ do_autocmd(exarg_T *eap, char_u *arg_in, int forceit)
     int		i;
     int		flags = 0;
 
+#ifdef FEAT_EVAL
+    // An autocommand defined by a dry run would run after it.
+    if (source_dryrun)
+    {
+	emsg(_(e_not_allowed_in_dry_run));
+	return;
+    }
+#endif
+
     if (*arg == '|')
     {
 	eap->nextcmd = arg + 1;

@@ -1012,6 +1012,31 @@ func Test_source_dryrun_no_side_effect()
         \ 'Xdryrun_s_const.vim', 'D')
   call assert_fails('source ++dryrun Xdryrun_s_const.vim', 'E1268:')
 
+  " nothing is defined or set that would take effect after the dry run
+  let lines =<< trim END
+    vim9script
+    autocmd BufEnter Xdryrun_buf writefile(['x'], 'Xdryrun_out')
+    nnoremap <F9> <Cmd>call writefile(['x'], 'Xdryrun_out')<CR>
+    iabbrev xdryrun xdryrun_expanded
+    command XdryrunCmd writefile(['x'], 'Xdryrun_out')
+    amenu Xdryrun.Item :call writefile(['x'], 'Xdryrun_out')<CR>
+    set textwidth=77
+    &shiftwidth = 7
+  END
+  call writefile(lines, 'Xdryrun_later.vim', 'D')
+  let save_tw = &textwidth
+  let save_sw = &shiftwidth
+  source ++dryrun Xdryrun_later.vim
+  call assert_false(exists('#BufEnter#Xdryrun_buf'))
+  call assert_equal('', maparg('<F9>', 'n'))
+  call assert_equal('', maparg('xdryrun', 'i', 1))
+  call assert_false(exists(':XdryrunCmd'))
+  if has('menu')
+    call assert_equal({}, menu_info('Xdryrun'))
+  endif
+  call assert_equal(save_tw, &textwidth)
+  call assert_equal(save_sw, &shiftwidth)
+
   " an interface command is not run
   if has('python3')
     let lines =<< trim END
