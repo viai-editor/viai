@@ -2189,6 +2189,14 @@ do_one_cmd(
 	    errormsg = _(e_command_not_allowed_in_rvim);
 	    goto doend;
 	}
+#ifdef FEAT_EVAL
+	// An interface runs code that no other check of a dry run sees.
+	if (source_dryrun && (ea.argt & EX_RESTRICT))
+	{
+	    errormsg = _(e_not_allowed_in_dry_run);
+	    goto doend;
+	}
+#endif
 	if (!curbuf->b_p_ma && (ea.argt & EX_MODIFY))
 	{
 	    // Command not allowed in non-'modifiable' buffer
