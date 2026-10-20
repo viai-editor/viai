@@ -17,7 +17,8 @@ file, this file is right.
 4. The viminfo file		|viai-viminfo|
 5. $VIM and $VIMRUNTIME		|viai-vimruntime|
 6. Error numbers		|viai-error-numbers|
-7. License			|viai-license|
+7. Additional features		|viai-additional-features|
+8. License			|viai-license|
 
 ==============================================================================
 1. Programs					*viai-programs*
@@ -180,7 +181,15 @@ Error messages that ViAI adds have the numbers E8000 to E8999.  Error
 messages from Vim keep their numbers.
 
 ==============================================================================
-7. License					*viai-license*
+7. Additional features				*viai-additional-features*
+
+ViAI has these features that Vim does not have:
+
+|:source-dryrun|
+	Read a script without running it, to check it for errors.
+
+==============================================================================
+8. License					*viai-license*
 
 Changes made in ViAI after the initial import are licensed under the Apache
 License 2.0.  Code imported from Vim is licensed under the Vim license, see

@@ -3424,6 +3424,7 @@ $quote	eval.txt	/*$quote*
 :sort-uniq	change.txt	/*:sort-uniq*
 :source	repeat.txt	/*:source*
 :source!	repeat.txt	/*:source!*
+:source-dryrun	repeat.txt	/*:source-dryrun*
 :source-range	repeat.txt	/*:source-range*
 :source_crnl	repeat.txt	/*:source_crnl*
 :sp	windows.txt	/*:sp*
@@ -11677,6 +11678,7 @@ vi-features	vi_diff.txt	/*vi-features*
 vi:	options.txt	/*vi:*
 vi_diff.txt	vi_diff.txt	/*vi_diff.txt*
 viai	viai.txt	/*viai*
+viai-additional-features	viai.txt	/*viai-additional-features*
 viai-config	viai.txt	/*viai-config*
 viai-error-numbers	viai.txt	/*viai-error-numbers*
 viai-feature	viai.txt	/*viai-feature*
