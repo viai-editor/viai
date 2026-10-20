@@ -283,7 +283,10 @@ For writing a Vim script, see chapter 41 of the user manual |usr_41.txt|.
 			Calling a function gives an error.  So do running a
 			shell command, a command of an interface such as
 			|:python3|, writing a file and other things that the
-			|sandbox| does not allow.
+			|sandbox| does not allow.  So do defining an
+			autocommand, a mapping, an abbreviation, a user
+			command or a menu, and setting an option, which would
+			take effect after the dry run.
 
 						*E8002*
 			A function defined by a dry run cannot be called, also

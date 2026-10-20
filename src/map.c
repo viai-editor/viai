@@ -478,6 +478,15 @@ do_map(
     int		noremap;
     char_u      *orig_rhs;
 
+#ifdef FEAT_EVAL
+    // A mapping defined by a dry run would run after it.
+    if (source_dryrun)
+    {
+	emsg(_(e_not_allowed_in_dry_run));
+	return 0;
+    }
+#endif
+
     keys = arg;
     map_table = maphash;
     abbr_table = &first_abbr;

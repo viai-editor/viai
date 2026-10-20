@@ -150,6 +150,15 @@ ex_menu(
     vimmenu_T	menuarg;
     vimmenu_T	**root_menu_ptr;
 
+#ifdef FEAT_EVAL
+    // A menu defined by a dry run would run after it.
+    if (source_dryrun)
+    {
+	emsg(_(e_not_allowed_in_dry_run));
+	return;
+    }
+#endif
+
     modes = get_menu_cmd_modes(eap->cmd, eap->forceit, &noremap, &unmenu);
     arg = eap->arg;
 
