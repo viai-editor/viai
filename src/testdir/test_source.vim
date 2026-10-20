@@ -1152,6 +1152,30 @@ func Test_source_dryrun_loaded_script()
   delfunc g:DryrunLoadedCount
 endfunc
 
+" Test that a timer that is due while a dry run waits at the more-prompt
+" fires after the dry run, its callback would fail in it.
+func Test_source_dryrun_timer()
+  CheckRunVimInTerminal
+  let lines = ['vim9script']
+  for i in range(20)
+    let lines += [printf('def F%d(): number', i), "  return 'x'", 'enddef']
+  endfor
+  call writefile(lines, 'Xdryrun_errors.vim', 'D')
+  let buf = RunVimInTerminal('', {'rows': 8})
+  call term_sendkeys(buf, ":call timer_start(10, "
+        \ .. "{-> writefile(['x'], 'Xdryrun_timer')})\<CR>")
+  call term_sendkeys(buf, ":source ++dryrun Xdryrun_errors.vim\<CR>")
+  call WaitForAssert({-> assert_match('-- More --', term_getline(buf, 8))})
+  call term_wait(buf, 200)
+  call assert_false(filereadable('Xdryrun_timer'))
+  call term_sendkeys(buf, 'G')
+  call WaitForAssert({-> assert_match('Press ENTER', term_getline(buf, 8))})
+  call term_sendkeys(buf, "\<CR>")
+  call WaitForAssert({-> assert_true(filereadable('Xdryrun_timer'))})
+  call StopVimInTerminal(buf)
+  call delete('Xdryrun_timer')
+endfunc
+
 " Test that a SourceCmd autocommand is used for sourcing a buffer.
 func Test_source_buffer_SourceCmd()
   new
