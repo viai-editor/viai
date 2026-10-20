@@ -23,7 +23,7 @@ static garray_T		ga_loaded = {0, 0, sizeof(char_u *), 4, NULL};
 static int		last_current_SID_seq = 0;
 #endif
 
-static int do_source_ext(char_u *fname, int check_other, int is_vimrc, int *ret_sid, exarg_T *eap, int clearvars, int dryrun);
+static int do_source_ext(char_u *fname, int check_other, int is_vimrc, int *ret_sid, exarg_T *eap, int clearvars, bool dryrun);
 
 /*
  * Initialize the execution stack.
@@ -1398,7 +1398,7 @@ ExpandPackAddDir(
 cmd_source(char_u *fname, exarg_T *eap)
 {
     int clearvars = FALSE;
-    int dryrun = FALSE;
+    bool dryrun = false;
 
     if (*fname != NUL && STRNCMP(fname, "++clear", 7) == 0)
     {
@@ -1414,8 +1414,19 @@ cmd_source(char_u *fname, exarg_T *eap)
     else if (STRNCMP(fname, "++dryrun", 8) == 0
 				    && (fname[8] == NUL || fname[8] == ' '))
     {
-	dryrun = TRUE;
+#ifdef FEAT_EVAL
+	// Normal mode commands define nothing, ":source!" would run them.
+	if (eap != NULL && eap->forceit)
+	{
+	    semsg(_(e_invalid_argument_str), eap->arg);
+	    return;
+	}
+	dryrun = true;
 	fname = skipwhite(fname + 8);
+#else
+	emsg(_(e_sorry_command_is_not_available_in_this_version));
+	return;
+#endif
     }
 
     if (*fname != NUL && eap != NULL && eap->addr_count > 0)
@@ -1648,7 +1659,7 @@ do_source_ext(
     int		*ret_sid UNUSED,
     exarg_T	*eap,
     int		clearvars UNUSED,
-    int		dryrun UNUSED)
+    bool	dryrun UNUSED)
 {
     source_cookie_T	    cookie;
     char_u		    *p;
@@ -1659,7 +1670,7 @@ do_source_ext(
     int			    source_autocmds = TRUE;
     sctx_T		    save_current_sctx;
 #ifdef FEAT_EVAL
-    int			    save_source_dryrun = source_dryrun;
+    bool		    save_source_dryrun = source_dryrun;
 #endif
 #ifdef STARTUPTIME
     struct timeval	    tv_rel;
@@ -1714,12 +1725,22 @@ do_source_ext(
 	retval = OK;
 	goto theend;
     }
+
+    // A dry run would replace the functions and variables of a script that
+    // is in use.
+    if (dryrun && sid > 0 && SCRIPT_ITEM(sid)->sn_state != SN_STATE_NOT_LOADED
+	    && !SCRIPT_ITEM(sid)->sn_dryrun)
+    {
+	semsg(_(e_cannot_dry_run_script_already_loaded_str), fname_exp);
+	retval = OK;
+	goto theend;
+    }
 #endif
 
 #ifdef FEAT_EVAL
     // Also applies to the scripts this one imports.
     if (dryrun)
-	source_dryrun = TRUE;
+	source_dryrun = true;
     // Nothing is sourced in a dry run, no Source* autocommand either.
     source_autocmds = !source_dryrun;
 #endif
@@ -1923,6 +1944,7 @@ do_source_ext(
 	// Remember the "is_vimrc" flag for when the file is sourced again.
 	si->sn_is_vimrc = is_vimrc;
     }
+    si->sn_dryrun = source_dryrun;
 
     // Keep the sourcing name/lnum, for recursive calls.
     estack_push(ETYPE_SCRIPT, si->sn_name, 0);
@@ -2090,8 +2112,6 @@ almosttheend:
 
     if (cookie.fp != NULL)
 	fclose(cookie.fp);
-    if (cookie.source_from_buf)
-	ga_clear_strings(&cookie.buflines);
     vim_free(cookie.nextline);
     vim_free(firstline);
     convert_setup(&cookie.conv, NULL, NULL);
@@ -2114,6 +2134,8 @@ theend:
     }
 #endif
 
+    if (cookie.source_from_buf)
+	ga_clear_strings(&cookie.buflines);
     vim_free(fname_not_fixed);
     vim_free(fname_exp);
     sticky_cmdmod_flags = save_sticky_cmdmod_flags;
@@ -2132,7 +2154,7 @@ do_source(
     int		*ret_sid)
 {
     return do_source_ext(fname, check_other, is_vimrc, ret_sid, NULL, FALSE,
-									FALSE);
+									false);
 }
 
 
@@ -2974,6 +2996,11 @@ script_autoload(
     int		ret = FALSE;
     int		i;
     int		ret_sid;
+
+    // A dry run would leave the script marked as loaded without having run
+    // it.
+    if (source_dryrun)
+	return FALSE;
 
     // If the name starts with "<SNR>123_" then "123" is the script ID.
     if (name[0] == K_SPECIAL && name[1] == KS_EXTRA && name[2] == KE_SNR)

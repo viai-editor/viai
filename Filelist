@@ -71,6 +71,7 @@ SRC_ALL =	\
 		src/drawscreen.c \
 		src/edit.c \
 		src/errors.h \
+		src/errors_viai.h \
 		src/eval.c \
 		src/evalbuffer.c \
 		src/evalfunc.c \

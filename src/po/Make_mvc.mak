@@ -387,6 +387,7 @@ PO_INPUTLIST = \
 	..\if_perl.xs \
 	..\GviaiExt\gviaiext.cpp \
 	..\errors.h \
+	..\errors_viai.h \
 	..\globals.h \
 	..\if_py_both.h \
 	..\vim.h \
