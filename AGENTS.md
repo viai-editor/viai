@@ -102,12 +102,14 @@ Before submitting any patch, at minimum:
     - `Signed-off-by:` lines from Vim are dropped: they certify the
       contribution to Vim, not to ViAI.  The ViAI maintainer adds their
       own `Signed-off-by:`.
+    - `Assisted-by:` lines from Vim are kept as they are.  Importing the
+      commit does not add one, also when an AI tool helped to apply it.
     - When the patch had to be adapted to ViAI (e.g. renamed files), a
-      short paragraph describes the adaptation.
+      short paragraph after the URL describes the adaptation.
   The description of its pull request is the commit message without the
-  `Assisted-by:` and `Signed-off-by:` lines.  A pull request with several
-  imported commits is titled `vim-patch: <summary>` and lists such a
-  description for each commit under a `#### <subject>` heading.
+  `Signed-off-by:` line.  A pull request with several imported commits is
+  titled `vim-patch: <summary>` and lists such a description for each
+  commit under a `#### <subject>` heading.
 - **Vim commits that are not imported** are listed in the message of one
   commit, one per line, each with a reason:
 
