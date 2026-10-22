@@ -45,6 +45,7 @@ document, there is a separate document for each supported system, see
 Vim is pronounced as one word, like Jim, not vi-ai-em.  It's written with a
 capital, since it's a name, again like Jim.  The GUI version of Vim is written
 "gVim" (or "GVim" when at the beginning of a sentence).
+ViAI is pronounced "vee-eye", see |viai|.
 
 This manual is a reference for all the Vim commands and options.  This is not
 an introduction to the use of Vi or Vim, it gets a bit complicated here and
@@ -125,7 +126,19 @@ http://www.vim.org/maillist.php
 
 Bug reports:				*bugs* *bug-reports* *bugreport.vim*
 
-There are three ways to report bugs:
+							*viai-bugs*
+How a bug in ViAI is handled depends on where it occurs:
+- A bug that occurs only in ViAI: please open an issue in the ViAI repository
+  to report it:
+	https://github.com/viai-editor/viai/issues
+  The maintainer fixes it in ViAI with a pull request.
+- A bug that also occurs in Vim: please report it to Vim as described below,
+  and put a link to your report in your ViAI issue.  A fix included in Vim is
+  imported into ViAI as a Vim patch.  A fix that Vim rejects may still be
+  included in ViAI.
+- A bug that occurs only in Vim: please report it to Vim as described below.
+
+There are three ways to report bugs to Vim:
 1. For issues with runtime files, look in the header for an email address or
    any other way to report it to the maintainer.
 2. Open an issue on GitHub: https://github.com/vim/vim/issues
@@ -189,6 +202,8 @@ introduce Y2K problems, but those are not really part of Vim itself.
 3. Credits						*credits* *author*
 
 Most of Vim was created by Bram Moolenaar <Bram@vim.org> |Bram-Moolenaar|.
+
+ViAI is maintained by Hirohito Higashi (h-east), see |viai|.
 
 Parts of the documentation come from several Vi manuals, written by:
 	W.N. Joy
