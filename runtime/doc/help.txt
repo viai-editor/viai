@@ -114,7 +114,7 @@ General subjects ~
 |develop.txt|	development of Vim
 |debug.txt|	debugging Vim itself
 |uganda.txt|	Vim distribution conditions and what to do with your money
-|viai.txt|	differences between ViAI and Vim
+|viai.txt|	development policy of ViAI and differences from Vim
 
 Basic editing ~
 |starting.txt|	starting Vim, Vim command arguments, initialisation
