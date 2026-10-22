@@ -105,6 +105,10 @@ The runtime files are installed in "/usr/local/share/viai/viai10" instead of
 "/usr/local/share/vim/vim92" (when using the default prefix).  This is
 $VIMRUNTIME, and $VIM is "/usr/local/share/viai".
 
+The translated messages are installed as "viai.mo" instead of "vim.mo", see
+|multilang-messages|.  Thus ViAI does not show the translations of Vim, and
+installing ViAI does not replace them.
+
 ==============================================================================
 3. Version					*viai-version*
 

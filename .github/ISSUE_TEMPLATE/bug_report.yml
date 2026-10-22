@@ -45,8 +45,9 @@ body:
     attributes:
       label: Does it also happen in Vim?
       description: >
-        If it does, please report it to Vim as well:
-        https://github.com/vim/vim/issues
+        If it does, please report it to Vim as well
+        (https://github.com/vim/vim/issues), and put a link to that issue in
+        this report.
       options:
         - "Yes"
         - "No"
