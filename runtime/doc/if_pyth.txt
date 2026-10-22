@@ -1,7 +1,7 @@
 *if_pyth.txt*	For ViAI version 1.0.  Last change: 2026 Mar 18
 
 
-		  VIM REFERENCE MANUAL	  by Paul Moore
+		  VIAI REFERENCE MANUAL
 
 
 The Python Interface to Vim				*python* *Python*

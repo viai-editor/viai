@@ -1,7 +1,7 @@
 *insert.txt*	For ViAI version 1.0.  Last change: 2026 Aug 25
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 						*Insert* *Insert-mode*

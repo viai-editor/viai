@@ -1,6 +1,6 @@
 *help.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
-			VIM - main help file
+			VIAI - main help file
 									 k
       Move around:  Use the cursor keys, or "h" to go left,	       h   l
 		    "j" to go down, "k" to go up, "l" to go right.	 j

@@ -1,7 +1,7 @@
 *if_mzsch.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Sergey Khorev
+		  VIAI REFERENCE MANUAL
 
 
 The MzScheme Interface to Vim				*mzscheme* *MzScheme*

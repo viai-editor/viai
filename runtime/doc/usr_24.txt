@@ -1,7 +1,7 @@
 *usr_24.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		     VIM USER MANUAL	by Bram Moolenaar
+		     VIAI USER MANUAL
 
 
 			     Inserting quickly

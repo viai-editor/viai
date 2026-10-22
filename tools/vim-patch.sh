@@ -50,13 +50,25 @@ main() {
     branch=vim-patch-$short
 
     # "git am -3" needs the blobs the patch applies to, ViAI has no Vim
-    # history.  In ViAI the first line of a help file has the ViAI version
-    # instead of the Vim version.  It is changed in these blobs and in the
+    # history.  In ViAI the header of a help file names ViAI instead of Vim:
+    # the version in the first line and the title, without an author, in the
+    # third or fourth line.  The header is changed in these blobs and in the
     # patch alike, so that the patch applies, also with a 3-way merge.
     viai_version=$(awk '$1 == "#define" { v[$2] = $3 }
         END { print v["VIAI_VERSION_MAJOR"] "." v["VIAI_VERSION_MINOR"] }' \
         "$VIAI_REPO/src/version.h")
-    header_re='^(\*[^*]+\*[[:blank:]]+For )Vim version [0-9]+\.[0-9]+\.'
+    fix_header='
+        function fix_header(s) {
+            if (s ~ /^\*[^*]+\*[ \t]+For Vim version [0-9]+\.[0-9]+\./)
+                sub(/Vim version [0-9]+\.[0-9]+\./,
+                    "ViAI version " ver ".", s)
+            else if (s ~ /^[ \t]+VIM (REFERENCE|USER) MANUAL/) {
+                sub(/VIM/, "VIAI", s)
+                sub(/[ \t]+by .*/, "", s)
+            } else if (s ~ /^[ \t]+VIM - main help file$/)
+                sub(/VIM/, "VIAI", s)
+            return s
+        }'
     blob_map=$OUT_DIR/$short.blobs
     : > "$blob_map"
     git show --format= --raw --no-abbrev "$full" |
@@ -77,7 +89,9 @@ main() {
                     continue
                 fi
                 fixed=$(git cat-file blob "$blob" |
-                    sed -E "1s/$header_re/\\1ViAI version $viai_version./" |
+                    awk -v ver="$viai_version" "$fix_header"'
+                        NR <= 4 { $0 = fix_header($0) }
+                        { print }' |
                     git -C "$VIAI_REPO" hash-object -w --stdin)
                 if [ "$fixed" != "$blob" ]; then
                     echo "$blob $fixed" >> "$blob_map"
@@ -87,7 +101,7 @@ main() {
 
     git format-patch -1 --full-index --stdout "$full" |
         sed '/^Signed-off-by: /d' |
-        awk -v map="$blob_map" -v ver="$viai_version" '
+        awk -v map="$blob_map" -v ver="$viai_version" "$fix_header"'
             BEGIN {
                 while ((getline line < map) > 0) {
                     split(line, f, " ")
@@ -122,9 +136,8 @@ main() {
             help && in_hunk && /^[-+ ]/ {
                 c = substr($0, 1, 1)
                 lnum = c == "+" ? new_lnum : old_lnum
-                if (lnum == 1 && $0 ~ /^.\*[^*]+\*[ \t]+For Vim version /)
-                    sub(/Vim version [0-9]+\.[0-9]+\./,
-                        "ViAI version " ver ".")
+                if (lnum <= 4)
+                    $0 = c fix_header(substr($0, 2))
                 if (c != "+")
                     old_lnum++
                 if (c != "-")

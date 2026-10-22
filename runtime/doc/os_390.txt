@@ -1,7 +1,7 @@
 *os_390.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Ralf Schandl
+		  VIAI REFERENCE MANUAL
 
 
 					*zOS* *z/OS* *OS390* *os390* *MVS*

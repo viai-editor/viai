@@ -1,7 +1,7 @@
 *version7.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 					*vim7* *version-7.0* *version7.0*

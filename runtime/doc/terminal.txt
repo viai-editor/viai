@@ -1,7 +1,7 @@
 *terminal.txt*	For ViAI version 1.0.  Last change: 2026 Aug 30
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 Terminal window support				*terminal* *terminal-window*

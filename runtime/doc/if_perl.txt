@@ -1,7 +1,7 @@
 *if_perl.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Sven Verdoolaege
+		  VIAI REFERENCE MANUAL
 					  and Matt Gerassimof
 
 

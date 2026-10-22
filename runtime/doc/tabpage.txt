@@ -1,7 +1,7 @@
 *tabpage.txt*	For ViAI version 1.0.  Last change: 2026 May 04
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 Editing with windows in multiple tab pages.		*tab-page* *tabpage*

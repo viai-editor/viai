@@ -1,7 +1,7 @@
 *version4.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 This document lists the incompatible differences between Vim 3.0 and Vim 4.0.

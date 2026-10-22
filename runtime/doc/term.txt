@@ -1,7 +1,7 @@
 *term.txt*	For ViAI version 1.0.  Last change: 2026 Sep 10
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 Terminal information					*terminal-info*

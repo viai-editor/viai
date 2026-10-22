@@ -1,7 +1,7 @@
 *vietnamese.txt* For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Phạm Bình An
+		  VIAI REFERENCE MANUAL
 
 
 Vietnamese language support in Vim		*vietnamese* *Vietnamese*

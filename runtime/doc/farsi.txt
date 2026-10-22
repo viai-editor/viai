@@ -1,7 +1,7 @@
 *farsi.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Mortaza Ghassab Shiran
+		  VIAI REFERENCE MANUAL
 
 
 Right to Left and Farsi Mapping for Vim		*farsi* *Farsi*
