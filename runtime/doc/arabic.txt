@@ -1,7 +1,7 @@
 *arabic.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Nadim Shaikli
+		  VIAI REFERENCE MANUAL
 
 
 Arabic Language support (options & mappings) for Vim		*Arabic*

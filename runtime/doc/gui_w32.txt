@@ -1,7 +1,7 @@
 *gui_w32.txt*	For ViAI version 1.0.  Last change: 2026 May 25
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 Vim's Win32 Graphical User Interface			*gui-w32* *win32-gui*

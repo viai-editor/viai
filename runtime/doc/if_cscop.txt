@@ -1,7 +1,7 @@
 *if_cscop.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Andy Kahn
+		  VIAI REFERENCE MANUAL
 
 
 							*cscope* *Cscope*

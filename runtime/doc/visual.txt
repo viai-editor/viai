@@ -1,7 +1,7 @@
 *visual.txt*	For ViAI version 1.0.  Last change: 2026 May 22
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 Visual mode				*Visual* *Visual-mode* *visual-mode*

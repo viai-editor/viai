@@ -1,7 +1,7 @@
 *remote.txt*	For ViAI version 1.0.  Last change: 2026 Jun 05
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 Vim client-server communication				*client-server*

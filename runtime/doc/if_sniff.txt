@@ -1,7 +1,7 @@
 *if_sniff.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Anton Leherbauer
+		  VIAI REFERENCE MANUAL
 
 
 The SNiFF+ support was removed at patch 7.4.1433.  If you want to check it out

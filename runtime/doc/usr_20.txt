@@ -1,7 +1,7 @@
 *usr_20.txt*	For ViAI version 1.0.  Last change: 2026 Jun 02
 
 
-		     VIM USER MANUAL	by Bram Moolenaar
+		     VIAI USER MANUAL
 
 
 		     Typing command-line commands quickly

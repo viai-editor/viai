@@ -1,7 +1,7 @@
 *version8.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 				*vim8* *vim-8* *version-8.0* *version8.0*

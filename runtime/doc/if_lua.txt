@@ -1,7 +1,7 @@
 *if_lua.txt*	For ViAI version 1.0.  Last change: 2026 Sep 29
 
 
-		  VIM REFERENCE MANUAL	  by Luis Carvalho
+		  VIAI REFERENCE MANUAL
 
 
 The Lua Interface to Vim				*lua* *Lua*

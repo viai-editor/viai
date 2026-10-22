@@ -1,7 +1,7 @@
 *textprop.txt*	For ViAI version 1.0.  Last change: 2026 May 31
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 Displaying text with properties attached.	*textprop* *text-properties*

@@ -1,7 +1,7 @@
 *if_tcl.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Ingo Wilken
+		  VIAI REFERENCE MANUAL
 
 
 The Tcl Interface to Vim				*tcl* *Tcl* *TCL*

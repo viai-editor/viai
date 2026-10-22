@@ -1,7 +1,7 @@
 *message.txt*	For ViAI version 1.0.  Last change: 2026 Aug 20
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 This file contains an alphabetical list of messages and error messages that

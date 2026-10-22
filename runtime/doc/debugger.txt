@@ -1,7 +1,7 @@
 *debugger.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Gordon Prieur
+		  VIAI REFERENCE MANUAL
 
 
 Debugger Support Features				*debugger-support*

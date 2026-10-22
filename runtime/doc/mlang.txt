@@ -1,7 +1,7 @@
 *mlang.txt*	For ViAI version 1.0.  Last change: 2026 Jul 28
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 Multi-language features				*multilang* *multi-lang*

@@ -1,7 +1,7 @@
 *os_win32.txt*	For ViAI version 1.0.  Last change: 2026 Jul 22
 
 
-		  VIM REFERENCE MANUAL	  by George Reilly
+		  VIAI REFERENCE MANUAL
 
 
 						*win32* *Win32* *MS-Windows*

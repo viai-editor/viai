@@ -1,7 +1,7 @@
 *russian.txt*	For ViAI version 1.0.  Last change: 2026 Feb 14
 
 
-		  VIM REFERENCE MANUAL	  by Vassily Ragosin
+		  VIAI REFERENCE MANUAL
 
 
 Russian language localization and support in Vim	   *russian* *Russian*

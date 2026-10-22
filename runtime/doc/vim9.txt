@@ -1,7 +1,7 @@
 *vim9.txt*	For ViAI version 1.0.  Last change: 2026 Oct 20
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 Vim9 script commands and expressions.			*Vim9* *vim9*

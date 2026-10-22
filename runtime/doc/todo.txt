@@ -1,7 +1,7 @@
 *todo.txt*	For ViAI version 1.0.  Last change: 2026 Sep 30
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 			      TODO list for Vim		*todo*

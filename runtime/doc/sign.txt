@@ -1,7 +1,7 @@
 *sign.txt*	For ViAI version 1.0.  Last change: 2026 Aug 23
 
 
-		  VIM REFERENCE MANUAL	  by Gordon Prieur
+		  VIAI REFERENCE MANUAL
 					  and Bram Moolenaar
 
 

@@ -1,7 +1,7 @@
 *viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 23
 
 
-		  VIM REFERENCE MANUAL
+		  VIAI REFERENCE MANUAL
 
 
 Differences between ViAI and Vim		*viai*
@@ -56,7 +56,7 @@ These places in the help files that come from Vim are about ViAI:
 	|credits|	the maintainer of ViAI
 
 In all help files that come from Vim the first line has the ViAI version and
-the "Last change" date from Vim.
+the "Last change" date from Vim, and the title names ViAI without an author.
 
 ==============================================================================
 2. Programs					*viai-programs*

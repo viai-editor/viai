@@ -1,7 +1,7 @@
 *usr_02.txt*	For ViAI version 1.0.  Last change: 2026 Aug 25
 
 
-		     VIM USER MANUAL	by Bram Moolenaar
+		     VIAI USER MANUAL
 
 
 			    The first steps in Vim

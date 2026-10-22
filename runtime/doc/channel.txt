@@ -1,7 +1,7 @@
 *channel.txt*	For ViAI version 1.0.  Last change: 2026 Sep 08
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 		      Inter-process communication		*channel*

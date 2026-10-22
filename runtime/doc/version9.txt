@@ -1,7 +1,7 @@
 *version9.txt*	For ViAI version 1.0.  Last change: 2026 Oct 13
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIAI REFERENCE MANUAL
 
 
 				*vim-9.0* *vim-9* *version-9.0* *version9.0*
