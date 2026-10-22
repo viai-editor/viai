@@ -19,7 +19,8 @@ Describe exactly how to reproduce the problem.  For example, instead of
 "insert some text" write what you typed: `ahere is some text<Esc>`.
 
 If the problem also happens in Vim, please report it to
-[Vim](https://github.com/vim/vim/issues) as well.
+[Vim](https://github.com/vim/vim/issues) as well, and put a link to
+that issue in your ViAI issue.
 
 ## Runtime files
 
