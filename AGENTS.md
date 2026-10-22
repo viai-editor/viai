@@ -334,6 +334,11 @@ Further rules, not spelled out here, live in `runtime/doc/develop.txt`:
   overview of the differences from Vim.
 - Bump the `Last change:` header only of ViAI's own help files, such as
   `viai.txt`.
+- The first line of every help file in `runtime/doc/` has the ViAI version
+  ("For ViAI version 1.0."), also in the files imported from Vim.
+  `tools/vim-patch.sh` puts the ViAI version in that line of an imported
+  patch.  This is not an adaptation that needs a paragraph in the commit
+  message.
 
 ### Help file style
 

@@ -1,4 +1,4 @@
-*usr_02.txt*	For Vim version 9.2.  Last change: 2026 Aug 25
+*usr_02.txt*	For ViAI version 1.0.  Last change: 2026 Aug 25
 
 
 		     VIM USER MANUAL	by Bram Moolenaar

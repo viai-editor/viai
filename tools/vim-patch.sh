@@ -49,8 +49,91 @@ main() {
     pr_file=$OUT_DIR/$short.pr.txt
     branch=vim-patch-$short
 
-    git format-patch -1 --stdout "$full" | sed '/^Signed-off-by: /d' \
-        > "$patch_file"
+    # "git am -3" needs the blobs the patch applies to, ViAI has no Vim
+    # history.  In ViAI the first line of a help file has the ViAI version
+    # instead of the Vim version.  It is changed in these blobs and in the
+    # patch alike, so that the patch applies, also with a 3-way merge.
+    viai_version=$(awk '$1 == "#define" { v[$2] = $3 }
+        END { print v["VIAI_VERSION_MAJOR"] "." v["VIAI_VERSION_MINOR"] }' \
+        "$VIAI_REPO/src/version.h")
+    header_re='^(\*[^*]+\*[[:blank:]]+For )Vim version [0-9]+\.[0-9]+\.'
+    blob_map=$OUT_DIR/$short.blobs
+    : > "$blob_map"
+    git show --format= --raw --no-abbrev "$full" |
+        while read -r _ _ old new _ path; do
+            for blob in "$old" "$new"; do
+                case $blob in
+                    *[!0]*) ;;
+                    *) continue ;;
+                esac
+                case $path in
+                    runtime/doc/*/*) is_help=0 ;;
+                    runtime/doc/*.txt) is_help=1 ;;
+                    *) is_help=0 ;;
+                esac
+                if [ $is_help -eq 0 ]; then
+                    git cat-file blob "$blob" |
+                        git -C "$VIAI_REPO" hash-object -w --stdin > /dev/null
+                    continue
+                fi
+                fixed=$(git cat-file blob "$blob" |
+                    sed -E "1s/$header_re/\\1ViAI version $viai_version./" |
+                    git -C "$VIAI_REPO" hash-object -w --stdin)
+                if [ "$fixed" != "$blob" ]; then
+                    echo "$blob $fixed" >> "$blob_map"
+                fi
+            done
+        done
+
+    git format-patch -1 --full-index --stdout "$full" |
+        sed '/^Signed-off-by: /d' |
+        awk -v map="$blob_map" -v ver="$viai_version" '
+            BEGIN {
+                while ((getline line < map) > 0) {
+                    split(line, f, " ")
+                    fixed[f[1]] = f[2]
+                }
+            }
+            /^diff --git / {
+                help = $3 ~ /^a\/runtime\/doc\/[^\/]+\.txt$/
+                in_hunk = 0
+                print
+                next
+            }
+            help && /^index / {
+                split($2, h, /\.\./)
+                if (h[1] in fixed)
+                    h[1] = fixed[h[1]]
+                if (h[2] in fixed)
+                    h[2] = fixed[h[2]]
+                sub(/^index [^ ]+/, "index " h[1] ".." h[2])
+                print
+                next
+            }
+            help && /^@@ / {
+                split($2, o, ",")
+                split($3, n, ",")
+                old_lnum = -o[1]
+                new_lnum = n[1] + 0
+                in_hunk = 1
+                print
+                next
+            }
+            help && in_hunk && /^[-+ ]/ {
+                c = substr($0, 1, 1)
+                lnum = c == "+" ? new_lnum : old_lnum
+                if (lnum == 1 && $0 ~ /^.\*[^*]+\*[ \t]+For Vim version /)
+                    sub(/Vim version [0-9]+\.[0-9]+\./,
+                        "ViAI version " ver ".")
+                if (c != "+")
+                    old_lnum++
+                if (c != "-")
+                    new_lnum++
+                print
+                next
+            }
+            { print }' > "$patch_file"
+    rm -f "$blob_map"
 
     case $subject in
         "patch "[0-9]*": "*)
@@ -126,15 +209,6 @@ main() {
         cat "$msg_file"
         exit 0
     fi
-
-    # "git am -3" needs the blobs the patch applies to, ViAI has no Vim
-    # history.
-    git -C "$VIM_REPO" show --format= --raw --no-abbrev "$full" |
-        awk '$3 !~ /^0+$/ { print $3 }' |
-        while read -r blob; do
-            git -C "$VIM_REPO" cat-file blob "$blob" |
-                git hash-object -w --stdin > /dev/null
-        done
 
     git switch -c "$branch" master
     if ! git am -3 -s "$patch_file"; then

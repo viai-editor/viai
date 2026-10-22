@@ -56,6 +56,9 @@ These places in the help files that come from Vim are about ViAI:
 	|viai-bugs|	how bugs are reported and handled
 	|credits|	the maintainer of ViAI
 
+In all help files that come from Vim the first line has the ViAI version and
+the "Last change" date from Vim.
+
 ==============================================================================
 2. Programs					*viai-programs*
 

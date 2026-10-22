@@ -1,4 +1,4 @@
-*os_win32.txt*	For Vim version 9.2.  Last change: 2026 Jul 22
+*os_win32.txt*	For ViAI version 1.0.  Last change: 2026 Jul 22
 
 
 		  VIM REFERENCE MANUAL	  by George Reilly

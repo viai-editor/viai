@@ -1,4 +1,4 @@
-*ft_ada.txt*	For Vim version 9.2.  Last change: 2026 Oct 14
+*ft_ada.txt*	For ViAI version 1.0.  Last change: 2026 Oct 14
 
 
 		    ADA FILE TYPE PLUG-INS REFERENCE MANUAL~

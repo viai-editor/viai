@@ -1,4 +1,4 @@
-*ft_mp.txt*	For Vim version 9.2.  Last change: 2026 May 04
+*ft_mp.txt*	For ViAI version 1.0.  Last change: 2026 May 04
 
 This is the documentation for the METAFONT and MetaPost filetype plugins.
 Unless otherwise specified, the commands, settings and mappings defined below

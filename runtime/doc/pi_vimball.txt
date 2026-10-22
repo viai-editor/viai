@@ -1,4 +1,4 @@
-*pi_vimball.txt*	For Vim version 9.2.  Last change: 2026 Apr 16
+*pi_vimball.txt*	For ViAI version 1.0.  Last change: 2026 Apr 16
 
 			       ----------------
 			       Vimball Archiver

@@ -1,4 +1,4 @@
-*vi_diff.txt*	For Vim version 9.2.  Last change: 2026 Jun 22
+*vi_diff.txt*	For ViAI version 1.0.  Last change: 2026 Jun 22
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
