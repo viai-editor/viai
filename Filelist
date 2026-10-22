@@ -37,6 +37,7 @@ SRC_ALL =	\
 		ci/setup-weston.sh \
 		ci/setup-xvfb.sh \
 		tools/viai_logo.py \
+		tools/vim-patch.sh \
 		src/Make_all.mak \
 		src/Make_tags.mak \
 		src/README.md \

@@ -90,6 +90,9 @@ Before submitting any patch, at minimum:
   for a numbered patch, `vim-patch:<hash>` (the first 7 characters of the
   Vim commit hash) for a commit without a patch number, such as
   `runtime(...)`.
+- **`tools/vim-patch.sh <hash>` imports a Vim commit** on a new branch with
+  the commit message described below.  It leaves the patch and the message
+  in `.git/vim-patch/`.
 - **An imported Vim commit** is authored by the ViAI maintainer and keeps
   the message from Vim, with these changes:
     - The subject is the token followed by the subject from Vim without
