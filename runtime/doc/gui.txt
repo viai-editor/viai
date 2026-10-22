@@ -1,4 +1,4 @@
-*gui.txt*	For Vim version 9.2.  Last change: 2026 Aug 04
+*gui.txt*	For ViAI version 1.0.  Last change: 2026 Aug 04
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar

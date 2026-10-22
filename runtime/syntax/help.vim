@@ -84,6 +84,7 @@ syn match helpNormal		"|.*====*|"
 syn match helpNormal		"|||"
 syn match helpNormal		":|vim:|"	" for :help modeline
 syn match helpVim		"\<Vim version [0-9][0-9.a-z]*"
+syn match helpVim		"\<ViAI version [0-9][0-9.a-z]*"
 syn match helpVim		"^\s\+\zsVIM - main help file$"
 syn region helpVim		start="^\s\+VIM REFERENCE" end="^$"
 syn region helpVim		start="^\s\+VIM USER MANUAL" end="^$"

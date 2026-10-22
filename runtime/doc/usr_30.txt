@@ -1,4 +1,4 @@
-*usr_30.txt*	For Vim version 9.2.  Last change: 2026 May 23
+*usr_30.txt*	For ViAI version 1.0.  Last change: 2026 May 23
 
 
 		     VIM USER MANUAL	by Bram Moolenaar

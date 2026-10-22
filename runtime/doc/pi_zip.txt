@@ -1,4 +1,4 @@
-*pi_zip.txt*	For Vim version 9.2.  Last change: 2026 Aug 19
+*pi_zip.txt*	For ViAI version 1.0.  Last change: 2026 Aug 19
 
 				+====================+
 				| Zip File Interface |

@@ -1,4 +1,4 @@
-*sign.txt*	For Vim version 9.2.  Last change: 2026 Aug 23
+*sign.txt*	For ViAI version 1.0.  Last change: 2026 Aug 23
 
 
 		  VIM REFERENCE MANUAL	  by Gordon Prieur

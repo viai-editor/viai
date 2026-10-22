@@ -1,4 +1,4 @@
-*pi_tar.txt*	For Vim version 9.2.  Last change: 2026 Apr 16
+*pi_tar.txt*	For ViAI version 1.0.  Last change: 2026 Apr 16
 
 		       +====================+
 		       | Tar File Interface |
