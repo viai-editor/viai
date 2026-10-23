@@ -5697,8 +5697,8 @@ msgstr "írd be  :q<Enter>               a kilépéshez         "
 msgid "type  :help<Enter>  or  <F1>  for on-line help"
 msgstr "írd be  :help<Enter>  vagy  <F1>  az online súgóhoz"
 
-msgid "type  :help version9<Enter>   for version info"
-msgstr "írd be  :help version9<Enter>   a verzió infóhoz"
+msgid "type  :help viai<Enter>       for differences "
+msgstr ""
 
 msgid "Running in Vi compatible mode"
 msgstr "Vi kompatibilis módban fut"

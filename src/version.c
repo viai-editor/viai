@@ -745,6 +745,8 @@ static char *(features[]) =
 static int viai_included_patches[] =
 {   /* Add new patch number below this line */
 /**/
+    30,
+/**/
     29,
 /**/
     28,
@@ -3824,7 +3826,7 @@ intro_message(
 	"",
 	N_("type  :q<Enter>               to exit         "),
 	N_("type  :help<Enter>  or  <F1>  for on-line help"),
-	N_("type  :help version9<Enter>   for version info"),
+	N_("type  :help viai<Enter>       for differences "),
 	NULL,
 	"",
 	N_("Running in Vi compatible mode"),

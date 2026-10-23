@@ -3574,7 +3574,7 @@ msgstr ""
 msgid "type  :help<Enter>  or  <F1>  for on-line help"
 msgstr ""
 
-msgid "type  :help version9<Enter>   for version info"
+msgid "type  :help viai<Enter>       for differences "
 msgstr ""
 
 msgid "Running in Vi compatible mode"

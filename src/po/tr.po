@@ -3720,8 +3720,8 @@ msgstr "çıkmak için            :q<Enter>              "
 msgid "type  :help<Enter>  or  <F1>  for on-line help"
 msgstr "yardım belgeleri için  :help<Enter> veya <F1> "
 
-msgid "type  :help version9<Enter>   for version info"
-msgstr "sürüm bilgisi için     :help version9<Enter>  "
+msgid "type  :help viai<Enter>       for differences "
+msgstr ""
 
 msgid "Running in Vi compatible mode"
 msgstr "Vi uyumlu kipte çalışıyor"

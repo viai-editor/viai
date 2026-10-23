@@ -4705,8 +4705,8 @@ msgstr "    hãy gõ :q<Enter>               để thoát khỏi chương trình
 msgid "type  :help<Enter>  or  <F1>  for on-line help"
 msgstr " hãy gõ :help<Enter> hoặc <F1>  để có được trợ giúp        "
 
-msgid "type  :help version9<Enter>   for version info"
-msgstr "hãy gõ :help version9<Enter>   để biết về phiên bản này  "
+msgid "type  :help viai<Enter>       for differences "
+msgstr ""
 
 msgid "Running in Vi compatible mode"
 msgstr "Làm việc trong chế độ tương thích với Vi"

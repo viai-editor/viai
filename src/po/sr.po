@@ -3791,8 +3791,8 @@ msgstr "откуцајте  :q<Ентер>               за излаз        
 msgid "type  :help<Enter>  or  <F1>  for on-line help"
 msgstr "откуцајте  :help<Ентер>  или  <F1> за директну помоћ"
 
-msgid "type  :help version9<Enter>   for version info"
-msgstr "откуцајте  :help version9<Ентер>   за инфо о верзији"
+msgid "type  :help viai<Enter>       for differences "
+msgstr ""
 
 msgid "Running in Vi compatible mode"
 msgstr "Рад у Vi компатибилном режиму"
