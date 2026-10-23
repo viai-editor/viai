@@ -3694,8 +3694,8 @@ msgstr "escriba  :q<Intro>            para salir             "
 msgid "type  :help<Enter>  or  <F1>  for on-line help"
 msgstr "escriba  :help<Intro>  o  <F1>  para obtener ayuda     "
 
-msgid "type  :help version9<Enter>   for version info"
-msgstr "escriba  :help version9<Intro>  para obtener información de la versión"
+msgid "type  :help viai<Enter>       for differences "
+msgstr ""
 
 msgid "Running in Vi compatible mode"
 msgstr "Ejecutando en modo compatible con Vi"

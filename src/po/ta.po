@@ -3734,8 +3734,8 @@ msgstr "வெளியேற:q<Enter> என தட்டச்சு செய
 msgid "type  :help<Enter>  or  <F1>  for on-line help"
 msgstr "ஆன்-லைன் உதவிக்கு:help<Enter> அல்லது <F1> என டைப் செய்யவும்"
 
-msgid "type  :help version9<Enter>   for version info"
-msgstr "பதிப்புத் தகவலுக்கு:help version9<Enter> என டைப் செய்யவும்"
+msgid "type  :help viai<Enter>       for differences "
+msgstr ""
 
 msgid "Running in Vi compatible mode"
 msgstr "Vi இணக்கமான பயன்முறையில் இயங்குகிறது"

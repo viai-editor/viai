@@ -4692,9 +4692,8 @@ msgstr ""
 
 # Restorer: пробелы не убирать, сделано чтобы выровнить сообщения
 # Restorer: выравнивается по самому длинному подобному сообщению
-msgid "type  :help version9<Enter>   for version info"
+msgid "type  :help viai<Enter>       for differences "
 msgstr ""
-"наберите :help version9<ENTER>          чтобы узнать подробнее об этой версии"
 
 msgid "Running in Vi compatible mode"
 msgstr "Программа работает в режиме совместимости с редактором Vi"

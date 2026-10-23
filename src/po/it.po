@@ -3841,8 +3841,8 @@ msgstr "batti :q<Invio>               per uscire                  "
 msgid "type  :help<Enter>  or  <F1>  for on-line help"
 msgstr "batti :help<Invio>  o  <F1>   per aiuto online            "
 
-msgid "type  :help version9<Enter>   for version info"
-msgstr "batti :help version9<Invio>   per informazioni su versione"
+msgid "type  :help viai<Enter>       for differences "
+msgstr ""
 
 msgid "Running in Vi compatible mode"
 msgstr "Eseguo in modo compatibile Vi"

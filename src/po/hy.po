@@ -3855,8 +3855,8 @@ msgstr "ծրագրից դուրս գալու համար տալ :q<Enter> հրա�
 msgid "type  :help<Enter>  or  <F1>  for on-line help"
 msgstr "օգնության համար տալ :help<Enter> կամ <F1> հրամանը"
 
-msgid "type  :help version9<Enter>   for version info"
-msgstr "այս տարբերակի մասին իմանալու համար տալ :help version9<Enter> հրամանը"
+msgid "type  :help viai<Enter>       for differences "
+msgstr ""
 
 msgid "Running in Vi compatible mode"
 msgstr "Աշխատանք Vi հարմարեցված մոդում"
