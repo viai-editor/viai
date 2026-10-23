@@ -2474,10 +2474,10 @@ installrtbase: $(HELPSOURCE)/vim.1 $(DEST_VIM) $(VIMTARGET) $(DEST_RT) \
 	$(INSTALL_DATA) $(SCRIPTSOURCE)/optwin.vim $(SYS_OPTWIN_FILE)
 	chmod $(VIMSCRIPTMOD) $(SYS_OPTWIN_FILE)
 # install README and LICENCE files
-	$(INSTALL_DATA) ../README.txt $(DEST_RT)
-	chmod $(HELPMOD) $(DEST_RT)/README.txt
-	$(INSTALL_DATA) ../LICENSE $(DEST_RT)
-	chmod $(HELPMOD) $(DEST_RT)/LICENSE
+	$(INSTALL_DATA) ../README.md $(DEST_RT)
+	chmod $(HELPMOD) $(DEST_RT)/README.md
+	$(INSTALL_DATA) ../LICENSE ../LICENSE-APACHE $(DEST_RT)
+	chmod $(HELPMOD) $(DEST_RT)/LICENSE $(DEST_RT)/LICENSE-APACHE
 # install the print resource files
 	cd $(PRINTSOURCE); $(INSTALL_DATA) *.ps $(DEST_PRINT)
 	cd $(DEST_PRINT); chmod $(FILEMOD) *.ps
@@ -2932,7 +2932,7 @@ uninstall_runtime:
 	-rm -f $(DEST_RT)/README.??_??.txt
 	-rm -f $(DEST_RT)/LICENSE.??.txt
 	-rm -f $(DEST_RT)/LICENSE.??_??.txt
-	-rm -f $(DEST_RT)/README.txt $(DEST_RT)/LICENSE
+	-rm -f $(DEST_RT)/README.md $(DEST_RT)/LICENSE $(DEST_RT)/LICENSE-APACHE
 	-rmdir $(DEST_PLUG) $(DEST_RT)
 #	This will fail when other Vim versions are installed, no worries.
 	-rmdir $(DEST_VIM)
@@ -3023,8 +3023,9 @@ shadowupdate:
 # Link needed for doing "make install" in a shadow directory.
 runtime:
 	-ln -s ../runtime .
-	-ln -s ../README.txt .
+	-ln -s ../README.md .
 	-ln -s ../LICENSE .
+	-ln -s ../LICENSE-APACHE .
 
 # Link needed for doing "make" using GTK in a shadow directory.
 pixmaps:
