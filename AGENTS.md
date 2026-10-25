@@ -138,6 +138,17 @@ Before submitting any patch, at minimum:
   not want the change.  The "Included patches" workflow adds the numbers of
   the N/A patches to `included_patches[]`, not those of the Declined
   patches.
+- **A bug that also occurs in Vim is fixed in ViAI** and reported to Vim
+  with an issue, not with a pull request.  The ViAI patch refers to the
+  issue with `related: vim/vim#NNNNN`.  Documentation fixes are handled the
+  same way.  When Vim fixes the bug later, its patch is imported and the
+  fix of ViAI is replaced with the one of Vim; a short paragraph after the
+  URL describes the replacement.  When the fix of ViAI added an error
+  message, the replacement also takes the error number of Vim.  The ViAI
+  number stays in `src/errors_viai.h` as a comment, so that it is not given
+  to another message: `// E8NNN unused` when Vim took another number, or
+  `// E8NNN is in errors.h` when Vim kept it.  When Vim does not fix the
+  bug, the fix stays in ViAI.
 - **License**: ViAI's own changes are licensed under the Apache License 2.0,
   code imported from Vim (the initial import and every `vim-patch:` commit)
   under the Vim license.

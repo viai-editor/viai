@@ -132,10 +132,9 @@ How a bug in ViAI is handled depends on where it occurs:
   to report it:
 	https://github.com/viai-editor/viai/issues
   The maintainer fixes it in ViAI with a pull request.
-- A bug that also occurs in Vim: please report it to Vim as described below,
-  and put a link to your report in your ViAI issue.  A fix included in Vim is
-  imported into ViAI as a Vim patch.  A fix that Vim rejects may still be
-  included in ViAI.
+- A bug that also occurs in Vim: please open an issue in the ViAI repository
+  to report it.  The maintainer fixes it in ViAI and reports it to Vim.  When
+  Vim fixes it later, ViAI takes the fix of Vim.
 - A bug that occurs only in Vim: please report it to Vim as described below.
 
 There are three ways to report bugs to Vim:

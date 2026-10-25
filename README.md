@@ -46,10 +46,9 @@ written.
 
 * A bug that occurs only in ViAI: please open an issue in this repository to
   report it.  The maintainer fixes it in ViAI with a pull request.
-* A bug that also occurs in Vim: please open an issue in the Vim repository
-  to report it, and put a link to that issue in your ViAI issue.  A fix
-  included in Vim is imported into ViAI as a Vim patch.  A fix that Vim
-  rejects may still be included in ViAI.
+* A bug that also occurs in Vim: please open an issue in this repository to
+  report it.  The maintainer fixes it in ViAI and reports it to Vim.  When
+  Vim fixes it later, ViAI takes the fix of Vim.
 * A bug that occurs only in Vim: please open an issue in the Vim repository
   to report it.
 
