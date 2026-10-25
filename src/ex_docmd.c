@@ -4515,7 +4515,6 @@ skip_range(
     int		*ctx)		// pointer to xp_context or NULL
 {
     char_u	*cmd = cmd_start;
-    unsigned	delim;
 
     while (vim_strchr((char_u *)" \t0123456789.$%'/?-+,;\\", *cmd) != NULL)
     {
@@ -4544,10 +4543,7 @@ skip_range(
 	}
 	else if (*cmd == '/' || *cmd == '?')
 	{
-	    delim = *cmd++;
-	    while (*cmd != NUL && *cmd != delim)
-		if (*cmd++ == '\\' && *cmd != NUL)
-		    ++cmd;
+	    cmd = skip_regexp(cmd + 1, *cmd, magic_isset());
 	    if (*cmd == NUL && ctx != NULL)
 		*ctx = EXPAND_NOTHING;
 	}
