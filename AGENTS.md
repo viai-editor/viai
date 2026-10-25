@@ -92,7 +92,14 @@ Before submitting any patch, at minimum:
   `runtime(...)`.
 - **`tools/vim-patch.sh <hash>` imports a Vim commit** on a new branch with
   the commit message described below.  It leaves the patch and the message
-  in `.git/vim-patch/`.
+  in `.git/vim-patch/`.  The hunk that adds the patch number to
+  `included_patches[]` in `src/version.c` is left out, so that a patch
+  applies without the patches before it.
+- **The "Included patches" workflow adds the numbers** after a push to
+  master: `tools/update-included-patches.sh` reads the `vim-patch:9.2.NNNN`
+  tokens in the git log and adds the missing numbers to
+  `included_patches[]`, so that `has('patch-...')` is true for them.  The
+  workflow pushes the commit to master itself.
 - **An imported Vim commit** is authored by the ViAI maintainer and keeps
   the message from Vim, with these changes:
     - The subject is the token followed by the subject from Vim without
@@ -128,9 +135,9 @@ Before submitting any patch, at minimum:
       vim-patch:9.2.1190: <subject> -- Declined: <reason>
 
   "N/A" means the commit does not apply to ViAI, "Declined" means ViAI does
-  not want the change.  The same commit adds the numbers of the N/A patches
-  to `included_patches[]` in `src/version.c`, so that `has('patch-...')` is
-  true for them.  Declined patches are not added.
+  not want the change.  The "Included patches" workflow adds the numbers of
+  the N/A patches to `included_patches[]`, not those of the Declined
+  patches.
 - **License**: ViAI's own changes are licensed under the Apache License 2.0,
   code imported from Vim (the initial import and every `vim-patch:` commit)
   under the Vim license.

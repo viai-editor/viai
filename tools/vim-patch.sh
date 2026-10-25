@@ -4,7 +4,8 @@
 # Usage: tools/vim-patch.sh [-n] <Vim commit hash>
 #
 # Creates in $VIM_PATCH_DIR (default: .git/vim-patch of the ViAI repository):
-#   <hash>.patch    the Vim commit without its Signed-off-by lines
+#   <hash>.patch    the Vim commit without its Signed-off-by lines and
+#                   without its number in included_patches[]
 #   <hash>.msg      the commit message used in ViAI
 #   <hash>.pr.txt   the pull request description (the same message)
 # With -n only these files are created, no branch or commit.  Stops before
@@ -68,6 +69,78 @@ main() {
             } else if (s ~ /^[ \t]+VIM - main help file$/)
                 sub(/VIM/, "VIAI", s)
             return s
+        }'
+    # Vim adds the patch number to included_patches[] next to the number of
+    # the patch before it, thus the patch would not apply without that patch.
+    # The hunk is left out, tools/update-included-patches.sh adds the number
+    # after the merge.
+    drop_patch_number='
+        function end_hunk(  i) {
+            if (number_only)
+                dropped++
+            else {
+                if (has_number)
+                    print "src/version.c: a hunk adds the patch number " \
+                        "and changes other lines, it is kept" > "/dev/stderr"
+                for (i = 0; i < nhunk; i++)
+                    file[nfile++] = hunk[i]
+                kept++
+            }
+            nhunk = 0
+            in_hunk = 0
+        }
+        function end_file(  i) {
+            if (kept > 0 || dropped == 0)
+                for (i = 0; i < nfile; i++)
+                    print file[i]
+            nfile = 0
+            in_file = 0
+        }
+        in_hunk {
+            hunk[nhunk++] = $0
+            c = substr($0, 1, 1)
+            if (c == "+" && $0 ~ /^\+(\/\*\*\/|    [0-9]+,)$/)
+                has_number = 1
+            else if (c == "+" || c == "-")
+                number_only = 0
+            if (c == " " || c == "-")
+                old_left--
+            if (c == " " || c == "+")
+                new_left--
+            if (old_left <= 0 && new_left <= 0)
+                end_hunk()
+            next
+        }
+        in_file && /^@@ / {
+            old_left = split($2, o, ",") > 1 ? o[2] : 1
+            new_left = split($3, n, ",") > 1 ? n[2] : 1
+            hunk[0] = $0
+            nhunk = 1
+            in_hunk = 1
+            number_only = 1
+            has_number = 0
+            seen_hunk = 1
+            next
+        }
+        in_file && !seen_hunk && !/^diff --git / {
+            file[nfile++] = $0
+            next
+        }
+        in_file {
+            end_file()
+        }
+        $0 == "diff --git a/src/version.c b/src/version.c" {
+            in_file = 1
+            seen_hunk = 0
+            kept = 0
+            dropped = 0
+            file[nfile++] = $0
+            next
+        }
+        { print }
+        END {
+            if (in_file)
+                end_file()
         }'
     blob_map=$OUT_DIR/$short.blobs
     : > "$blob_map"
@@ -145,7 +218,7 @@ main() {
                 print
                 next
             }
-            { print }' > "$patch_file"
+            { print }' | awk "$drop_patch_number" > "$patch_file"
     rm -f "$blob_map"
 
     case $subject in

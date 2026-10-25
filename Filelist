@@ -17,6 +17,7 @@ SRC_ALL =	\
 		.github/workflows/ci.yml \
 		.github/workflows/codeql-analysis.yml \
 		.github/workflows/coverity.yml \
+		.github/workflows/included-patches.yml \
 		.github/workflows/link-check.yml \
 		.github/actions/build_viai_on_linux/action.yml \
 		.github/actions/test_artifacts/action.yml \
@@ -36,6 +37,7 @@ SRC_ALL =	\
 		ci/remove_snap.sh \
 		ci/setup-weston.sh \
 		ci/setup-xvfb.sh \
+		tools/update-included-patches.sh \
 		tools/viai_logo.py \
 		tools/vim-patch.sh \
 		src/Make_all.mak \
