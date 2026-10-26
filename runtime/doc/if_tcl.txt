@@ -535,7 +535,7 @@ option can be also used to specify the Tcl DLL.
 
 The name of the DLL must match the Tcl version Vim was compiled with.
 Currently the name is "tcl86.dll".  That is for Tcl 8.6.  To know for sure
-edit "gvim.exe" and search for "tcl\d*.dll\c".
+edit "gviai.exe" and search for "tcl\d*.dll\c".
 
 
 Unix ~

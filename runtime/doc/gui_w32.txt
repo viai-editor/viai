@@ -27,15 +27,15 @@ The Win32 GUI version of Vim will always start the GUI, no matter how you
 start it or what it's called.
 
 The GUI will always run in the Windows subsystem.  Mostly shells automatically
-return with a command prompt after starting gvim.  If not, you should use the
+return with a command prompt after starting gviai.  If not, you should use the
 "start" command: >
-	start gvim [options] file ..
+	start gviai [options] file ..
 <							*E988*
 The console version with the |-g| option may also start the GUI by executing
-gvim.exe: >
-	vim -g [options] file ..
-To make this work, gvim.exe must exist in the same directory as the vim.exe,
-and this feature must be enabled at compile time.
+gviai.exe: >
+	viai -g [options] file ..
+To make this work, gviai.exe must exist in the same directory as the
+viai.exe, and this feature must be enabled at compile time.
 
 One may also use `:gui` from the console version.  However, this is an
 experimental feature and this feature must be enabled at compile time.
@@ -116,7 +116,7 @@ form on some Windows versions.  This is a limitation of the Windows "Send To"
 mechanism.
 
 						*notepad*
-You could replace notepad.exe with gvim.exe, but that has a few side effects.
+You could replace notepad.exe with gviai.exe, but that has a few side effects.
 Some programs rely on notepad arguments, which are not recognized by Vim.  For
 example "notepad -p" is used by some applications to print a file.  It's
 better to leave notepad where it is and use another way to start Vim.
@@ -222,7 +222,7 @@ REGEDIT4
 
 ----------------------------------------------------------
 
-Change the "c:\\vim\\vim82" bit to where gvim.exe is actually located.
+Change the "c:\\viai\\viai10" bit to where gviai.exe is actually located.
 
 To uninstall this run the Vim uninstall program or manually delete the
 registry entries with "regedit".
@@ -488,7 +488,7 @@ VIM_KEYCODE_TRANS_STRATEGY can be set to the desired value ("experimental" or
 "classic"), to override the default, e.g., type in dos prompt:
 >
         set VIM_KEYCODE_TRANS_STRATEGY=experimental
-        gvim.exe
+        gviai.exe
 <
 
 Title Bar						*gui-w32-title-bar*

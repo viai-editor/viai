@@ -201,21 +201,20 @@ Support was removed in patch 7.4.1364.
 ==============================================================================
 7. Installation package					*win32-installer*
 
-A simple installer for windows is available at http://www.vim.org/download.php
-(stable version) and nightly builds are also available at
-https://github.com/vim/vim-win32-installer/releases/
+Nightly builds of the installer for windows are available at
+https://github.com/viai-editor/viai-win32-installer/releases/
 
 The nightly builds include 32bit and 64bit builds, have most features enabled
 and usually also contain an extra cryptographic signed installer, so Windows
 will not complain.
 
-To use the installer, simply run the exe file.  The following switches are
-also supported: >
+To use the installer, simply run the exe file, e.g. "gviai_1.0.0033_x64.exe".
+The following switches are also supported: >
 
-    gvim_<version>.exe /S           -> silent install without any dialogues
-    gvim_<version>.exe /D=C:\vim    -> Install into directory c:\vim
-                                    -> /D must be the last argument
-    gvim_<version>.exe /S /D=c:\vim -> silent install into c:\vim
+    {installer} /S            -> silent install without any dialogues
+    {installer} /D=C:\viai    -> Install into directory c:\viai
+                              -> /D must be the last argument
+    {installer} /S /D=c:\viai -> silent install into c:\viai
 <
 The default installation directory can alternatively be given by setting the
 $VIM environment variable.

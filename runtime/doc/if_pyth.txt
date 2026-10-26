@@ -797,7 +797,7 @@ also used to specify the Python DLL.
 The name of the DLL should match the Python version Vim was compiled with.
 Currently the name for Python 2 is "python27.dll", that is for Python 2.7.
 That is the default value for 'pythondll'.  For Python 3 it is python36.dll
-(Python 3.6).  To know for sure edit "gvim.exe" and search for
+(Python 3.6).  To know for sure edit "gviai.exe" and search for
 "python\d*.dll\c".
 
 

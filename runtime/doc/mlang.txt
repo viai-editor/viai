@@ -111,7 +111,7 @@ Or:
 
 This also contains tools xgettext, msgformat and others.
 
-libintl.dll should be placed in same directory as (g)vim.exe, or one of the
+libintl.dll should be placed in same directory as (g)viai.exe, or one of the
 directories listed in the PATH environment value.  Vim also looks for the
 alternate names "libintl-8.dll" and "intl.dll".
 

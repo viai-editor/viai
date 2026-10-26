@@ -2808,7 +2808,7 @@ v:progpath	Contains the command with which Vim was invoked, in a form
 		On Linux and other systems it will always be the full path.
 		On Mac it may just be "vim" and using exepath() as mentioned
 		above should be used to get the full path.
-		On MS-Windows the executable may be called "vim.exe", but the
+		On MS-Windows the executable may be called "viai.exe", but the
 		".exe" is not added to v:progpath.
 		Read-only.
 
