@@ -51,7 +51,9 @@ written.
 Changes in the help from Vim ~
 
 These places in the help files that come from Vim are about ViAI:
-	|pronounce|	how ViAI is pronounced
+	|intro|		what ViAI is
+	|pronounce|	how ViAI is pronounced and written
+	|internet|	where ViAI is developed
 	|viai-bugs|	how bugs are reported and handled
 	|credits|	the maintainer of ViAI
 
