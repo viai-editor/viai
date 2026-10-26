@@ -52,7 +52,7 @@ Writing Vim script ~
 |usr_52.txt|  Write larger plugins
 
 Making Vim Run ~
-|usr_90.txt|  Installing Vim
+|usr_90.txt|  Installing ViAI
 
 
 Reference manual ~
@@ -367,14 +367,14 @@ Writing Vim script ~
 ==============================================================================
 Making Vim Run ~
 
-Before you can use Vim.
+Before you can use ViAI.
 
-|usr_90.txt|  Installing Vim
+|usr_90.txt|  Installing ViAI
 		|90.1|	Unix
 		|90.2|	MS-Windows
 		|90.3|	Upgrading
 		|90.4|	Common installation issues
-		|90.5|	Uninstalling Vim
+		|90.5|	Uninstalling ViAI
 
 ==============================================================================
 

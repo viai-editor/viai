@@ -98,7 +98,7 @@ Writing Vim scripts ~
 |usr_52.txt|  Write plugins using Vim9 script
 
 Making Vim Run ~
-|usr_90.txt|  Installing Vim
+|usr_90.txt|  Installing ViAI
 
 REFERENCE MANUAL: These files explain every detail of Vim.	*reference_toc*
 

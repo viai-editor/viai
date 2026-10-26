@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 23
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 26
 
 
 		  VIAI REFERENCE MANUAL
@@ -56,6 +56,7 @@ These places in the help files that come from Vim are about ViAI:
 	|internet|	where ViAI is developed
 	|viai-bugs|	how bugs are reported and handled
 	|credits|	the maintainer of ViAI
+	|usr_90.txt|	how ViAI is installed
 
 In all help files that come from Vim the first line has the ViAI version and
 the "Last change" date from Vim, and the title names ViAI without an author.
