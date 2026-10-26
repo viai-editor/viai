@@ -70,10 +70,10 @@ some steps to provide a useful bug report.
 
 3.1 GENERIC ~
 
-You must obtain the debugger symbols (PDB) file for your executable: gvim.pdb
-for gvim.exe, or vim.pdb for vim.exe.  The PDB should be available from the
-same place that you obtained the executable.  Be sure to use the PDB that
-matches the EXE (same date).
+You must obtain the debugger symbols (PDB) file for your executable:
+gviai.pdb for gviai.exe, or viai.pdb for viai.exe.  The PDB should be
+available from the same place that you obtained the executable.  Be sure to
+use the PDB that matches the EXE (same date).
 
 If you built the executable yourself with the Microsoft Visual C++ compiler,
 then the PDB was built with the EXE.
@@ -87,9 +87,9 @@ For other compilers, you should always use the corresponding debugger: gdb
 								*debug-vs2005*
 3.2 Debugging Vim crashes with Visual Studio 2005/Visual C++ 2005 Express ~
 
-First launch vim.exe or gvim.exe and then launch Visual Studio.  (If you don't
-have Visual Studio, follow the instructions at |get-ms-debuggers| to obtain a
-free copy of Visual C++ 2005 Express Edition.)
+First launch viai.exe or gviai.exe and then launch Visual Studio.  (If you
+don't have Visual Studio, follow the instructions at |get-ms-debuggers| to
+obtain a free copy of Visual C++ 2005 Express Edition.)
 
 On the Tools menu, click Attach to Process.  Choose the Vim process.
 
@@ -101,8 +101,8 @@ Visual Studio will pop up another dialog, telling you that no symbols are
 loaded and that the source code cannot be displayed.  Click OK.
 
 Several windows will open.  Right-click in the Call Stack window.  Choose Load
-Symbols.  The Find Symbols dialog will open, looking for (g)vim.pdb.  Navigate
-to the directory where you have the PDB file and click Open.
+Symbols.  The Find Symbols dialog will open, looking for (g)viai.pdb.
+Navigate to the directory where you have the PDB file and click Open.
 
 At this point, you should have a full call stack with vim function names and
 line numbers.  Double-click one of the lines and the Find Source dialog will

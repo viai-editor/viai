@@ -36,11 +36,13 @@ Get specific help:  It is possible to go directly to whatever you want help
 		    basic commands, see |vimtutor|.
 		    Read the user manual from start to end: |usr_01.txt|
 
+ViAI is a modified version of Vim, see |viai|.
 Vim stands for Vi IMproved.  Most of Vim was made by Bram Moolenaar, but only
 through the help of many others.  See |credits|.
 ------------------------------------------------------------------------------
 						*doc-file-list* *Q_ct*
 BASIC:
+|viai|		Development policy of ViAI and differences from Vim
 |quickref|	Overview of the most common commands you will use
 |tutor|		30-minute interactive course for beginners
 |copying|	About copyrights
