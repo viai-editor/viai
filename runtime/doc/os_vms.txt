@@ -84,10 +84,9 @@ polarhome.com
 Post 7.2 Vim uses GTK2+ while the last GTK on OpenVMS is 1.2.10, therefore
 the GTK build is no longer available.
 
-For more advanced questions, please send your problem to Vim on VMS mailing
-list <vim-vms@polarhome.com>
-More about the vim-vms list can be found at:
-http://www.polarhome.com/mailman/listinfo/vim-vms
+For more advanced questions, please open an issue in the ViAI repository, see
+|viai-bugs|:
+	https://github.com/viai-editor/viai/issues
 
 ==============================================================================
 
@@ -952,7 +951,7 @@ Version 4.5 (1996 Dec 16)
 
 10. Authors						*vms-authors*
 
-OpenVMS documentation and executables are maintained by:
+OpenVMS documentation and executables of Vim are maintained by:
 Zoltan Arpadffy <zoltan.arpadffy@gmail.com>
 OpenVMS Vim page: http://www.polarhome.com/vim/
 
