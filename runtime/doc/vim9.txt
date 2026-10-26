@@ -356,8 +356,8 @@ Compilation is done when any of these is encountered:
 
 							*E1099*
 "Unknown error", E1099, may occur while executing.  If reproducible, it may be
-reported at https://github.com/vim/vim/issues as it is now likely to be a
-rare, unhandled error worth reporting.
+reported at https://github.com/viai-editor/viai/issues as it is now likely to
+be a rare, unhandled error worth reporting.
 							*E1091*
 If compilation fails it is not tried again on the next call, instead this
 error is given: "E1091: Function is not compiled: {name}".  For example:
@@ -3573,8 +3573,8 @@ Other differences ~
 			Note: The generic error *E1028* ("Compiling :def
 			function failed") indicates an undeterminable error
 			during compilation.  If reproducible, it may be
-			reported at https://github.com/vim/vim/issues as
-			it could represent a gap in Vim's error reporting.
+			reported at https://github.com/viai-editor/viai/issues
+			as it could represent a gap in Vim's error reporting.
 
 							*:enddef*
 							*E1057* *E1152* *E1173*

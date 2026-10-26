@@ -230,11 +230,10 @@ Thank you, all!
 14. Bugs & to-do					*haiku-bugs*
 
 The port is under development now and far away from the perfect state.  For
-bug reports, patches and wishes, please use the Vim mailing list or Vim Github
-repository.
+bug reports and wishes, please open an issue in the ViAI repository, see
+|viai-bugs|:
 
-Mailing list: https://www.vim.org/maillist.php
-Vim Github repository: https://github.com/vim/vim
+	https://github.com/viai-editor/viai/issues
 
 
  vim:tw=78:ts=8:ft=help:norl:

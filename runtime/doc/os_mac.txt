@@ -116,11 +116,10 @@ Shift-Control-2.
 ==============================================================================
 6. Mac Bug Report					*mac-bug*
 
-When reporting any Mac specific bug or feature change, please use the vim-mac
-maillist |vim-mac|.  However, you need to be subscribed.  An alternative is to
-report issues either directly at the Vim github repository:
+When reporting any Mac specific bug or feature change, please open an issue in
+the ViAI repository, see |viai-bugs|:
 
-https://github.com/vim/vim/issues
+https://github.com/viai-editor/viai/issues
 
 or for MacVim specific issues, you may report those over here:
 
