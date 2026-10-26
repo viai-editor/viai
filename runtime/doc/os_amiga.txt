@@ -145,10 +145,10 @@ Installation of a binary archive ~
 
 Compiling~
 
-You can download the Vim source code from the official Vim site:
-	https://github.com/vim/vim/archive/refs/heads/master.zip
+You can download the ViAI source code from the ViAI repository:
+	https://github.com/viai-editor/viai/archive/refs/heads/master.zip
 Or using git: >
-	git clone https://github.com/vim/vim.git
+	git clone https://github.com/viai-editor/viai.git
 
 For compiling see "src/INSTALLami.txt"
 

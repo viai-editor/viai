@@ -33,41 +33,10 @@ Vim on other operating systems.
 
 2. Download files					*vms-download*
 
-You can download the Vim source code from the official Vim site:
-	https://github.com/vim/vim/archive/refs/heads/master.zip
+You can download the ViAI source code from the ViAI repository:
+	https://github.com/viai-editor/viai/archive/refs/heads/master.zip
 Or using git: >
-	git clone https://github.com/vim/vim.git
-
-Older release archives are also available at:
-	https://ftp.nluug.nl/pub/vim/
-Or use one of the mirrors:
-	https://ftp.nluug.nl/pub/vim/MIRRORS
-
-Note: the ftp server has been retired and is no longer updated.
-
-You can download precompiled executables from:
-	http://www.polarhome.com/vim/
-
-To use the precompiled binary version, you need one of these archives:
-
-  vim-XX-exe-x86-gui.zip	X86_64 GUI/Motif executables
-  vim-XX-exe-x86-term.zip	X86_64 console executables
-  vim-XX-exe-ia64-gui.zip	IA64 GUI/Motif executables
-  vim-XX-exe-ia64-gtk.zip	IA64 GUI/GTK executables
-  vim-XX-exe-ia64-term.zip	IA64 console executables
-  vim-XX-exe-axp-gui.zip	Alpha GUI/Motif executables
-  vim-XX-exe-axp-gtk.zip	Alpha GUI/GTK executables
-  vim-XX-exe-axp-term.zip	Alpha console executables
-  vim-XX-exe-vax-gui.zip	VAX GUI executables
-  vim-XX-exe-vax-term.zip	VAX console executables
-
-and of course (optional)
-  vim-XX-runtime.zip		runtime files
-
-The binary archives contain: viai.exe, ctags.exe, xxd.exe files.
-
-For GTK executables you will need GTKLIB that is available for
-Alpha and IA64 platforms.
+	git clone https://github.com/viai-editor/viai.git
 
 ==============================================================================
 
