@@ -1836,6 +1836,7 @@ do_one_cmd(
 #endif
     int		sourcing = flags & DOCMD_VERBOSE;
     int		did_append_cmd = FALSE;
+    char_u	*newline_cut = NULL;	// where the argument ends at a newline
 
     CLEAR_FIELD(ea);
     ea.line1 = 1;
@@ -2412,6 +2413,7 @@ do_one_cmd(
 	    {
 		ea.nextcmd = p + 1;
 		*p = NUL;
+		newline_cut = p;
 		break;
 	    }
 	}
@@ -2707,6 +2709,14 @@ do_one_cmd(
 	if (ea.errmsg != NULL)
 	    errormsg = ea.errmsg;
     }
+
+    // A command such as ":autocmd" may continue after a '|' in its argument.
+    // Then the lines after the newline must follow that command.  Not for a
+    // command that expands file names, it may reallocate the command line.
+    if (newline_cut != NULL && !(ea.argt & EX_XFILE) && ea.nextcmd != NULL
+	    && ea.nextcmd >= ea.arg && ea.nextcmd <= newline_cut
+	    && *newline_cut == NUL)
+	*newline_cut = '\n';
 
 #ifdef FEAT_EVAL
     // A command will reset "is_export" when exporting an item.  If it is still
