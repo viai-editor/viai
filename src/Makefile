@@ -1461,35 +1461,8 @@ DEST_SCRIPT = $(DESTDIR)$(SCRIPTLOC)
 DEST_PRINT = $(DESTDIR)$(PRINTSUBLOC)
 DEST_MAN_TOP = $(DESTDIR)$(MANDIR)
 
-# We assume that the ".../man/xx/man1/" directory is for latin1 manual pages.
-# Some systems use UTF-8, but these should find the ".../man/xx.UTF-8/man1/"
-# directory first.
-# FreeBSD uses ".../man/xx.ISO8859-1/man1" for latin1, use that one too.
+# The translated manual pages are not installed.
 DEST_MAN = $(DEST_MAN_TOP)$(MAN1DIR)
-DEST_MAN_DA = $(DEST_MAN_TOP)/da$(MAN1DIR)
-DEST_MAN_DA_I = $(DEST_MAN_TOP)/da.ISO8859-1$(MAN1DIR)
-DEST_MAN_DA_U = $(DEST_MAN_TOP)/da.UTF-8$(MAN1DIR)
-DEST_MAN_DE = $(DEST_MAN_TOP)/de$(MAN1DIR)
-DEST_MAN_DE_I = $(DEST_MAN_TOP)/de.ISO8859-1$(MAN1DIR)
-DEST_MAN_DE_U = $(DEST_MAN_TOP)/de.UTF-8$(MAN1DIR)
-DEST_MAN_FR = $(DEST_MAN_TOP)/fr$(MAN1DIR)
-DEST_MAN_FR_I = $(DEST_MAN_TOP)/fr.ISO8859-1$(MAN1DIR)
-DEST_MAN_FR_U = $(DEST_MAN_TOP)/fr.UTF-8$(MAN1DIR)
-DEST_MAN_IT = $(DEST_MAN_TOP)/it$(MAN1DIR)
-DEST_MAN_IT_I = $(DEST_MAN_TOP)/it.ISO8859-1$(MAN1DIR)
-DEST_MAN_IT_U = $(DEST_MAN_TOP)/it.UTF-8$(MAN1DIR)
-DEST_MAN_JA_U = $(DEST_MAN_TOP)/ja$(MAN1DIR)
-DEST_MAN_PL = $(DEST_MAN_TOP)/pl$(MAN1DIR)
-DEST_MAN_PL_I = $(DEST_MAN_TOP)/pl.ISO8859-2$(MAN1DIR)
-DEST_MAN_PL_U = $(DEST_MAN_TOP)/pl.UTF-8$(MAN1DIR)
-DEST_MAN_RU = $(DEST_MAN_TOP)/ru.KOI8-R$(MAN1DIR)
-DEST_MAN_RU_U = $(DEST_MAN_TOP)/ru.UTF-8$(MAN1DIR)
-DEST_MAN_SV = $(DEST_MAN_TOP)/sv$(MAN1DIR)
-DEST_MAN_SV_I = $(DEST_MAN_TOP)/sv.ISO8859-1$(MAN1DIR)
-DEST_MAN_SV_U = $(DEST_MAN_TOP)/sv.UTF-8$(MAN1DIR)
-DEST_MAN_TR = $(DEST_MAN_TOP)/tr$(MAN1DIR)
-DEST_MAN_TR_I = $(DEST_MAN_TOP)/tr.ISO8859-9$(MAN1DIR)
-DEST_MAN_TR_U = $(DEST_MAN_TOP)/tr.UTF-8$(MAN1DIR)
 
 # stuff common to all systems
 include Make_all.mak
@@ -2402,7 +2375,7 @@ installruntime: installrtbase installmacros installpack installtutor installspel
 
 # Install the help files; first adjust the contents for the final location.
 # Also install most of the other runtime files.
-installrtbase: $(HELPSOURCE)/vim.1 $(DEST_VIM) $(VIMTARGET) $(DEST_RT) \
+installrtbase: $(HELPSOURCE)/viai.1 $(DEST_VIM) $(VIMTARGET) $(DEST_RT) \
 		$(DEST_HELP) $(DEST_PRINT) $(DEST_COL) \
 		$(DEST_SYN) $(DEST_SYN)/modula2 $(DEST_SYN)/modula2/opt $(DEST_SYN)/shared \
 		$(DEST_IND) $(DEST_FTP) \
@@ -2580,78 +2553,6 @@ installtools: $(TOOLS) $(TOOLSSOURCE) $(DEST_VIM) $(DEST_RT) $(DEST_TOOLS)
 
 # install the language specific files, if they were unpacked
 install-languages: languages $(DEST_LANG) $(DEST_KMAP) $(DEST_RT)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_DA) "-da" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_DA_I) "-da" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_DA_U) "-da.UTF-8" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_DE) "-de" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_DE_I) "-de" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_DE_U) "-de.UTF-8" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_FR) "-fr" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_FR_I) "-fr" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_FR_U) "-fr.UTF-8" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_IT) "-it" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_IT_I) "-it" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_IT_U) "-it.UTF-8" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_JA_U) "-ja.UTF-8" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_PL) "-pl" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_PL_I) "-pl" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_PL_U) "-pl.UTF-8" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_RU) "-ru" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_RU_U) "-ru.UTF-8" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_SV) "-sv" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_SV_I) "-sv" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_SV_U) "-sv.UTF-8" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_TR) "-tr" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_TR_I) "-tr" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh install $(DEST_MAN_TR_U) "-tr.UTF-8" $(INSTALLMANARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DA) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DA_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DA_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DE) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DE_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DE_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_FR) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_FR_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_FR_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_IT) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_IT_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_IT_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_JA_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_PL) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_PL_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_PL_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_RU) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_RU_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_SV) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_SV_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_SV_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_TR) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_TR_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh install "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_TR_U) $(INSTALLMLARGS)
 	if test -n "$(MAKEMO)" -a -f $(PODIR)/Makefile; then \
 	   cd $(PODIR); $(MAKE) prefix=$(DESTDIR)$(prefix) LOCALEDIR=$(DEST_LANG) \
 	   INSTALL_DATA=$(INSTALL_DATA) FILEMOD=$(FILEMOD) install; \
@@ -2737,7 +2638,7 @@ install-icons:
 	   fi \
 	fi
 
-$(HELPSOURCE)/vim.1 $(MACROSOURCE) $(TOOLSSOURCE):
+$(HELPSOURCE)/viai.1 $(MACROSOURCE) $(TOOLSSOURCE):
 	@echo Runtime files not found.
 	@echo You need to unpack the runtime archive before running "make install".
 	test -f error
@@ -2811,80 +2712,8 @@ uninstall: uninstall_runtime
 # Note: the "rmdir" will fail if any files were added after "make install"
 uninstall_runtime:
 	-$(SHELL) ./installman.sh uninstall $(DEST_MAN) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_DA) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_DA_I) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_DA_U) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_DE) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_DE_I) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_DE_U) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_FR) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_FR_I) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_FR_U) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_IT) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_IT_I) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_IT_U) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_JA_U) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_PL) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_PL_I) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_PL_U) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_RU) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_RU_U) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_SV) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_SV_I) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_SV_U) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_TR) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_TR_I) "" $(INSTALLMANARGS)
-	-$(SHELL) ./installman.sh uninstall $(DEST_MAN_TR_U) "" $(INSTALLMANARGS)
 	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
 		$(DEST_MAN) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DA) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DA_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DA_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DE) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DE_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_DE_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_FR) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_FR_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_FR_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_IT) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_IT_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_IT_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_JA_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_PL) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_PL_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_PL_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_RU) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_RU_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_SV) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_SV_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_SV_U) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_TR) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_TR_I) $(INSTALLMLARGS)
-	-$(SHELL) ./installml.sh uninstall "$(GUI_MAN_TARGETS)" \
-		$(DEST_MAN_TR_U) $(INSTALLMLARGS)
 	-rm -f $(DEST_HELP)/*.txt $(DEST_HELP)/tags $(DEST_HELP)/*.pl
 	-rm -f $(DEST_HELP)/*.??x $(DEST_HELP)/tags-??
 	-rm -f $(SYS_MENU_FILE) $(SYS_SYNMENU_FILE) $(SYS_DELMENU_FILE)

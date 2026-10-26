@@ -1,4 +1,4 @@
-*usr_90.txt*	For ViAI version 1.0.  Last change: 2026 Oct 26
+*usr_90.txt*	For ViAI version 1.0.  Last change: 2026 Oct 27
 
 
 		     VIAI USER MANUAL
@@ -383,9 +383,6 @@ example for when "/usr/local" was used as the root: >
 	rm /usr/local/share/icons/hicolor/scalable/apps/gviai.svg
 	rm /usr/local/share/icons/locolor/16x16/apps/gviai.png
 	rm /usr/local/share/icons/locolor/32x32/apps/gviai.png
-
-The translated manual pages are in directories like
-"/usr/local/share/man/ja/man1", delete them in the same way.
 
 
 MS-WINDOWS

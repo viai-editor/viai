@@ -779,9 +779,9 @@ RT_ALL =	\
 		runtime/doc/doctags.c \
 		runtime/doc/doctags.vim \
 		runtime/doc/test_urls.vim \
-		runtime/doc/vim.1 \
-		runtime/doc/evim.1 \
-		runtime/doc/vimdiff.1 \
+		runtime/doc/viai.1 \
+		runtime/doc/eviai.1 \
+		runtime/doc/viaidiff.1 \
 		runtime/doc/xxd.1 \
 		runtime/ftoff.vim \
 		runtime/gvimrc_example.vim \
@@ -977,9 +977,9 @@ RT_NO_UNIX =	\
 
 # Runtime for Amiga (also in the extra archive).
 RT_AMI_DOS =	\
-		runtime/doc/evim.man \
-		runtime/doc/vim.man \
-		runtime/doc/vimdiff.man \
+		runtime/doc/eviai.man \
+		runtime/doc/viai.man \
+		runtime/doc/viaidiff.man \
 		runtime/doc/xxd.man \
 
 # MS Windows runtime (also in the extra archive).

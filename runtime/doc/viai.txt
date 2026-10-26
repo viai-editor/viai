@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 26
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 27
 
 
 		  VIAI REFERENCE MANUAL
@@ -92,6 +92,10 @@ Start menu folder and uninstall entry "ViAI 1.0".
 
 There is no "vimtutor" program, use the |:Tutor| command.  On Unix "xxd" is
 not installed either, use the xxd program of Vim.
+
+On Unix the man pages are installed as "viai.1", "eviai.1" and "viaidiff.1",
+with links for the other programs.  The translated man pages are not
+installed, as they describe Vim.
 
 The default client-server name is "GVIAI" instead of "GVIM", see
 |client-server-name| and |{server}|.

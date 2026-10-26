@@ -317,30 +317,30 @@ HTMLS = \
 	workshop.html
 
 CONVERTED = \
-	vim-da.UTF-8.1 \
-	vimdiff-da.UTF-8.1 \
-	vim-de.UTF-8.1 \
-	vim-fr.UTF-8.1 \
-	evim-fr.UTF-8.1 \
-	vimdiff-fr.UTF-8.1 \
+	viai-da.UTF-8.1 \
+	viaidiff-da.UTF-8.1 \
+	viai-de.UTF-8.1 \
+	viai-fr.UTF-8.1 \
+	eviai-fr.UTF-8.1 \
+	viaidiff-fr.UTF-8.1 \
 	xxd-fr.UTF-8.1 \
-	vim-it.UTF-8.1 \
-	evim-it.UTF-8.1 \
-	vimdiff-it.UTF-8.1 \
+	viai-it.UTF-8.1 \
+	eviai-it.UTF-8.1 \
+	viaidiff-it.UTF-8.1 \
 	xxd-it.UTF-8.1 \
-	vim-pl.UTF-8.1 \
-	evim-pl.UTF-8.1 \
-	vimdiff-pl.UTF-8.1 \
+	viai-pl.UTF-8.1 \
+	eviai-pl.UTF-8.1 \
+	viaidiff-pl.UTF-8.1 \
 	xxd-pl.UTF-8.1 \
-	vim-ru.UTF-8.1 \
-	evim-ru.UTF-8.1 \
-	vimdiff-ru.UTF-8.1 \
+	viai-ru.UTF-8.1 \
+	eviai-ru.UTF-8.1 \
+	viaidiff-ru.UTF-8.1 \
 	xxd-ru.UTF-8.1 \
-	vim-sv.UTF-8.1 \
-	evim-sv.UTF-8.1 \
-	vimdiff-sv.UTF-8.1 \
+	viai-sv.UTF-8.1 \
+	eviai-sv.UTF-8.1 \
+	viaidiff-sv.UTF-8.1 \
 	xxd-sv.UTF-8.1 \
-	vim-tr.UTF-8.1 \
-	evim-tr.UTF-8.1 \
-	vimdiff-tr.UTF-8.1
+	viai-tr.UTF-8.1 \
+	eviai-tr.UTF-8.1 \
+	viaidiff-tr.UTF-8.1
 

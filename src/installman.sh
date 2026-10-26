@@ -48,8 +48,8 @@ fi
 # on some systems.
 
 if test $what = "install"; then
-   # vim.1
-   if test -r $helpsource/vim$langadd.1; then
+   # viai.1
+   if test -r $helpsource/viai$langadd.1; then
       echo installing $destdir/$exename.1
       LC_ALL=C sed -e s+/usr/local/lib/vim+$vimloc+ \
 	      -e s+'/usr/local/share/vim/vim??'+$vimloc+ \
@@ -65,24 +65,24 @@ if test $what = "install"; then
 	      -e s+$vimloc/filetype.vim+$scriptloc/filetype.vim+ \
 	      -e s+$vimloc/scripts.vim+$scriptloc/scripts.vim+ \
 	      -e s+$vimloc/optwin.vim+$scriptloc/optwin.vim+ \
-	      $helpsource/vim$langadd.1 > $destdir/$exename.1
+	      $helpsource/viai$langadd.1 > $destdir/$exename.1
       chmod $manmod $destdir/$exename.1
    fi
 
-   # vimdiff.1
-   if test -r $helpsource/vimdiff$langadd.1; then
+   # viaidiff.1
+   if test -r $helpsource/viaidiff$langadd.1; then
       echo installing $destdir/$vimdiffname.1
-      cp $helpsource/vimdiff$langadd.1 $destdir/$vimdiffname.1
+      cp $helpsource/viaidiff$langadd.1 $destdir/$vimdiffname.1
       chmod $manmod $destdir/$vimdiffname.1
    fi
 
-   # evim.1
-   if test -r $helpsource/evim$langadd.1; then
+   # eviai.1
+   if test -r $helpsource/eviai$langadd.1; then
       echo installing $destdir/$evimname.1
       LC_ALL=C sed -e s+/usr/local/lib/vim+$vimloc+ \
 	      -e s+'/usr/local/share/vim/vim??'+$vimloc+ \
 	      -e s+$vimloc/evim.vim+$scriptloc/evim.vim+ \
-	      $helpsource/evim$langadd.1 > $destdir/$evimname.1
+	      $helpsource/eviai$langadd.1 > $destdir/$evimname.1
       chmod $manmod $destdir/$evimname.1
    fi
 fi

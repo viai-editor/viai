@@ -1,0 +1,48 @@
+EVIAI(1)                    General Commands Manual                   EVIAI(1)
+
+NAME
+       eviai - easy Vim, edit a file with ViAI and setup for modeless editing
+
+SYNOPSIS
+       eviai [options] [file ..]
+
+DESCRIPTION
+       eVim starts Vim and sets options to make it behave like a modeless edi‐
+       tor.   This  is  still  Vim but used as a point-and-click editor.  This
+       feels a lot like using Notepad on MS-Windows.  eVim will always run  in
+       the GUI, to enable the use of menus and toolbar.
+
+       Only to be used for people who really can't work with Vim in the normal
+       way.  Editing will be much less efficient.
+
+       To start in read-only mode use eviai -R.
+
+       See viai(1) for details about Vim, options, etc.
+
+       The 'insertmode' option is set to be able to type text directly.
+       Mappings  are  setup  to  make  Copy and Paste work with the MS-Windows
+       keys.  CTRL-X cuts text, CTRL-C copies text  and  CTRL-V  pastes  text.
+       Use CTRL-Q to obtain the original meaning of CTRL-V.
+
+OPTIONS
+       See viai(1).
+
+FILES
+       /usr/local/share/vim/vim??/evim.vim
+                      The script loaded to initialize eVim.
+                      viai??   is  short  version number, like viai10 for ViAI
+                      1.0
+
+AKA
+       Also Known As "Vim for gumbies".  When using eviai you are expected  to
+       take  a  handkerchief,  make  a knot in each corner and wear it on your
+       head.
+
+SEE ALSO
+       viai(1)
+
+AUTHOR
+       Most of Vim was made by Bram Moolenaar, with a lot of help from others.
+       See the Help/Credits menu.
+
+                                  2026 Oct 27                         EVIAI(1)

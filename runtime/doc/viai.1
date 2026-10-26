@@ -1,34 +1,26 @@
-.TH VIM 1 "2026 Sep 28"
+.TH VIAI 1 "2026 Oct 27"
 .SH NAME
-vim \- Vi IMproved, a programmer's text editor
+viai \- ViAI (Vim Advanced Integrated), a programmer's text editor
 .SH SYNOPSIS
 .br
-.B vim
+.B viai
 [options] [file ..]
 .br
-.B vim
+.B viai
 [options] \-
 .br
-.B vim
+.B viai
 [options] \-t tag
 .br
-.B vim
+.B viai
 [options] \-q [errorfile]
 .PP
 .br
-.B ex
+.B gviai
+.B eviai
 .br
-.B view
-.br
-.B gvim
-.B gview
-.B evim
-.B eview
-.br
-.B rvim
-.B rview
-.B rgvim
-.B rgview
+.B rviai
+.B rgviai
 .SH DESCRIPTION
 .B Vim
 is a text editor that is upwards compatible to Vi.
@@ -52,13 +44,13 @@ Most often
 .B Vim
 is started to edit a single file with the command
 .PP
-	vim file
+	viai file
 .PP
 More generally
 .B Vim
 is started with:
 .PP
-	vim [options] [filelist]
+	viai [options] [filelist]
 .PP
 If the filelist is missing, the editor will start with an empty buffer.
 Otherwise exactly one out of the following four may be used to choose one or
@@ -99,7 +91,7 @@ See ":help quickfix".
 behaves differently, depending on the name of the command (the executable may
 still be the same file).
 .TP 10
-vim
+viai
 The "normal" way, everything is default.
 .TP
 ex
@@ -111,21 +103,24 @@ view
 Start in read-only mode.  You will be protected from writing the files.
 Can also be done with the "\-R" argument.
 .TP
-gvim gview
+gviai gview
 The GUI version.
 Starts a new window.
 Can also be done with the "\-g" argument.
 .TP
-evim eview
+eviai eview
 The GUI version in easy mode.
 Starts a new window.
 Can also be done with the "\-y" argument.
 .TP
-rvim rview rgvim rgview
+rviai rview rgviai rgview
 Like the above, but with restrictions.  It will not be possible to start shell
 commands, or suspend
 .B Vim.
 Can also be done with the "\-Z" argument.
+.PP
+Only viai, gviai, rviai, rgviai, eviai, viaidiff and gviaidiff are installed.
+See ":help viai\-programs".
 .SH OPTIONS
 The options may be given in any order, before or after filenames.
 Options without an argument can be combined after a single dash.
@@ -146,7 +141,7 @@ See ":help search\-pattern" for the available search patterns.
 {command} is interpreted as an Ex command.
 If the {command} contains spaces it must be enclosed in double quotes (this
 depends on the shell that is used).
-Example: vim "+set si" main.c
+Example: viai "+set si" main.c
 .br
 Note: You can use up to 10 "+" or "\-c" commands.
 .TP
@@ -177,7 +172,7 @@ Start in diff mode.
 There should between two to eight file name arguments.
 .B Vim
 will open all the files and show differences between them.
-Works like vimdiff(1).
+Works like viaidiff(1).
 .TP
 \-d {device}, \-dev {device}
 Open {device} for use as a terminal.
@@ -257,7 +252,7 @@ aborts.
 .TP
 \-i {viminfo}
 Specifies the filename to use when reading or writing the viminfo file,
-instead of the default "~/.viminfo".
+instead of the default "~/.viaiinfo".
 This can also be used to skip the use of the .viminfo file, by giving the name
 "NONE".
 .TP
@@ -398,7 +393,7 @@ Set the 'window' option to {number}.
 All the characters that you type are recorded in the file
 {scriptout}, until you exit
 .B Vim.
-This is useful if you want to create a script file to be used with "vim \-s" or
+This is useful if you want to create a script file to be used with "viai \-s" or
 ":source!".
 If the {scriptout} file exists, characters are appended.
 .TP
@@ -421,7 +416,7 @@ Don't connect to the wayland compositor
 \-y
 Start
 .B Vim
-in easy mode, just like the executable was called "evim" or "eview".
+in easy mode, just like the executable was called "eviai" or "eview".
 Makes
 .B Vim
 behave like a click-and-type editor.
@@ -579,9 +574,9 @@ The
 documentation files.
 Use ":help doc\-file\-list" to get the complete list.
 .br
-.I vim??
-is short version number, like vim91 for
-.B Vim 9.1
+.I viai??
+is short version number, like viai10 for
+.B ViAI 1.0
 .TP
 /usr/local/share/vim/vim??/doc/tags
 The tags file used for finding information in the documentation files.
@@ -602,6 +597,10 @@ Your personal
 .B Vim
 initializations (first one found is used).
 .TP
+~/.viairc, ~/.viai/vimrc, $XDG_CONFIG_HOME/viai/vimrc
+Used instead of the above when ViAI's own user configuration exists.
+See ":help viai\-config".
+.TP
 /usr/local/share/vim/gvimrc
 System wide gvim initializations.
 .TP
@@ -609,6 +608,9 @@ System wide gvim initializations.
 Your personal
 .B gVim
 initializations (first one found is used).
+.TP
+~/.gviairc, ~/.viai/gvimrc, $XDG_CONFIG_HOME/viai/gvimrc
+Used instead of the above when ViAI's own user configuration exists.
 .TP
 /usr/local/share/vim/vim??/optwin.vim
 Script used for the ":options" command, a nice way to view and set options.
@@ -629,9 +631,9 @@ Script to detect the type of a file by its contents.  See ":help 'filetype'".
 /usr/local/share/vim/vim??/print/*.ps
 Files used for PostScript printing.
 .PP
-For recent info read the VIM home page:
+For recent info read the ViAI repository:
 .br
-<URL:http://www.vim.org/>
+<URL:https://github.com/viai-editor/viai>
 .SH AUTHOR
 Most of
 .B Vim
@@ -646,6 +648,7 @@ Although hardly any of the original code remains.
 .SH BUGS
 Probably.
 See ":help todo" for a list of known problems.
+To report a bug, see ":help viai\-bugs".
 .PP
 Note that a number of things that may be regarded as bugs by some, are in fact
 caused by a too-faithful reproduction of Vi's behaviour.

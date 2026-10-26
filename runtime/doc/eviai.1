@@ -1,12 +1,10 @@
-.TH EVIM 1 "2024 August 12"
+.TH EVIAI 1 "2026 Oct 27"
 .SH NAME
-evim \- easy Vim, edit a file with Vim and setup for modeless editing
+eviai \- easy Vim, edit a file with ViAI and setup for modeless editing
 .SH SYNOPSIS
 .br
-.B evim
+.B eviai
 [options] [file ..]
-.br
-.B eview
 .SH DESCRIPTION
 .B eVim
 starts
@@ -20,10 +18,9 @@ will always run in the GUI, to enable the use of menus and toolbar.
 Only to be used for people who really can't work with Vim in the normal way.
 Editing will be much less efficient.
 .PP
-.B eview
-is the same, but starts in read-only mode.  It works just like evim \-R.
+To start in read-only mode use eviai \-R.
 .PP
-See vim(1) for details about Vim, options, etc.
+See viai(1) for details about Vim, options, etc.
 .PP
 The 'insertmode' option is set to be able to type text directly.
 .br
@@ -31,21 +28,21 @@ Mappings are setup to make Copy and Paste work with the MS-Windows keys.
 CTRL-X cuts text, CTRL-C copies text and CTRL-V pastes text.
 Use CTRL-Q to obtain the original meaning of CTRL-V.
 .SH OPTIONS
-See vim(1).
+See viai(1).
 .SH FILES
 .TP 15
 /usr/local/share/vim/vim??/evim.vim
 The script loaded to initialize eVim.
 .br
-.I vim??
-is short version number, like vim91 for
-.B Vim 9.1
+.I viai??
+is short version number, like viai10 for
+.B ViAI 1.0
 .SH AKA
 Also Known As "Vim for gumbies".
-When using evim you are expected to take a handkerchief,
+When using eviai you are expected to take a handkerchief,
 make a knot in each corner and wear it on your head.
 .SH SEE ALSO
-vim(1)
+viai(1)
 .SH AUTHOR
 Most of
 .B Vim

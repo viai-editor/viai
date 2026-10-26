@@ -185,7 +185,7 @@ os_win32.txt :
 
 convert-all : $(CONVERTED)
 
-vim-da.UTF-8.1 : vim-da.1
+viai-da.UTF-8.1 : viai-da.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -196,7 +196,7 @@ vim-da.UTF-8.1 : vim-da.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vimdiff-da.UTF-8.1 : vimdiff-da.1
+viaidiff-da.UTF-8.1 : viaidiff-da.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -207,7 +207,7 @@ vimdiff-da.UTF-8.1 : vimdiff-da.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vim-de.UTF-8.1 : vim-de.1
+viai-de.UTF-8.1 : viai-de.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -218,7 +218,7 @@ vim-de.UTF-8.1 : vim-de.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-evim-fr.UTF-8.1 : evim-fr.1
+eviai-fr.UTF-8.1 : eviai-fr.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -229,7 +229,7 @@ evim-fr.UTF-8.1 : evim-fr.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vim-fr.UTF-8.1 : vim-fr.1
+viai-fr.UTF-8.1 : viai-fr.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -240,7 +240,7 @@ vim-fr.UTF-8.1 : vim-fr.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vimdiff-fr.UTF-8.1 : vimdiff-fr.1
+viaidiff-fr.UTF-8.1 : viaidiff-fr.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -262,7 +262,7 @@ xxd-fr.UTF-8.1 : xxd-fr.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-evim-it.UTF-8.1 : evim-it.1
+eviai-it.UTF-8.1 : eviai-it.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -273,7 +273,7 @@ evim-it.UTF-8.1 : evim-it.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vim-it.UTF-8.1 : vim-it.1
+viai-it.UTF-8.1 : viai-it.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -284,7 +284,7 @@ vim-it.UTF-8.1 : vim-it.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vimdiff-it.UTF-8.1 : vimdiff-it.1
+viaidiff-it.UTF-8.1 : viaidiff-it.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -306,7 +306,7 @@ xxd-it.UTF-8.1 : xxd-it.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-evim-pl.UTF-8.1 : evim-pl.1
+eviai-pl.UTF-8.1 : eviai-pl.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-2 -t UTF-8 $? >$@
 !ELSE
@@ -317,7 +317,7 @@ evim-pl.UTF-8.1 : evim-pl.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vim-pl.UTF-8.1 : vim-pl.1
+viai-pl.UTF-8.1 : viai-pl.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-2 -t UTF-8 $? >$@
 !ELSE
@@ -328,7 +328,7 @@ vim-pl.UTF-8.1 : vim-pl.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vimdiff-pl.UTF-8.1 : vimdiff-pl.1
+viaidiff-pl.UTF-8.1 : viaidiff-pl.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-2 -t UTF-8 $? >$@
 !ELSE
@@ -350,7 +350,7 @@ xxd-pl.UTF-8.1 : xxd-pl.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-evim-ru.UTF-8.1 : evim-ru.1
+eviai-ru.UTF-8.1 : eviai-ru.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f KOI8-R -t UTF-8 $? >$@
 !ELSE
@@ -361,7 +361,7 @@ evim-ru.UTF-8.1 : evim-ru.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vim-ru.UTF-8.1 : vim-ru.1
+viai-ru.UTF-8.1 : viai-ru.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f KOI8-R -t UTF-8 $? >$@
 !ELSE
@@ -372,7 +372,7 @@ vim-ru.UTF-8.1 : vim-ru.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vimdiff-ru.UTF-8.1 : vimdiff-ru.1
+viaidiff-ru.UTF-8.1 : viaidiff-ru.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f KOI8-R -t UTF-8 $? >$@
 !ELSE
@@ -394,7 +394,7 @@ xxd-ru.UTF-8.1 : xxd-ru.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-evim-sv.UTF-8.1 : evim-sv.1
+eviai-sv.UTF-8.1 : eviai-sv.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -405,7 +405,7 @@ evim-sv.UTF-8.1 : evim-sv.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vim-sv.UTF-8.1 : vim-sv.1
+viai-sv.UTF-8.1 : viai-sv.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -416,7 +416,7 @@ vim-sv.UTF-8.1 : vim-sv.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vimdiff-sv.UTF-8.1 : vimdiff-sv.1
+viaidiff-sv.UTF-8.1 : viaidiff-sv.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-1 -t UTF-8 $? >$@
 !ELSE
@@ -438,7 +438,7 @@ xxd-sv.UTF-8.1 : xxd-sv.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-evim-tr.UTF-8.1 : evim-tr.1
+eviai-tr.UTF-8.1 : eviai-tr.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-9 -t UTF-8 $? >$@
 !ELSE
@@ -449,7 +449,7 @@ evim-tr.UTF-8.1 : evim-tr.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vim-tr.UTF-8.1 : vim-tr.1
+viai-tr.UTF-8.1 : viai-tr.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-9 -t UTF-8 $? >$@
 !ELSE
@@ -460,7 +460,7 @@ vim-tr.UTF-8.1 : vim-tr.1
 		1>nul New-Item -Path . -Name $@ -ItemType file -Force
 !ENDIF
 
-vimdiff-tr.UTF-8.1 : vimdiff-tr.1
+viaidiff-tr.UTF-8.1 : viaidiff-tr.1
 !IF DEFINED (ICONV)
 	$(ICONV) -f ISO-8859-9 -t UTF-8 $? >$@
 !ELSE
