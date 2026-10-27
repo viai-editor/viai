@@ -10,9 +10,15 @@ use of AI assistance.
 
 ## What is ViAI?
 
-ViAI started from Vim 9.2.1186, so it has all the features of Vim:
-multi-level undo, syntax highlighting, command line history, on-line help,
-spell checking, Vim9 script, a GUI, and much more.
+ViAI is a text editor whose main aim is that these plugins work well:
+  * [lsp.vim](https://github.com/h-east/lsp.vim): an LSP client
+  * [vim9ls](https://github.com/h-east/vim9ls): a language server for Vim9
+    script
+
+ViAI is the only editor that can show the errors that Vim gives when sourcing
+a Vim9 script as diagnostics, without running the script.
+
+Your Vim configuration and plugins work in ViAI as they are.
 
 The name stands for "Vim Advanced Integrated".  It happens to be the same
 words as the "AI synthesis" (Advanced Integrated) of the KORG M1 synthesizer,
@@ -20,14 +26,7 @@ released in 1988, the year in which Bram Moolenaar started writing Vim.
 
 ## Development policy
 
-* ViAI aims to be an editor in which these Vim9 script plugins work well:
-  * [lsp.vim](https://github.com/h-east/lsp.vim): an LSP client
-  * [vim9ls](https://github.com/h-east/vim9ls): a language server for Vim9
-    script
-
-  They will be bundled with ViAI and enabled by default, so that they work
-  as soon as a file of the "vim" filetype is opened.  They can be disabled
-  in your configuration.
+* The two plugins above will be bundled with ViAI.
 * ViAI adds features of its own, while keeping compatibility with Vim as far
   as possible.
 * The patches of Vim are imported into ViAI as a rule.

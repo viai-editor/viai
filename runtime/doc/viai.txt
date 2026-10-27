@@ -26,14 +26,17 @@ applies to ViAI as well, also where it mentions Vim.
 ==============================================================================
 1. Development policy				*viai-policy*
 
-- ViAI aims to be an editor in which these Vim9 script plugins work well:
+- The main aim of ViAI is that these plugins work well:
 	lsp.vim		an LSP client
 			https://github.com/h-east/lsp.vim
 	vim9ls		a language server for Vim9 script
 			https://github.com/h-east/vim9ls
-  They will be bundled with ViAI and enabled by default, so that they work
-  as soon as a file of the "vim" filetype is opened.  They can be disabled
-  in your configuration.
+  They will be bundled with ViAI.
+- ViAI is the only editor that can show the errors that Vim gives when
+  sourcing a Vim9 script as diagnostics, without running the script, see
+  |:source-dryrun|.
+- Your Vim configuration and plugins work in ViAI as they are, see
+  |viai-config|.
 - ViAI adds features of its own, while keeping compatibility with Vim as far
   as possible.
 - The patches of Vim are imported into ViAI as a rule.
