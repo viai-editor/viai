@@ -819,6 +819,20 @@ static int viai_included_patches[] =
 static int included_patches[] =
 {   /* Add new patch number below this line */
 /**/
+    1252,
+/**/
+    1251,
+/**/
+    1250,
+/**/
+    1249,
+/**/
+    1248,
+/**/
+    1247,
+/**/
+    1246,
+/**/
     1245,
 /**/
     1244,
