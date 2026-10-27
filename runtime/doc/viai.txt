@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 27
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 28
 
 
 		  VIAI REFERENCE MANUAL
@@ -21,6 +21,7 @@ applies to ViAI as well, also where it mentions Vim.
 7. Error numbers		|viai-error-numbers|
 8. Additional features		|viai-additional-features|
 9. License			|viai-license|
+10. Sponsoring			|viai-sponsor|
 
 ==============================================================================
 1. Development policy				*viai-policy*
@@ -256,5 +257,15 @@ license:
 
 To contact the ViAI maintainer, open an issue at:
 	https://github.com/viai-editor/viai/issues
+
+==============================================================================
+10. Sponsoring					*viai-sponsor*
+
+If you find ViAI useful, you can sponsor its maintainer, Hirohito Higashi,
+on GitHub Sponsors:
+	https://github.com/sponsors/h-east
+
+This money does not go to the children in Uganda.  To help them, see
+|uganda|.  For sponsoring Vim, see |sponsor|.
 
  vim:tw=78:ts=8:noet:ft=help:norl:

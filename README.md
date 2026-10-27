@@ -111,3 +111,10 @@ Most of Vim was created by Bram Moolenaar.  Many thanks to him and to everyone
 who has contributed to Vim.
 
 ViAI is maintained by Hirohito Higashi ([@h-east](https://github.com/h-east)).
+
+## Sponsoring
+
+If you find ViAI useful, you can sponsor its maintainer, Hirohito Higashi,
+on [GitHub Sponsors](https://github.com/sponsors/h-east).  This money does
+not go to the children in Uganda; to help them, see the License section
+above.
