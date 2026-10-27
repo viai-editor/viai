@@ -1,5 +1,6 @@
 # Adds the Vim patches merged into master to included_patches[] in
-# src/version.c, see tools/update-included-patches.sh.  The commit is pushed
+# src/version.c, and the declined ones as comments, see
+# tools/update-included-patches.sh.  The commit is pushed
 # to master directly, so that the nightly build of viai-win32-installer
 # finds the numbers; that workflow waits until this one has finished.
 
@@ -45,32 +46,64 @@ jobs:
           # A push to master after the checkout makes "git push" fail, try
           # again on the new master.
           for i in 1 2 3; do
-            added=$(tools/update-included-patches.sh)
-            if [ -z "$added" ]; then
-              echo "No patches to add."
+            changed=$(tools/update-included-patches.sh)
+            if [ -z "$changed" ]; then
+              echo "No changes to included_patches[]."
               exit 0
             fi
-            list=$(printf '%s\n' "$added" | awk '
-              { p[NR] = $0 }
-              END {
-                for (i = 1; i <= NR; i++)
-                  s = s (i == 1 ? "" : i == NR ? " and " : ", ") p[i]
-                print s
-              }')
-            if [ "$(printf '%s\n' "$added" | wc -l)" -eq 1 ]; then
-              patches="patch $list"
-              them=it
+            # Prints "patch A" or "patches A, B and C" for the numbers
+            # followed by "$1" (empty for added numbers).
+            patches() {
+              printf '%s\n' "$changed" | awk -v kind="$1" '
+                { n = $1; $1 = ""; sub(/^ /, "") }
+                $0 == kind { p[++c] = n }
+                END {
+                  for (i = 1; i <= c; i++)
+                    s = s (i == 1 ? "" : i == c ? " and " : ", ") p[i]
+                  if (c > 0)
+                    print (c == 1 ? "patch " : "patches ") s
+                }'
+            }
+            added=$(patches "")
+            declined=$(patches declined)
+            not_declined=$(patches "not declined")
+            problem=
+            solution=
+            if [ -n "$added" ]; then
+              subject="has('patch-...') is false for imported Vim patches"
+              problem="has('patch-...') is false and :version does not list"
+              problem="$problem the imported Vim $added."
+              solution="Add $added to included_patches[]."
+            elif [ -n "$declined" ]; then
+              subject="included_patches[] does not show declined Vim patches"
             else
-              patches="patches $list"
-              them=them
+              subject="included_patches[] shows Vim patches as declined"
             fi
+            if [ -n "$declined" ]; then
+              case $declined in
+                patches*) as="as comments" ;;
+                *) as="as a comment" ;;
+              esac
+              problem="$problem  included_patches[] does not show the"
+              problem="$problem declined Vim $declined."
+              solution="$solution  Add $declined to included_patches[] $as."
+            fi
+            if [ -n "$not_declined" ]; then
+              problem="$problem  included_patches[] shows the Vim"
+              problem="$problem $not_declined as declined."
+              solution="$solution  Remove the comment for $not_declined."
+            fi
+            # Prints "$2" after the label "$1", folded and indented.
+            wrap() {
+              echo "$2" | fold -s -w 62 |
+                sed -e 's/^ *//' -e 's/ *$//' \
+                  -e "1s/^/$1/" -e '2,$s/^/          /'
+            }
             {
-              echo "has('patch-...') is false for imported Vim patches"
+              echo "$subject"
               echo
-              echo "has('patch-...') is false and :version does not list the" \
-                "imported Vim $patches." | fold -s -w 62 |
-                sed -e 's/ *$//' -e '1s/^/Problem:  /' -e '2,$s/^/          /'
-              echo "Solution: Add $them to included_patches[]."
+              wrap "Problem:  " "$problem"
+              wrap "Solution: " "$solution"
             } > "$RUNNER_TEMP/msg"
             git commit -a -F "$RUNNER_TEMP/msg"
             if git push origin HEAD:master; then

@@ -1,0 +1,5 @@
+# Vim commits that are not imported into ViAI, see "Relationship with Vim"
+# in AGENTS.md.  One per line:
+#
+#   vim-patch:9.2.1188: <subject> -- N/A #123
+#   vim-patch:1a2b3c4: <subject> -- Declined #118

@@ -85,11 +85,28 @@ Before submitting any patch, at minimum:
 ## Relationship with Vim
 
 - **Vim patches are imported as separate commits.**  Never mix a Vim patch
-  with ViAI changes in one commit.  Every Vim commit, imported or not, is
-  recorded in the git log with a `vim-patch:` token: `vim-patch:9.2.NNNN`
+  with ViAI changes in one commit.  Every Vim commit is recorded with a
+  `vim-patch:` token, in the git log when it is imported and in
+  `tools/vim-patch-not-imported.txt` when it is not: `vim-patch:9.2.NNNN`
   for a numbered patch, `vim-patch:<hash>` (the first 7 characters of the
   Vim commit hash) for a commit without a patch number, such as
   `runtime(...)`.
+- **The ViAI maintainer decides whether a Vim commit is imported**, not
+  an AI tool.  Before importing, the AI tool sorts the Vim commits into
+  two groups and reports them:
+    - Routine commits: CI, translations, runtime files with a maintainer,
+      corrections of the documentation and clear bug fixes.  They are
+      reported in one list.
+    - Commits that change behavior: new features, changed defaults,
+      changes in startup or in the communication with the terminal,
+      changes that affect compatibility and changes that may conflict
+      with the policy of ViAI.  Each one is reported separately with what
+      changes for the user and the concerns about it.
+  The maintainer then decides for each commit to import it, to decline
+  it, or to put it on hold.  For a commit on hold, the pull request is
+  created as usual, gets the label `on hold` and a comment with the
+  reason, and stays open until the maintainer decides: it is merged when
+  the commit is imported and closed when it is declined.
 - **`tools/vim-patch.sh <hash>` imports a Vim commit** on a new branch with
   the commit message described below.  It leaves the patch and the message
   in `.git/vim-patch/`.  The hunk that adds the patch number to
@@ -97,9 +114,11 @@ Before submitting any patch, at minimum:
   applies without the patches before it.
 - **The "Included patches" workflow adds the numbers** after a push to
   master: `tools/update-included-patches.sh` reads the `vim-patch:9.2.NNNN`
-  tokens in the git log and adds the missing numbers to
-  `included_patches[]`, so that `has('patch-...')` is true for them.  The
-  workflow pushes the commit to master itself.
+  tokens in the git log and in `tools/vim-patch-not-imported.txt` and adds
+  the missing numbers to `included_patches[]`, so that `has('patch-...')`
+  is true for them.  A declined patch is added as a comment, e.g.
+  `// 1246,`, so that `has('patch-...')` stays false.  The workflow pushes
+  the commit to master itself.
 - **An imported Vim commit** is authored by the ViAI maintainer and keeps
   the message from Vim, with these changes:
     - The subject is the token followed by the subject from Vim without
@@ -127,17 +146,20 @@ Before submitting any patch, at minimum:
   `Signed-off-by:` line.  A pull request with several imported commits is
   titled `vim-patch: <summary>` and lists such a description for each
   commit under a `#### <subject>` heading.
-- **Vim commits that are not imported** are listed in the message of one
-  commit, one per line, each with a reason:
+- **Vim commits that are not imported** are listed in
+  `tools/vim-patch-not-imported.txt`, one per line, each with the number of
+  the pull request that gives the reason:
 
-      vim-patch:9.2.1188: <subject> -- N/A: CI of Vim only
-      vim-patch:1a2b3c4: <subject> -- N/A: netrw only
-      vim-patch:9.2.1190: <subject> -- Declined: <reason>
+      vim-patch:9.2.1188: <subject> -- N/A #123
+      vim-patch:9.2.1190: <subject> -- Declined #118
 
   "N/A" means the commit does not apply to ViAI, "Declined" means ViAI does
-  not want the change.  The "Included patches" workflow adds the numbers of
-  the N/A patches to `included_patches[]`, not those of the Declined
-  patches.
+  not want the change.  For a commit that was on hold, the number is that
+  of its closed pull request, otherwise that of the pull request that adds
+  the line; that number is added by amending the commit after the pull
+  request is created.  The commit that adds lines is titled
+  `Vim patches that are not imported`.  When a declined commit is imported
+  later, its line is removed.
 - **A bug that also occurs in Vim is fixed in ViAI** and reported to Vim
   with an issue, not with a pull request.  The ViAI patch refers to the
   issue with `related: vim/vim#NNNNN`.  Documentation fixes are handled the
