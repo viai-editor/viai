@@ -19,6 +19,7 @@ SRC_ALL =	\
 		.github/workflows/coverity.yml \
 		.github/workflows/included-patches.yml \
 		.github/workflows/link-check.yml \
+		.github/workflows/tag-patches.yml \
 		.github/actions/build_viai_on_linux/action.yml \
 		.github/actions/test_artifacts/action.yml \
 		.github/dependabot.yml \

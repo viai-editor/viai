@@ -238,6 +238,8 @@ Rules:
 - **`Assisted-by:` is required** when AI was used.
 - **A numbered ViAI patch** has the subject `patch 1.0.NNNN: ` followed by
   the problem statement.  The number is added when merging.
+  When it is merged into master, a workflow adds the tag `v1.0.NNNN`; the
+  installer of viai-win32-installer is built for the newest tag.
 
 ## C code conventions
 

@@ -1,0 +1,79 @@
+# Adds the tag "v1.0.NNNN" to every "patch 1.0.NNNN:" commit on master that
+# does not have it yet.  The build of viai-win32-installer makes a release for
+# the newest tag.  A tag that was pushed is never moved: when a number is on
+# two commits, or a tag is on a commit that is no longer on master, nothing is
+# tagged and the run fails.
+
+name: Tag patches
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One run at a time, a running one is never cancelled.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+
+    # Don't tag forks.
+    if: ${{ github.repository_owner == 'viai-editor' }}
+
+    permissions:
+      contents: write # to push the tags
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: master
+          # All commit messages and tags are read.
+          fetch-depth: 0
+
+      - name: Tag the numbered ViAI patches
+        env:
+          USER_NAME: "github-actions[bot]"
+          USER_EMAIL: "41898282+github-actions[bot]@users.noreply.github.com"
+        run: |
+          git config user.name "$USER_NAME"
+          git config user.email "$USER_EMAIL"
+          # "<hash> v1.0.NNNN" for every numbered patch on master.
+          patches=$(git log --format='%H %s' HEAD |
+            sed -n 's/^\([0-9a-f]*\) patch \(1\.0\.[0-9]*\):.*/\1 v\2/p')
+          errors=0
+          for tag in $(printf '%s\n' "$patches" | awk '{ print $2 }' |
+              sort | uniq -d); do
+            echo "$tag is the number of more than one commit."
+            errors=1
+          done
+          new=
+          while read -r hash tag; do
+            [ -n "$hash" ] || continue
+            if old=$(git rev-parse -q --verify "refs/tags/$tag^{commit}"); then
+              if [ "$old" != "$hash" ]; then
+                echo "$tag is on $old, which is not the commit on master."
+                errors=1
+              fi
+            else
+              new="$new $tag:$hash"
+            fi
+          done <<< "$patches"
+          if [ $errors -ne 0 ]; then
+            exit 1
+          fi
+          if [ -z "$new" ]; then
+            echo "No numbered patches without a tag."
+            exit 0
+          fi
+          refs=
+          for th in $new; do
+            git tag -a -m "${th%%:*}" "${th%%:*}" "${th#*:}"
+            refs="$refs refs/tags/${th%%:*}"
+          done
+          git push origin $refs
