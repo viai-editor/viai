@@ -40,6 +40,7 @@ SRC_ALL =	\
 		tools/update-included-patches.sh \
 		tools/viai_logo.py \
 		tools/vim-patch.sh \
+		tools/vim-patch-not-imported.txt \
 		src/Make_all.mak \
 		src/Make_tags.mak \
 		src/README.md \
