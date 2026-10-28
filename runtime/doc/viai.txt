@@ -186,9 +186,9 @@ These are the same as in Vim: $VIMINIT, $EXINIT, the exrc file, the local
 vimrc used with the 'exrc' option and the system vimrc.  Note that $VIM
 is ViAI's own directory, see |viai-programs|.
 
-On MS-Windows the install program creates $HOME/viaifiles/ for plugins by
-default, thus ViAI uses its own user configuration.  It can create
-$HOME/vimfiles/ instead, to keep using the configuration of Vim.
+On MS-Windows the install program creates $HOME/vimfiles/ for plugins by
+default, thus ViAI keeps using Vim's user configuration.  It can create
+$HOME/viaifiles/ instead, to make ViAI use its own user configuration.
 
 ==============================================================================
 5. The viminfo file				*viai-viminfo*

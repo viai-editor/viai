@@ -2324,8 +2324,8 @@ init_directories_choice(void)
     p = getenv("HOME");
     if (p != NULL)
     {
-	vimfiles_dir_choice = (int)vimfiles_dir_home;
-	sprintf(tmp_dirname, "%s\\viaifiles\\compiler", p);
+	vimfiles_dir_choice = (int)vimfiles_dir_home_vim;
+	sprintf(tmp_dirname, "%s\\vimfiles\\compiler", p);
 	if (stat(tmp_dirname, &st) == 0)
 	    vimfiles_dir_choice = (int)vimfiles_dir_none;
     }
