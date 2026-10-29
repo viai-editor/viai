@@ -2277,7 +2277,9 @@ typedef int sock_T;
 #define VV_VIM_DID_INIT		116
 #define VV_CLIPPROVIDERS 117
 #define VV_IMAGEBACKEND 118
-#define VV_LEN		119	// number of v: vars
+#define VV_VIAI_VERSION 119
+#define VV_VIAI_VERSIONLONG 120
+#define VV_LEN		121	// number of v: vars
 
 // used for v_number in VAR_BOOL and VAR_SPECIAL
 #define VVAL_FALSE	0L	// VAR_BOOL

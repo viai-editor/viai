@@ -169,7 +169,9 @@ static struct vimvar
     {VV_NAME("termosc",	 VAR_STRING), NULL, VV_RO},
     {VV_NAME("vim_did_init",	 VAR_NUMBER), NULL, VV_RO},
     {VV_NAME("clipproviders",	 VAR_DICT), NULL, VV_RO},
-    {VV_NAME("imagebackend",	 VAR_STRING), NULL, VV_RO}
+    {VV_NAME("imagebackend",	 VAR_STRING), NULL, VV_RO},
+    {VV_NAME("viai_version",	 VAR_NUMBER), NULL, VV_RO},
+    {VV_NAME("viai_versionlong", VAR_NUMBER), NULL, VV_RO}
 };
 
 // shorthand
@@ -233,6 +235,9 @@ evalvars_init(void)
     }
     set_vim_var_nr(VV_VERSION, VIM_VERSION_100);
     set_vim_var_nr(VV_VERSIONLONG, VIM_VERSION_100 * 10000 + highest_patch());
+    set_vim_var_nr(VV_VIAI_VERSION, VIAI_VERSION_100);
+    set_vim_var_nr(VV_VIAI_VERSIONLONG,
+				VIAI_VERSION_100 * 10000 + highest_viai_patch());
 
     set_vim_var_nr(VV_SEARCHFORWARD, 1L);
     set_vim_var_nr(VV_HLSEARCH, 1L);

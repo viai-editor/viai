@@ -67,4 +67,14 @@ func Test_has_viai()
   call assert_false(has('viai-'))
 endfunc
 
+func Test_viai_version_variables()
+  call assert_equal(100, v:viai_version)
+  let patch = matchstr(execute('version'), "\nIncluded patches: 1-\\zs\\d\\+")
+  call assert_equal(1000000 + str2nr(patch), v:viai_versionlong)
+  call assert_true(has('viai-1.0.' .. (v:viai_versionlong % 10000)))
+  call assert_false(has('viai-1.0.' .. (v:viai_versionlong % 10000 + 1)))
+  call assert_fails('let v:viai_version = 1', 'E46:')
+  call assert_fails('let v:viai_versionlong = 1', 'E46:')
+endfunc
+
 " vim: shiftwidth=2 sts=2 expandtab

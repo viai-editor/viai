@@ -11500,6 +11500,8 @@ v:val	eval.txt	/*v:val*
 v:var	eval.txt	/*v:var*
 v:version	eval.txt	/*v:version*
 v:versionlong	eval.txt	/*v:versionlong*
+v:viai_version	eval.txt	/*v:viai_version*
+v:viai_versionlong	eval.txt	/*v:viai_versionlong*
 v:vim_did_enter	eval.txt	/*v:vim_did_enter*
 v:vim_did_init	eval.txt	/*v:vim_did_init*
 v:warningmsg	eval.txt	/*v:warningmsg*
@@ -11701,6 +11703,8 @@ viai-version	viai.txt	/*viai-version*
 viai-viminfo	viai.txt	/*viai-viminfo*
 viai-vimruntime	viai.txt	/*viai-vimruntime*
 viai.txt	viai.txt	/*viai.txt*
+viai_version-variable	eval.txt	/*viai_version-variable*
+viai_versionlong-variable	eval.txt	/*viai_versionlong-variable*
 vib	motion.txt	/*vib*
 vietnamese	vietnamese.txt	/*vietnamese*
 vietnamese-ime_diff	vietnamese.txt	/*vietnamese-ime_diff*

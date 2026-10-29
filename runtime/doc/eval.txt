@@ -3085,6 +3085,16 @@ v:versionlong	Like v:version, but also including the patchlevel in the last
 		Use the has() function to make sure the patch is actually
 		included.
 
+				*v:viai_version* *viai_version-variable*
+v:viai_version	Version number of ViAI, like |v:version| for Vim.  Version
+		1.0 is 100.  Read-only.
+
+			*v:viai_versionlong* *viai_versionlong-variable*
+v:viai_versionlong
+		Like v:viai_version, but also including the patchlevel in the
+		last four digits.  Version 1.0 with patch 40 has value 1000040.
+		Read-only.
+
 				*v:vim_did_enter* *vim_did_enter-variable*
 v:vim_did_enter	Zero until most of startup is done.  It is set to one just
 		before |VimEnter| autocommands are triggered.

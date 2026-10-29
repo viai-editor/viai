@@ -133,8 +133,9 @@ version of Vim that ViAI is based on.  ":version" lists the ViAI patches as
 "Included patches" and the Vim patches as "Included Vim patches".
 
 |v:version|, |v:versionlong| and has("patch-9.2.1186") report the Vim
-version, so that plugins written for Vim keep working.  To check for ViAI
-use |has()| with:
+version, so that plugins written for Vim keep working.  |v:viai_version| and
+|v:viai_versionlong| report the ViAI version.  To check for ViAI use |has()|
+with:
 						*viai-feature*
 	viai		True in ViAI.
 	viai-1.0	True for ViAI version 1.0 and later.
