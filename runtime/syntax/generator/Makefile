@@ -2,7 +2,7 @@
 # Makefile for generate runtime/syntax/vim.vim
 #
 VIM_SRCDIR := ../../../src
-RUN_VIMPROG := $(VIM_SRCDIR)/vim -N -u NONE -i NONE -n
+RUN_VIMPROG := $(VIM_SRCDIR)/viai -N -u NONE -i NONE -n
 TARGET := ../vim.vim
 CHECK_HELP_DOC := 0
 

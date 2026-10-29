@@ -653,7 +653,7 @@ func RunTest()
 
   if !empty(failed_tests)
     call Message('')
-    call Message('View generated screendumps with "../../src/vim --clean -S testdir/viewdumps.vim"')
+    call Message('View generated screendumps with "../../src/viai --clean -S testdir/viewdumps.vim"')
   endif
 
   call AppendMessages('== SUMMARY SYNTAX TESTS ==')

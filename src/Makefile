@@ -2227,9 +2227,6 @@ scripttests:
 	if test -n "$(MAKEMO)" -a -f $(PODIR)/Makefile; then \
 		cd $(PODIR); $(MAKE) -f Makefile check VIMPROG=../$(VIMTARGET); \
 	fi
-	-if test $(VIMTARGET) != vim -a ! -r vim; then \
-		ln -s $(VIMTARGET) vim; \
-	fi
 	cd testdir; $(MAKE) -f Makefile $(GUI_TESTTARGET) VIMPROG=../$(VIMTARGET) $(GUI_TESTARG) SCRIPTSOURCE=../$(SCRIPTSOURCE)
 
 # Run the tests with the GUI.  Assumes vim/gvim was already built
