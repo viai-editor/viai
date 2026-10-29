@@ -1131,6 +1131,7 @@ LANG_DOS = \
 # be excluded from distribution tarballs and the like.
 # This excludes them from the CI check for unlisted files.
 IGNORE = \
+		.github/FUNDING.yml \
 		.github/labeler.yml \
 		.github/workflows/label.yml \
 		AGENTS.md \
