@@ -20,9 +20,10 @@ applies to ViAI as well, also where it mentions Vim.
 6. $VIM and $VIMRUNTIME		|viai-vimruntime|
 7. Error numbers		|viai-error-numbers|
 8. Default values		|viai-defaults|
-9. Additional features		|viai-additional-features|
-10. License			|viai-license|
-11. Sponsoring			|viai-sponsor|
+9. Function interface		|viai-functions|
+10. Additional features		|viai-additional-features|
+11. License			|viai-license|
+12. Sponsoring			|viai-sponsor|
 
 ==============================================================================
 1. Development policy				*viai-policy*
@@ -244,7 +245,16 @@ These default values differ from Vim:
 	colons instead of semicolons, see |xterm-true-color|.
 
 ==============================================================================
-9. Additional features				*viai-additional-features*
+9. Function interface				*viai-functions*
+
+These functions differ from Vim in their arguments or return values:
+
+|getinfo()|
+	For an Ex command "range" is always a String and "count" always a
+	Number, -1 when a count is not allowed.
+
+==============================================================================
+10. Additional features				*viai-additional-features*
 
 ViAI has these features that Vim does not have:
 
@@ -256,7 +266,7 @@ ViAI has these features that Vim does not have:
 	curly underline, they are set, see |terminalprops()|.
 
 ==============================================================================
-10. License					*viai-license*
+11. License					*viai-license*
 
 Changes made in ViAI after the initial import are licensed under the Apache
 License 2.0.  Code imported from Vim is licensed under the Vim license, see
@@ -276,7 +286,7 @@ To contact the ViAI maintainer, open an issue at:
 	https://github.com/viai-editor/viai/issues
 
 ==============================================================================
-11. Sponsoring					*viai-sponsor*
+12. Sponsoring					*viai-sponsor*
 
 If you find ViAI useful, you can sponsor its maintainer, Hirohito Higashi,
 on GitHub Sponsors:

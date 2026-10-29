@@ -11692,6 +11692,7 @@ viai-config	viai.txt	/*viai-config*
 viai-defaults	viai.txt	/*viai-defaults*
 viai-error-numbers	viai.txt	/*viai-error-numbers*
 viai-feature	viai.txt	/*viai-feature*
+viai-functions	viai.txt	/*viai-functions*
 viai-license	viai.txt	/*viai-license*
 viai-policy	viai.txt	/*viai-policy*
 viai-programs	viai.txt	/*viai-programs*
