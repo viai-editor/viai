@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 28
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 30
 
 
 		  VIAI REFERENCE MANUAL
@@ -19,9 +19,10 @@ applies to ViAI as well, also where it mentions Vim.
 5. The viminfo file		|viai-viminfo|
 6. $VIM and $VIMRUNTIME		|viai-vimruntime|
 7. Error numbers		|viai-error-numbers|
-8. Additional features		|viai-additional-features|
-9. License			|viai-license|
-10. Sponsoring			|viai-sponsor|
+8. Default values		|viai-defaults|
+9. Additional features		|viai-additional-features|
+10. License			|viai-license|
+11. Sponsoring			|viai-sponsor|
 
 ==============================================================================
 1. Development policy				*viai-policy*
@@ -234,7 +235,16 @@ Error messages that ViAI adds have the numbers E8000 to E8999.  Error
 messages from Vim keep their numbers.
 
 ==============================================================================
-8. Additional features				*viai-additional-features*
+8. Default values				*viai-defaults*
+
+These default values differ from Vim:
+
+|t_AU| and |t_8u|
+	The parameters of the underline color (SGR 58) are separated with
+	colons instead of semicolons, see |xterm-true-color|.
+
+==============================================================================
+9. Additional features				*viai-additional-features*
 
 ViAI has these features that Vim does not have:
 
@@ -242,7 +252,7 @@ ViAI has these features that Vim does not have:
 	Read a script without running it, to check it for errors.
 
 ==============================================================================
-9. License					*viai-license*
+10. License					*viai-license*
 
 Changes made in ViAI after the initial import are licensed under the Apache
 License 2.0.  Code imported from Vim is licensed under the Vim license, see
@@ -262,7 +272,7 @@ To contact the ViAI maintainer, open an issue at:
 	https://github.com/viai-editor/viai/issues
 
 ==============================================================================
-10. Sponsoring					*viai-sponsor*
+11. Sponsoring					*viai-sponsor*
 
 If you find ViAI useful, you can sponsor its maintainer, Hirohito Higashi,
 on GitHub Sponsors:
