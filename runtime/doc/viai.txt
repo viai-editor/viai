@@ -262,6 +262,12 @@ ViAI has these features that Vim does not have:
 |:source-dryrun|
 	Read a script without running it, to check it for errors.
 
+|v:viai_version| and |v:viai_versionlong|
+	The ViAI version, see |viai-version|.
+
+|has()| with "viai"
+	True in ViAI, see |viai-feature|.
+
 |t_Cs| and |t_Ce|
 	When they are empty and the terminal answers that it supports the
 	curly underline, they are set, see |terminalprops()|.
