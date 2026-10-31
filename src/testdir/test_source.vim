@@ -1193,6 +1193,35 @@ func Test_source_dryrun_no_more_prompt()
   call delete('Xdryrun_job')
 endfunc
 
+" With ":source ++dryrun" the expression of a script variable is not
+" evaluated, but a line that goes on with ".name" still belongs to it
+func Test_source_dryrun_dot_continuation()
+  let lines =<< trim END
+    vim9script
+    class List
+      var items: list<any> = []
+      def Cons<T>(item: T): List
+        this.items->add(item)
+        return this
+      enddef
+    endclass
+    def MakeList(): List
+      return List.new()
+    enddef
+    const listX: List = MakeList()
+        .Cons<number>(0).Cons<number>(1)
+    var dict = {key: 1}
+        .key
+    var method = [3, 1, 2]
+        ->sort()
+  END
+  call writefile(lines, 'Xdryrun_dot.vim', 'D')
+  source ++dryrun Xdryrun_dot.vim
+  let sid = getscriptinfo({'name': 'Xdryrun_dot\.vim$'})[0].sid
+  call assert_equal(['List', 'dict', 'listX', 'method'],
+        \ sort(keys(getscriptinfo({'sid': sid})[0].variables)))
+endfunc
+
 " Test that a SourceCmd autocommand is used for sourcing a buffer.
 func Test_source_buffer_SourceCmd()
   new
