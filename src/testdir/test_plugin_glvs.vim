@@ -1,5 +1,8 @@
 " Tests for GetLatestVimScripts plugin
 
+" The tests download scripts from www.vim.org.
+CheckGithubActions
+
 " vim feature
 set nocp
 set cpo&vim
