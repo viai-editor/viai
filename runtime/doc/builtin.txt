@@ -1,4 +1,4 @@
-*builtin.txt*	For ViAI version 1.0.  Last change: 2026 Oct 31
+*builtin.txt*	For ViAI version 1.0.  Last change: 2026 Nov 01
 
 
 		  VIAI REFERENCE MANUAL
