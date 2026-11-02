@@ -184,8 +184,10 @@ types, script reloading or error paths should be checked for memory errors
   of its closed pull request, otherwise that of the pull request that adds
   the line; that number is added by amending the commit after the pull
   request is created.  The commit that adds lines is titled
-  `Vim patches that are not imported`.  When a declined commit is imported
-  later, its line is removed.
+  `Vim patches that are not imported`.  Its message names each commit by
+  its number or hash, not as a range, together with the ViAI patch that
+  makes the same change when there is one.  When a declined commit is
+  imported later, its line is removed.
 - **A bug that also occurs in Vim is fixed in ViAI** and reported to Vim
   with an issue, not with a pull request.  The ViAI patch refers to the
   issue with `related: vim/vim#NNNNN`.  Documentation fixes are handled the
