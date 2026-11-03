@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Oct 30
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 03
 
 
 		  VIAI REFERENCE MANUAL
@@ -238,12 +238,6 @@ messages from Vim keep their numbers.
 
 ==============================================================================
 8. Default values				*viai-defaults*
-
-These default values differ from Vim:
-
-|t_AU| and |t_8u|
-	The parameters of the underline color (SGR 58) are separated with
-	colons instead of semicolons, see |xterm-true-color|.
 
 ==============================================================================
 9. Function interface				*viai-functions*
