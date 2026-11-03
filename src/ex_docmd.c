@@ -4331,6 +4331,7 @@ ex_command_attrs(dict_T *d, long_u argt, cmd_addr_T addr_type, long def)
     };
     char	*nargs;
     char	*range;
+    char	numbuf[NUMBUFLEN];
     long	count = -1;
 
     if (!(argt & EX_EXTRA))
@@ -4343,15 +4344,16 @@ ex_command_attrs(dict_T *d, long_u argt, cmd_addr_T addr_type, long def)
 	nargs = (argt & EX_ARGSPACE) ? "_" : "1";
     dict_add_string(d, "nargs", (char_u *)nargs);
 
-    // "N" is a count in the place of the range, as with "-range=N".
     if (!(argt & EX_RANGE))
 	range = "";
     else if (argt & EX_DFLALL)
 	range = "%";
     else if (def >= 0 && !(argt & EX_COUNT))
     {
-	range = "N";
-	count = def;
+	// "-range=N": the default count in the place of the range, as listed
+	// by ":command".
+	vim_snprintf(numbuf, sizeof(numbuf), "%ld", def);
+	range = numbuf;
     }
     else
 	range = ".";

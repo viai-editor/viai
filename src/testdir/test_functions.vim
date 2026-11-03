@@ -2642,7 +2642,7 @@ func Test_getinfo()
   command! -range MyRangeLine echo 5
   command! -range=3 MyRangeCount echo 6
   command! -count MyCount echo 7
-  call assert_equal([['', -1], ['.', -1], ['N', 3], ['.', 0]],
+  call assert_equal([['', -1], ['.', -1], ['3', -1], ['.', 0]],
         \ ['MyRangeNone', 'MyRangeLine', 'MyRangeCount', 'MyCount']
         \ ->map({_, c -> [getinfo('command', c).range,
         \                 getinfo('command', c).count]}))

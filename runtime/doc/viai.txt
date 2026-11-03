@@ -242,12 +242,6 @@ messages from Vim keep their numbers.
 ==============================================================================
 9. Function interface				*viai-functions*
 
-These functions differ from Vim in their arguments or return values:
-
-|getinfo()|
-	For an Ex command "range" is always a String and "count" always a
-	Number, -1 when a count is not allowed.
-
 ==============================================================================
 10. Additional features				*viai-additional-features*
 
