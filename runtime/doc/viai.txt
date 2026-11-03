@@ -272,6 +272,11 @@ ViAI has these features that Vim does not have:
 	When they are empty and the terminal answers that it supports the
 	curly underline, they are set, see |terminalprops()|.
 
+|:TOhtml| with text properties
+	The highlighting and the virtual text of |text-properties| are
+	included in the HTML, see |g:html_ignore_textprop|.  The "v" flag
+	of |g:html_prevent_copy| makes the virtual text uncopyable.
+
 ==============================================================================
 11. License					*viai-license*
 
