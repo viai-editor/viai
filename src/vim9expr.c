@@ -2742,7 +2742,8 @@ compile_subscript(
 	    if (keeping_dict)
 	    {
 		keeping_dict = FALSE;
-		if (generate_instr(cctx, ISN_CLEARDICT) == NULL)
+		if (cctx->ctx_skip != SKIP_YES
+			&& generate_instr(cctx, ISN_CLEARDICT) == NULL)
 		    return FAIL;
 	    }
 	}
@@ -2924,7 +2925,8 @@ compile_subscript(
 	    if (keeping_dict)
 	    {
 		keeping_dict = FALSE;
-		if (generate_instr(cctx, ISN_CLEARDICT) == NULL)
+		if (cctx->ctx_skip != SKIP_YES
+			&& generate_instr(cctx, ISN_CLEARDICT) == NULL)
 		    return FAIL;
 	    }
 	}
@@ -2998,7 +3000,8 @@ compile_subscript(
 	    if (keeping_dict)
 	    {
 		keeping_dict = FALSE;
-		if (generate_instr(cctx, ISN_CLEARDICT) == NULL)
+		if (cctx->ctx_skip != SKIP_YES
+			&& generate_instr(cctx, ISN_CLEARDICT) == NULL)
 		    return FAIL;
 	    }
 	    if (cctx->ctx_skip != SKIP_YES
@@ -3043,7 +3046,8 @@ compile_subscript(
 		    semsg(_(e_syntax_error_at_str), *arg);
 		    return FAIL;
 		}
-		if (keeping_dict && generate_instr(cctx, ISN_CLEARDICT) == NULL)
+		if (keeping_dict && cctx->ctx_skip != SKIP_YES
+			&& generate_instr(cctx, ISN_CLEARDICT) == NULL)
 		    return FAIL;
 		if (generate_STRINGMEMBER(cctx, *arg, p - *arg) == FAIL)
 		    return FAIL;
