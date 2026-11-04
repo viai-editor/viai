@@ -26,7 +26,8 @@ released in 1988, the year in which Bram Moolenaar started writing Vim.
 
 ## Development policy
 
-* Bundling the two plugins above with ViAI is planned.
+* The two plugins above come with ViAI as optional packages, see
+  `:help package-lsp.vim`.
 * ViAI adds features of its own, while keeping compatibility with Vim as far
   as possible.
 * The patches of Vim are imported into ViAI as a rule.

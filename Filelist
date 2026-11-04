@@ -38,6 +38,7 @@ SRC_ALL =	\
 		ci/remove_snap.sh \
 		ci/setup-weston.sh \
 		ci/setup-xvfb.sh \
+		tools/sync-plugins.sh \
 		tools/update-included-patches.sh \
 		tools/viai_logo.py \
 		tools/vim-patch.sh \
@@ -870,6 +871,12 @@ RT_ALL =	\
 		runtime/pack/dist/opt/helptoc/plugin/helptoc.vim \
 		runtime/pack/dist/opt/hlyank/plugin/hlyank.vim \
 		runtime/pack/dist/opt/justify/plugin/justify.vim \
+		runtime/pack/dist/opt/lsp.vim/LICENSE \
+		runtime/pack/dist/opt/lsp.vim/autoload/*.vim \
+		runtime/pack/dist/opt/lsp.vim/autoload/lsp/*.vim \
+		runtime/pack/dist/opt/lsp.vim/doc/lsp.txt \
+		runtime/pack/dist/opt/lsp.vim/doc/tags \
+		runtime/pack/dist/opt/lsp.vim/plugin/lsp.vim \
 		runtime/pack/dist/opt/matchit/plugin/matchit.vim \
 		runtime/pack/dist/opt/matchit/doc/matchit.txt \
 		runtime/pack/dist/opt/matchit/doc/tags \
@@ -878,6 +885,13 @@ RT_ALL =	\
 		runtime/pack/dist/opt/shellmenu/plugin/shellmenu.vim \
 		runtime/pack/dist/opt/swapmouse/plugin/swapmouse.vim \
 		runtime/pack/dist/opt/termdebug/plugin/termdebug.vim \
+		runtime/pack/dist/opt/vim9ls/LICENSE \
+		runtime/pack/dist/opt/vim9ls/autoload/*.vim \
+		runtime/pack/dist/opt/vim9ls/autoload/vim9ls/*.vim \
+		runtime/pack/dist/opt/vim9ls/bin/vim9ls \
+		runtime/pack/dist/opt/vim9ls/bin/vim9ls.cmd \
+		runtime/pack/dist/opt/vim9ls/doc/tags \
+		runtime/pack/dist/opt/vim9ls/doc/vim9ls.txt \
 		runtime/pack/dist/opt/netrw/LICENSE.txt \
 		runtime/pack/dist/opt/netrw/README.md \
 		runtime/pack/dist/opt/netrw/autoload/netrw.vim \

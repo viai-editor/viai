@@ -1,0 +1,432 @@
+*vim9ls.txt*	A language server for Vim script, run by Vim itself
+
+Author:  Hirohito Higashi <h.east.727@gmail.com>
+License: Vim license, see |license|
+
+==============================================================================
+CONTENTS					*vim9ls-contents*
+
+1. Introduction				|vim9ls-introduction|
+2. Requirements				|vim9ls-requirements|
+3. Installation				|vim9ls-installation|
+4. Setup				|vim9ls-setup|
+5. What it does				|vim9ls-features|
+6. Environment				|vim9ls-environment|
+7. Development				|vim9ls-development|
+
+==============================================================================
+1. Introduction					*vim9ls-introduction*
+
+vim9ls is a language server for |Vim9| script and legacy Vim script.  It is
+written in Vim9 script and runs in a Vim of its own, so it answers from what
+that Vim knows: its builtin functions, options and commands, its help files,
+and the plugins you already have.  A new function or option is there as soon
+as Vim has it, since nothing is copied out of Vim.  Nothing else needs to be
+installed.
+
+The diagnostics come from reading the script line by line, which runs
+nothing in it.  A Vim that has ":source ++dryrun" reads the script as well,
+compiles its |:def| functions and reports what it finds there.  Vim itself
+no longer has it, see |vim9ls-checker|.  ViAI has it, with fail-safes, and
+is recommended for vim9ls.
+
+==============================================================================
+2. Requirements					*vim9ls-requirements*
+
+ViAI 1.0 or later with the |+channel| and |+job| features (recommended).
+	https://github.com/viai-editor/viai
+Vim 9.2.1160 or later with the |+channel| and |+job| features, where vim9ls
+has no checker.
+
+What those patches are for:
+9.2.1160: |getinfo()| gives the names and the types of the arguments in
+          the signature help of a builtin
+9.2.1055: lets a function holding a lambda compile after an earlier one
+          failed, which the checker relies on
+9.2.1049: adds |--stdio-channel|, which is how the server talks to a client
+          on stdin and stdout
+
+The Vim that runs the server does not have to be the one that is editing, but
+with lsp.vim it is: |vim9ls#Command()| names |v:progpath|.
+
+==============================================================================
+3. Installation					*vim9ls-installation*
+
+With a plugin manager, with vim-plug for instance: >vim9
+
+	Plug 'h-east/vim9ls'
+<
+Or put it under a |packages| directory as "pack/*/opt/vim9ls", which does not
+load on its own, and add this to your |vimrc|: >vim9
+
+	packadd! vim9ls
+<
+
+==============================================================================
+4. Setup					*vim9ls-setup*
+
+Any LSP client that talks stdio can use the server.  lsp.vim is the
+recommended one:
+	https://github.com/h-east/lsp.vim
+
+With lsp.vim ~
+Install it the same way and add an entry for "vim" files to
+|g:lsp_server_list|: >
+	{filetypes: ['vim'], name: 'vim9ls', cmd: function('vim9ls#Command')}
+lsp.vim calls the Funcref when the server starts, so vim9ls does not have to
+be in 'runtimepath' yet when the vimrc is read.
+The server takes on every workspace folder the client adds, so lsp.vim starts
+one server, and the server one checker, however many projects the files come
+from.
+
+						*vim9ls#Command()*
+vim9ls#Command() returns the command that starts the server with the Vim it is
+called in.  On MS-Windows it names vim.exe or viai.exe when called from
+gvim.exe or gviai.exe.  It throws when that Vim lacks |+channel| or |+job|, or
+is older than 9.2.1160.
+
+With another LSP client ~
+Point the client at bin/vim9ls (bin/vim9ls.cmd on MS-Windows), a script that
+starts the server with "vim" from $PATH.  $VIM9LS_VIM names another Vim; to
+run it with ViAI, set it to "viai".  What it runs is >
+	vim --clean --stdio-channel -S /path/to/autoload/vim9ls.vim
+and the server talks to the client on stdin and stdout, which every client
+supports.  See |--stdio-channel|.
+
+Initialization options ~
+				*vim9ls-initializationOptions* *vim9ls-options*
+The client can give these in "initializationOptions" of "initialize":
+	workspace.maxFiles	The most "*.vim" files of the workspace
+				folders that workspace diagnostics read, at
+				least 1.  Another value is told about with a
+				log message and the default is used.
+				Default: 4096.
+With lsp.vim they go in the entry of |g:lsp_server_list|: >
+	initializationOptions: {workspace: {maxFiles: 8192}}
+<
+==============================================================================
+5. What it does					*vim9ls-features*
+
+Positions are counted the way the client asks for at initialize: "utf-8"
+when it offers that, which needs no conversion, "utf-16" otherwise.
+
+Hover ~
+The help entry for the builtin function, option, Ex command or "v:" variable
+under the cursor, as Vim's help has it.  An option is recognized after "&" and
+in a ":set" command, a command at the start of a statement.  Variables and
+functions of the script itself have no help and give nothing.
+This is for editors other than Vim.  In Vim, |K| opens the same entry in a
+help window, which is the better place to read it.  The help goes out as it
+stands, not turned into Markdown.
+
+Completion ~
+Builtin functions, plus the functions, variables, classes and other names the
+script defines.  After "&" and in a ":set" command: options.  At the start of
+a statement: Ex commands as well.  "v:" variables after "v:".  After "g:",
+"s:", "b:", "w:" or "t:": the variables of that scope the document uses.
+After a ".": the exported names of the imported script when the name before
+it is the alias of an import, the members of a class or an enum when it is
+their name, of the class a variable is declared with or made with
+"Class.new()", of the class around "this", and the functions defined as
+"function s:obj.Method()" after "s:obj."; "." brings the menu on there and
+gives nothing elsewhere.  After "foo#bar#": the functions of
+autoload/foo/bar.vim and the files below it as "foo#bar#name#".
+After "->": the builtin functions that can be called as a |method|, the
+functions of the script that take an argument, and the Funcref variables of
+the script; ">" brings the menu on there and gives nothing elsewhere.  A
+global function a plugin defines is not among them: it is known to the Vim
+that is editing, not to the document or to Vim itself.
+The word typed is matched the way |matchfuzzy()| does, "l2s" for
+"list2str()", and the client narrows the items down further, see
+'completeopt'.  A scope, "g:", and an autoload head, "foo#bar#", are matched
+as they are: "g:cn" gives "g:CamelName", "cn" does not.
+In the argument of a command that takes no expression, ":set completeopt="
+for one: nothing, since the current value of an option, file names and the
+like are the client's.  A client that declares "cmdlineCompletion" in its
+experimental capabilities is asked to complete it the way |i_CTRL-X_CTRL-V|
+does, see |vim9ls-cmdline-completion|; lsp.vim does that, see
+|lsp-cmdline-completion|.  "=", "," and a space bring the menu on there, a
+space for the name of an option as well, and give nothing elsewhere.
+The help entry of a builtin comes with "completionItem/resolve", for the item
+the client asks about: its first line as the detail, the rest as the
+documentation.
+
+			*vim9ls-experimental* *vim9ls-cmdline-completion*
+A client takes this on by setting "cmdlineCompletion" to |true| in
+"capabilities.experimental" of "initialize", and is then answered there with
+a CompletionList with no items and "cmdlineCompletion" set to |true|.  It
+completes the text of the line before the cursor, with |getcompletion()| and
+"cmdline" in Vim, and puts in what a match has after the text typed: a match
+may start before the word, "src/ma" giving "src/main.c".
+
+Document symbols ~
+The functions, variables, constants, classes with their members, enums with
+their values, interfaces, augroups, imports and user commands of the script,
+nested the way they are written.  Legacy "function" and Vim9 "def" both count.
+
+Workspace symbols ~
+The same names, searched by the text the client asks with, without regard to
+case.  Looked in are the open documents, the scripts of the plugin each open
+document belongs to, and the autoload and plugin files on 'runtimepath' of the
+Vim the server runs in.  A name inside a class or an enum comes with the name
+around it.  The search answers with at most 256 names; an empty search text
+with the names of the open documents alone, since every script on
+'runtimepath' would be read for it.
+
+Folding ranges ~
+A range for each function, class, interface, enum, augroup and user command,
+for the block of an "if", "while", "for" or "try", and for a run of comment
+lines or of imports.  A range ends on the line that closes it, so ":enddef"
+is folded away with the function it ends; one that never closes reaches the
+end of the document.  Only ranges of two lines or more are reported, a fold
+that hides nothing being of no use.
+
+Selection ranges ~
+The ranges a selection grows through at a position, from the name under the
+cursor outwards: the text between the quotes of a string and the string with
+them, the text between brackets and the brackets with the name of the call
+in front of them, the statement with the lines it carries on over, the branch
+of each block the position stands in and that block with its header and its
+end, and last the whole document.  A range no wider than the one inside it
+is left out, so a block of one line is one step, not two.
+
+Type definition ~
+From a name to the class, interface or enum it is typed with: the type it
+declares, or the one its initializer comes to.  A type inside another, the
+"Shape" of "list<Shape>", counts as well, and the name of a class leads to the
+class itself.  The type of another script is followed through the alias of the
+import it comes from.  A type of Vim's own, "string" or "list<number>", has
+nothing to go to.
+
+Implementation ~
+From an interface to the classes that "implements" it, and from a class to
+the ones that "extends" it, whether it is abstract or not.  From a method of
+an interface or an abstract class to the method of the same name in each of
+them.  What names the type itself is what counts: a class extending one of
+the classes found is not among them.  Looked in are the same scripts a
+workspace search reads.  Ask from the line that declares the interface, the
+class or the method.
+
+Type hierarchy ~
+A class, an interface or an enum starts one, asked for from the line that
+declares it.  Above it are the class it "extends" and the interfaces it
+"implements", an interface being able to extend another and an enum to
+implement one; below it are the types that name it in their header, the same
+ones the implementation of it leads to.  Each answer is one step: the client
+asks again for the next.  A name that leads nowhere, a type of a script that
+is neither imported nor open, is left out.
+
+Formatting ~
+The indent of every line, as the indent script of Vim itself lays it out,
+with 'tabstop', 'shiftwidth' and 'expandtab' set to what the client asks for
+in "tabSize" and "insertSpaces".  Nothing else of the text is moved: Vim has
+no other way of its own to lay out a script.  The blanks at the end of a
+line, the newline at the end of the document and the empty lines before it
+are seen to where the client asks for that as well.  A range is taken by
+whole lines, the columns of it having no use for an indent.
+The answer is one change per line that differs, so a document that is
+already laid out comes back with nothing to do.  A whole script takes its
+time: what is asked for is what ":normal gg=G" does, and that is Vim script
+reading every line.
+
+Definition, references and rename ~
+For the names the script defines: functions, variables and parameters, classes
+and their members, enum values, imports and user commands.  A name is looked
+up from where it is used: the innermost function that declares it wins, so a
+local hides a script variable of the same name.  A member counts only after a
+".", and a function named in a string ("function('Name')") counts as a use; a
+variable named in a string does not.  On the line that declares a name, with
+a type after it or not, a member as well, the name itself is found, so all of
+these work from there too.
+Under Vim9 rules "s:Name" and "Name" are the same script-local name; in legacy
+script they are two different functions.
+Definition also follows an import: "alias.Name" goes to the exported name in
+the imported script, and the alias itself to that file.  A relative import is
+found next to the script, an autoload import in the autoload directories above
+it and in $VIMRUNTIME.  A legacy "foo#bar#Func()" goes to autoload/foo/bar.vim
+the same way.
+References and rename follow an exported name and a legacy autoload function
+into the other scripts: those of the plugin the defining script belongs to
+and the open documents.  The plugin is the directory above its autoload,
+plugin, ftplugin, import, syntax or indent directory, or else the nearest
+directory above it with an autoload or plugin directory.  A use is the name
+after the alias of an import of that script, or the autoload name
+"foo#bar#Func" spelled out, also in a string.  Scripts elsewhere on
+'runtimepath', and a name put together at runtime, are not found.
+Rename changes the name proper and leaves a "s:" or "<SID>", or the "foo#bar#"
+of an autoload name, in place.  A name that is not defined in the document
+and not shared by the script that defines it, a builtin for one, cannot be
+renamed.
+Under Vim9 rules a variable declared inside a block, an "if", "while", "for"
+or "try" with each of its branches, is seen from its declaration to the end
+of that block, so two blocks may declare the same name and are told apart.
+A block of its own, "{" to "}", is not told apart from what holds it.
+
+Document highlight marks the other uses of the name in the document alone,
+which is what an editor colors in the buffer it has open.  A declaration and
+an assignment ("x = 1", "x += 1") are reported as a write, everything else as
+a read.  A builtin function or a "v:" variable is marked by name, since the
+parser does not track what Vim itself defines.
+
+Signature help ~
+Inside a call, the signature of the function with the argument the cursor is
+in marked: for a builtin the first line of its help entry, with the rest of
+the entry as documentation, for a function of the script or an imported one
+its "def" or "function" line.  After "->" the value in front counts as the
+first argument.  A call that started up to 32 lines above the cursor is found.
+The signature of a builtin is built from what |getinfo()| reports: the names
+of the arguments, how many there are and which are optional, the types each
+accepts, "{expr}: string | list<any>", the return type after the ")", and the
+argument the value before "->" fills, which for append() is the second.  An argument Vim does not name, the second
+of getreg(), or that accepts several types and is named after one of them,
+"{list}" of get(), is shown as "{argN}", N being its number.
+
+Inlay hints ~
+The type of a "var" that leaves it to the initializer, shown after the name
+as the Vim9 compiler infers it: from the literals, operators, indexing and
+lambdas of the initializer, the declared types of the variables and
+parameters in scope, the "def" lines of the script's functions, and for a
+builtin what |getinfo()| reports.  An initializer that goes on over lines is
+read to its end.  A type that cannot be told gives no hint.
+And the name of the parameter in front of each argument of a call, "start:",
+from what signature help knows: the help entry of a builtin, the definition
+of a function of the script.  The argument the value before "->" fills gets
+none, nor does one that is the name itself, nor one signature help would
+show as "{argN}", nor one of a builtin named after its type, "{string}" of
+strlen().
+
+Code actions ~
+A quick fix for a diagnostic the client sends along with the request, one of
+the parser or one Vim reported: ":let" under Vim9 rules becomes "var" when it
+declares the variable and goes when the variable is there already or has a
+scope; the end a block lacks, "endif" for one, is put in where the
+indentation of the block stops; an end without a start is removed; a
+parameter that is not used is named "_".
+
+Diagnostics ~
+Reported when a document is opened and after its changes pause, or, to a
+client that pulls them with "textDocument/diagnostic", when it asks and on
+save:
+- a block that is not closed ("if" without "endif", "def" without "enddef",
+  and so on) and an end without a start, with the error Vim would give; an
+  "endif", "endwhile", "endfor", "endtry", "else", "elseif", "catch" or
+  "finally" out of place under Vim9 rules is left to Vim when there is a
+  checker, see below;
+- ":let" under Vim9 rules; when there is a checker, only after |:vim9cmd| in
+  legacy script, elsewhere Vim reports it, see below.  A statement after
+  |:legacy| or |:vim9cmd| follows the rules these name;
+- in legacy script, a word at the start of a statement that is not a command,
+  as a warning; an assignment, a call or a user command does not count.  Under
+  Vim9 rules a statement may start with any expression, so nothing is reported
+  there;
+- in legacy script, a call of a function that is not defined: a builtin Vim
+  does not have, a script-local function the script does not define, a
+  legacy autoload function its file does not have.  A global function may be
+  defined anywhere and is left alone, and so is a call in a pattern, in keys,
+  in the value of an option or in the arguments of a user command.  Under Vim9
+  rules only the checker has Vim report these, see below, all but an autoload
+  function, which Vim looks up only when it is called: that one is reported
+  here too;
+- in legacy script, a "v:" variable Vim does not have;
+- a variable or a parameter of a ":def" function whose name does not come up
+  again after it is declared, as a hint with the "unnecessary" tag, which an
+  editor may show faded.  An assignment counts as a use, and so does the name
+  in an expression of an interpolated string or of a heredoc that evaluates.
+  "_" is left alone, and so are a variable of the script, which another
+  script may use, and what a legacy "function" declares.
+The reading is line by line and does not run the script.
+
+						*vim9ls-checker*
+At the same time a Vim that has ":source ++dryrun" reads the document itself.
+Vim 9.2.1084 added ":source ++dryrun" and 9.2.1184 removed it again: what Vim
+skips while it reads a script, a heredoc among others, is not always what it
+leaves unexecuted, and a script made for that can have commands run.  The
+same holds for a plain ":source", so in a Vim without the dry run there is no
+checker and only the reading above reports.  ViAI has ":source ++dryrun" with
+fail-safes: what would still run gives an error, so ViAI has the checker.
+
+The checker, a Vim of its own that the server starts once and keeps, reads
+the text under the file's own name, so that a relative import is found, with
+":source ++dryrun": what the script defines is defined, nothing in it runs,
+and every ":def" is compiled.  In a |vim9script| file the script level goes
+along once more as the body of a function, so that it is compiled as well; a
+declaration is checked against its type.  A user command is left out, there
+and in a function: the checker's Vim loads no plugins and would not know it.
+The server does not wait for the checker, it goes on answering the client and
+sends the diagnostics once the checker has answered.  What Vim reports is
+added, each on the line it is about: a type mismatch, a name that is not
+found, an argument too many.  A script it imports is read again once it has
+changed: at once when it was saved or the client reports the change, otherwise
+at a check two seconds or more after the last look.
+Vim does not read the keys of a mapping, an abbreviation or a menu.  In a
+|vim9script| file the checker looks up a call there with |getinfo()| where
+the keys find it when typed, and reports a function that is not found and a
+wrong number of arguments.  A capitalized name found nowhere is left alone,
+another script may define it.
+What a legacy "function" does is not read until it is called, and neither is
+a mapping or an autocommand.  A dry run does not execute ":let", so the
+Dictionary of "function s:obj.Method()" does not exist; the checker reads
+such a function under a name of its own.  A :def that uses a script
+variable made by ":let" without "s:" is not reported for it.  A dry run
+does not evaluate the value of a static class variable nor the arguments
+of the values of an enum; the checker has them compiled all the same.
+Nor does it run ":execute" and ":source".  A list of heredocs that is run at
+the script level with `execute join(lines, "\n")`, or written with
+|writefile()| and sourced, is read in place of that command: a function made
+that way is found, and an error in it is reported on the line of the heredoc.
+Every heredoc added to the list is read, even one that the script adds only
+under a condition.  A list with anything else in it, such as a heredoc that
+evaluates, is not read.
+
+Workspace diagnostics ~
+A client that asks with "workspace/diagnostic" is told about the "*.vim" files
+under the workspace folders that are not open, at most as many as
+"workspace.maxFiles" of |vim9ls-options|; with more it is told how many there
+are.  The request is kept open and each script goes out as a partial result:
+what the parser finds, then, when there is a checker, that with what the
+checker reports, which reads them after the open documents.  With a token for
+the work done in the request, the client is told how far the first reading
+has got, every tenth of it, until what the checker reports is in; with nothing
+to read, the work begins and ends at once.  A script is
+read again when a document whose name it contains is saved, when it was open
+and is closed, when the folders change, and when the client reports it
+changed: the server asks the client to watch every "*.vim" file, where the
+client takes that.  With lsp.vim, use |:LspWorkspaceDiag|.
+
+What was found in the scripts is kept in a file for each workspace folder, in
+"$XDG_CACHE_HOME/vim9ls", "~/.cache/vim9ls" when that is not set, and in
+"$LOCALAPPDATA/vim9ls" on MS-Windows.  A server started again reports a
+script whose time and size are the same from there, without reading it, even
+when what it imports has changed.  All of a folder is read again when the
+version of vim9ls or Vim, the time of the Vim executable or the position
+encoding is not the one it was kept with.
+
+The command "vim9ls.reloadWorkspace" of "workspace/executeCommand" has every
+script read again, as if nothing was kept.  With lsp.vim: >
+	:LspExecuteCommand vim9ls.reloadWorkspace
+
+==============================================================================
+6. Environment					*vim9ls-environment*
+
+$VIM9LS_LOG	When not empty, the server appends its channel log to
+		"vim9ls_{pid}.log", {pid} being the process ID of the server,
+		in $TEMP on MS-Windows and in $TMPDIR or "/tmp" elsewhere.
+		See |ch_logfile()|.  Requests, responses and the errors the
+		server ran into end up there.  The client is told where the
+		log is with a log message, or, when the file cannot be
+		opened, with a warning; the server still runs then.
+
+$VIM9LS_VIM	The Vim that bin/vim9ls starts.  Default: "vim" from $PATH.
+
+==============================================================================
+7. Development					*vim9ls-development*
+
+The tests are in test/ and run with: >
+	cd test && ./run
+	VIMPROG=/path/to/vim ./run
+	TEST_FILTER=hover ./run
+The Vim they run in is also the server they start, so it needs what the
+server needs, see |vim9ls-requirements|.  Unit tests read the parser and the
+conversions directly; the server tests start the server and talk LSP to it.
+
+ vim:tw=78:ts=8:noet:ft=help:norl:

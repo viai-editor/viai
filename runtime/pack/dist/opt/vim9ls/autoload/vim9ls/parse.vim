@@ -1,0 +1,843 @@
+vim9script
+
+# vim9ls - a line-oriented reading of a Vim script
+# Maintainer: Hirohito Higashi <h.east.727@gmail.com>
+#
+# What the server needs is the shape of a script, not its meaning: which
+# functions, variables, classes and groups it defines, where each block starts
+# and ends, and where the blocks do not add up.  Every line is read on its
+# own; expressions are left alone.  Vim itself resolves the command names,
+# through fullcommand(), so abbreviations come out right.
+
+import autoload './util.vim'
+
+# LSP SymbolKind values.
+export const KIND_MODULE = 2
+export const KIND_NAMESPACE = 3
+export const KIND_CLASS = 5
+export const KIND_METHOD = 6
+export const KIND_FIELD = 8
+export const KIND_ENUM = 10
+export const KIND_INTERFACE = 11
+export const KIND_FUNCTION = 12
+export const KIND_VARIABLE = 13
+export const KIND_CONSTANT = 14
+export const KIND_ENUM_MEMBER = 22
+
+# LSP DiagnosticSeverity values.
+export const SEVERITY_ERROR = 1
+export const SEVERITY_WARNING = 2
+export const SEVERITY_HINT = 4
+# LSP DiagnosticTag value.
+export const TAG_UNNECESSARY = 1
+
+# "<SID>" in any case, as Vim takes it.
+export const SID = '<[sS][iI][dD]>'
+
+# Commands that only qualify the command after them.
+const MODIFIERS = {
+  aboveleft: 1, belowright: 1, botright: 1, browse: 1, confirm: 1, hide: 1,
+  horizontal: 1, keepalt: 1, keepjumps: 1, keepmarks: 1, keeppatterns: 1,
+  legacy: 1, lockmarks: 1, noautocmd: 1, noswapfile: 1, sandbox: 1,
+  silent: 1, tab: 1, topleft: 1, unsilent: 1, verbose: 1, vertical: 1,
+  vim9cmd: 1,
+  export: 1, static: 1, public: 1, abstract: 1, protected: 1,
+}
+
+# The error Vim gives for each way of getting a block wrong.
+const MISSING_END = {
+  def: 'E1057: Missing :enddef', function: 'E126: Missing :endfunction',
+  if: 'E171: Missing :endif', while: 'E170: Missing :endwhile',
+  for: 'E170: Missing :endfor', try: 'E600: Missing :endtry',
+  class: 'Missing :endclass', enum: 'E1420: Missing :endenum',
+  interface: 'Missing :endinterface', augroup: 'Missing :augroup END',
+}
+const END_WITHOUT_START = {
+  enddef: 'E193: :enddef not inside a function',
+  endfunction: 'E193: :endfunction not inside a function',
+  endif: 'E580: :endif without :if', endwhile: 'E588: :endwhile without :while',
+  endfor: 'E588: :endfor without :for', endtry: 'E602: :endtry without :try',
+  endclass: ':endclass without :class', endenum: ':endenum without :enum',
+  endinterface: ':endinterface without :interface',
+  else: 'E581: :else without :if', elseif: 'E582: :elseif without :if',
+  catch: 'E603: :catch without :try', finally: 'E606: :finally without :try',
+}
+const CLOSES = {
+  enddef: 'def', endfunction: 'function', endif: 'if', endwhile: 'while',
+  endfor: 'for', endtry: 'try', endclass: 'class', endenum: 'enum',
+  endinterface: 'interface',
+}
+const CONTINUES = {else: 'if', elseif: 'if', catch: 'try', finally: 'try'}
+# What Vim itself reports, on the same line, when it is out of place in code
+# it compiles: the checker, when there is one, has it reported there.
+const VIM_REPORTS = {endif: 1, endwhile: 1, endfor: 1, endtry: 1, else: 1,
+  elseif: 1, catch: 1, finally: 1}
+# Whether there is a checker, see compile.vim.
+const CHECKER = util.DRYRUN
+const OPENS = {if: 1, while: 1, for: 1, try: 1}
+const DECLARES = {var: 1, const: 1, final: 1, let: 1}
+# Commands that take a script in another language as a heredoc.
+const LANGUAGES = {python: 1, python3: 1, pythonx: 1, py3: 1, pyx: 1,
+  perl: 1, lua: 1, ruby: 1, tcl: 1, mzscheme: 1}
+# Commands that take the rest of the line, bars included; see ":help :bar".
+# A mapping is not one of them.
+const TAKES_REST = {command: 1, autocmd: 1, normal: 1, global: 1, vglobal: 1,
+  windo: 1, bufdo: 1, argdo: 1, tabdo: 1, cdo: 1, cfdo: 1, ldo: 1, lfdo: 1,
+  folddoopen: 1, folddoclosed: 1, help: 1, sign: 1, terminal: 1}
+const TYPES = {class: KIND_CLASS, interface: KIND_INTERFACE, enum: KIND_ENUM}
+# A line of ":append", ":change" or ":insert", after a range of numbers,
+# marks and the like.
+const APPEND = '^\s*\%(:\s*\)*\%([-+0-9.$%,;]\|''.\)*\s*'
+  .. '\%(a\%[ppend]\|c\%[hange]\|i\%[nsert]\)!\=\%(\s\||\|$\)'
+
+# A heredoc after the name of the variable, "=<< [trim] [eval] {endmarker}",
+# the end marker as the match: no white space in it, and not starting with a
+# lower case letter.  See ":help :let-heredoc".  A comment may follow it,
+# with '"' in legacy script and "#" under Vim9 rules.
+const HEREDOC_MARKER = '\s*=<<\%(\s\+trim\)\=\%(\s\+eval\)\=\s\+'
+  .. '\zs[^a-z[:space:]]\S*\ze'
+const HEREDOC = HEREDOC_MARKER .. '\%(\s\+".*\)\=\s*$'
+const HEREDOC_VIM9 = HEREDOC_MARKER .. '\%(\s\+#.*\)\=\s*$'
+# The name a declaration gives a heredoc, with a type after it under Vim9
+# rules, or the option, environment variable or register ":let" assigns it
+# to.  A type has no "=" or quote, which a string holding "=<<" has.
+const HEREDOC_NAME = '^\%(\%([sgbwtlv]:\)\=\h\w*\|&\%([lg]:\)\=\h\w*\|\$\h\w*'
+  .. '\|@.\)\%(\s*:\s*[^=''"]\{-1,}\)\='
+
+# The commands that shape a script; every other command is left alone.
+const SHAPING = extend({
+  def: 1, function: 1, augroup: 1, import: 1, command: 1, vim9script: 1,
+}, MODIFIERS)->extend(OPENS)->extend(CLOSES)->extend(CONTINUES)
+  ->extend(DECLARES)->extend(TYPES)
+
+# fullcommand() costs more than a lookup, and the same words come up again
+# and again.
+var commands: dict<string> = {}
+
+# The command "word" stands for, expanded; empty when it is not one.  A
+# command name has no underscore: for "for_buf" fullcommand() would settle
+# for "for".
+export def CommandOf(word: string): string
+  if !commands->has_key(word)
+    commands[word] = word =~ '_' ? '' : fullcommand(word, false)
+  endif
+  return commands[word]
+enddef
+
+# Whether "word" only qualifies the command after it.
+export def IsModifier(word: string): bool
+  return MODIFIERS->has_key(CommandOf(word))
+enddef
+
+# A word followed by one of these is an expression, not a command: an
+# assignment, a call, a method chain, or the tail of a continued line.
+const EXPRESSION_CHARS = '-+*/%.=:#([])},<>?&|!'
+
+# "col" is where the statement starts, "name_col" where the name does.
+def NewSymbol(name: string, kind: number, line: number, col: number,
+    name_col: number, detail: string = ''): dict<any>
+  return {
+    name: name, kind: kind, detail: detail,
+    line: line, col: col, end_line: line,
+    name_col: name_col, name_end: name_col + strlen(name),
+    children: [],
+  }
+enddef
+
+def Diag(line: number, col: number, end_col: number, message: string,
+    severity: number = SEVERITY_ERROR): dict<any>
+  return {line: line, col: col, end_col: end_col, message: message,
+    severity: severity}
+enddef
+
+# The name defined by "def"/"function" arguments, or an empty string for a
+# listing: no "(" after the name and its "{expr}" parts.
+def FunctionName(arg_text: string): string
+  var name = matchstr(arg_text,
+    '^\%(' .. SID .. '\|[sgbwtl]:\)\=\h[[:alnum:]_#.]*')
+  var pos = strlen(name)
+  while strpart(arg_text, pos, 1) == '{'
+    var depth = 0
+    while pos < strlen(arg_text)
+      var c = strpart(arg_text, pos, 1)
+      depth += c == '{' ? 1 : c == '}' ? -1 : 0
+      pos += 1
+      if depth == 0
+        break
+      endif
+    endwhile
+    pos += strlen(matchstr(strpart(arg_text, pos), '^[[:alnum:]_#.]*'))
+  endwhile
+  return stridx(arg_text, '(', pos) < 0 ? '' : name
+enddef
+
+# The variables a "var"/"let"/"const"/"final" statement declares.
+def VariableNames(arg_text: string): list<string>
+  if arg_text =~ '^\['
+    return matchstr(arg_text, '^\[\zs[^]]*')->split('[,;]')
+      ->map((_, s) => matchstr(s, '^\s*\zs\%([sgbwtl]:\)\=\h\w*'))
+      ->filter((_, s) => s != '')
+  endif
+  var name = matchstr(arg_text, '^\%([sgbwtl]:\)\=\h\w*')
+  return name == '' ? [] : [name]
+enddef
+
+# The state of one parse, handed to the functions below.
+def NewState(): dict<any>
+  return {vim9: false, stack: [], top: [], diags: [], heredoc: '',
+    heredoc_let: -1, heredoc_trim: false,
+    heredoc_lines: [], blocks: [], params: null_dict, params_depth: 0}
+enddef
+
+# A heredoc assigned on line "lnum" up to "marker".  Vim ends it at a line
+# that is the marker, with "trim" after the indent of that line.
+def StartLetHeredoc(st: dict<any>, lnum: number, marker: string,
+    text: string)
+  st.heredoc = marker
+  st.heredoc_let = lnum
+  st.heredoc_trim = text =~ '=<<\s\+trim\s'
+enddef
+
+def HeredocEnds(st: dict<any>, lines: list<string>, line: string): bool
+  if st.heredoc_let < 0
+    return line->trim() == st.heredoc
+  endif
+  var indent = st.heredoc_trim ? matchstr(lines[st.heredoc_let], '^\s*') : ''
+  return line == st.heredoc || (indent != '' && stridx(line, indent) == 0
+    && line[len(indent) :] == st.heredoc)
+enddef
+
+def Container(st: dict<any>): list<dict<any>>
+  for i in range(len(st.stack) - 1, 0, -1)
+    if st.stack[i].symbol != null_dict
+      return st.stack[i].symbol.children
+    endif
+  endfor
+  return st.top
+enddef
+
+# Whether the code here follows Vim9 rules: the innermost function decides,
+# then the script.
+def InVim9(st: dict<any>): bool
+  for i in range(len(st.stack) - 1, 0, -1)
+    if st.stack[i].kind == 'def' || st.stack[i].kind == 'class'
+      return true
+    elseif st.stack[i].kind == 'function'
+      return false
+    endif
+  endfor
+  return st.vim9
+enddef
+
+def InKind(st: dict<any>, kind: string): bool
+  return !st.stack->empty() && st.stack[-1].kind == kind
+enddef
+
+def Open(st: dict<any>, kind: string, symbol: dict<any>, lnum: number)
+  add(st.stack, {kind: kind, symbol: symbol, line: lnum, vars: []})
+enddef
+
+# A variable declared under Vim9 rules ("vim9") inside a block or a function
+# is seen from its line to the end of that block.
+def Declared(st: dict<any>, symbol: dict<any>, lnum: number, vim9: bool)
+  if !st.stack->empty() && vim9
+    symbol.scope_start = lnum
+    add(st.stack[-1].vars, symbol)
+  endif
+enddef
+
+def EndScope(entry: dict<any>, lnum: number)
+  for v in entry.vars
+    v.scope_end = lnum
+  endfor
+  entry.vars = []
+enddef
+
+# "report" is false to leave the error to the checker.
+def Close(st: dict<any>, closer: string, lnum: number, col: number,
+    end_col: number, report: bool)
+  var kind = CLOSES[closer]
+  if st.stack->empty() || st.stack[-1].kind != kind
+    # An :endwhile or :endfor in an :if inside a loop is "Missing :endif",
+    # as Vim reports it, and ends the blocks up to its loop, or the :if
+    # blocks when the loop is of the other kind.  Vim gives up at a :try in
+    # between.
+    var loop = st.stack->empty() || st.stack[-1].kind != 'if'
+      || (kind != 'while' && kind != 'for') ? -2 : LoopAt(st, kind)
+    if loop == -2
+      if report
+        add(st.diags, Diag(lnum, col, end_col, END_WITHOUT_START[closer]))
+      endif
+      return
+    endif
+    if report
+      add(st.diags, Diag(lnum, col, end_col, MISSING_END.if))
+    endif
+    while !st.stack->empty() && (loop >= 0
+        ? len(st.stack) > loop + 1 : st.stack[-1].kind == 'if')
+      CloseEntry(st, remove(st.stack, -1), lnum)
+    endwhile
+    if loop < 0
+      return
+    endif
+  endif
+  CloseEntry(st, remove(st.stack, -1), lnum)
+enddef
+
+# The index in the stack of the loop of "kind" around the blocks on top, -1
+# when there is only a loop of the other kind, -2 when there is no loop or
+# a :try comes first.  A function or the like ends the search.
+def LoopAt(st: dict<any>, kind: string): number
+  var other = false
+  for i in range(len(st.stack) - 1, 0, -1)
+    var k = st.stack[i].kind
+    if k == kind
+      return i
+    elseif k == 'try'
+      return -2
+    elseif k == 'while' || k == 'for'
+      other = true
+    elseif k != 'if'
+      break
+    endif
+  endfor
+  return other ? -1 : -2
+enddef
+
+def CloseEntry(st: dict<any>, entry: dict<any>, lnum: number)
+  if entry.symbol != null_dict
+    entry.symbol.end_line = lnum
+  else
+    # A block with no name: a named one keeps its lines in its symbol.
+    add(st.blocks, {line: entry.line, end_line: lnum})
+  endif
+  EndScope(entry, lnum)
+enddef
+
+# Where the type and the default of a parameter end, from byte "pos" of
+# "text": the "," that is not inside brackets or a string, or the end of
+# "text".  In the type "<" and ">" are brackets too, "tuple<number, string>";
+# in the default they compare.
+def ParamEnd(text: string, pos: number): number
+  var depth = 0
+  var in_type = true
+  var quote = ''
+  var escaped = false
+  var byte = pos
+  for c in split(strpart(text, pos), '\zs')
+    if quote != ''
+      if escaped
+        escaped = false
+      elseif quote == '"' && c == '\'
+        escaped = true
+      elseif c == quote
+        quote = ''
+      endif
+    elseif c == '"' || c == "'"
+      quote = c
+    elseif c == '=' && depth == 0
+      in_type = false
+    elseif c == '(' || c == '[' || c == '{' || (in_type && c == '<')
+      depth += 1
+    elseif c == ')' || c == ']' || c == '}' || (in_type && c == '>')
+      depth -= 1
+    elseif c == ',' && depth == 0
+      return byte
+    endif
+    byte += strlen(c)
+  endfor
+  return strlen(text)
+enddef
+
+# The parameters in "text", at "col" of line "lnum", as variables of the
+# function; a legacy script refers to them with "a:".  A header may go on
+# over several lines, "text" is what one line has of it.
+def AddParams(symbol: dict<any>, text: string, lnum: number, col: number,
+    legacy: bool)
+  var pos = 0
+  while true
+    var m = matchstrpos(text, '\h\w*', pos)
+    if m[1] < 0
+      break
+    endif
+    # Skip a type and a default: what follows ":" or "=" up to ",".
+    pos = strpart(text, m[2]) =~ '^\s*[:=]' ? ParamEnd(text, m[2]) : m[2]
+    var param = NewSymbol((legacy ? 'a:' : '') .. m[0], KIND_VARIABLE, lnum,
+      col + m[1], col + m[1])
+    param.param = true
+    add(symbol.children, param)
+  endwhile
+enddef
+
+# Where the parameters in "text" end: the ")" that brings the depth of
+# parentheses, "depth" at the start, to zero.  Returns that index and the
+# depth at the end of "text" when there is no such ")".
+def HeaderEnd(text: string, depth: number): list<number>
+  var d = depth
+  var byte = 0
+  # Indexing a string is by character and counts from its start every time,
+  # so a long line is walked over its characters instead.
+  for c in split(text, '\zs')
+    if c == '('
+      d += 1
+    elseif c == ')'
+      d -= 1
+      if d == 0
+        return [byte, 0]
+      endif
+    endif
+    byte += strlen(c)
+  endfor
+  return [strlen(text), d]
+enddef
+
+# The commands of "text", each with its offset: a bar separates them, but
+# not "||", not "\|" and not one inside a string.  A legacy comment counts as
+# a string that does not end.  A quote after a backslash, "\"", starts none.
+# Under Vim9 rules a "#" after white space starts a comment, which ends the
+# commands.
+def Parts(text: string, vim9: bool): list<list<any>>
+  var parts: list<list<any>> = []
+  # The characters of the line, and the byte the current one starts at: the
+  # offsets go out as columns, which the rest of the parser counts in bytes.
+  var chars = split(text, '\zs')
+  var len = len(chars)
+  var start = 0
+  var byte = 0
+  var quote = ''
+  var i = 0
+  while i < len
+    var c = chars[i]
+    # Whether the character after this one belongs to it.
+    var pair = false
+    if quote != ''
+      if c == quote
+        if quote == "'" && i + 1 < len && chars[i + 1] == "'"
+          pair = true
+        else
+          quote = ''
+        endif
+      elseif quote == '"' && c == '\'
+        pair = true
+      endif
+    elseif (c == "'" || c == '"') && (i == 0 || chars[i - 1] != '\')
+      quote = c
+    elseif vim9 && c == '#' && (i == 0 || chars[i - 1] =~ '\s')
+      break
+    elseif c == '|'
+      if i + 1 < len && chars[i + 1] == '|'
+        pair = true
+      elseif i == 0 || chars[i - 1] != '\'
+        add(parts, [start, strpart(text, start, byte - start)])
+        start = byte + 1
+      endif
+    endif
+    byte += strlen(c)
+    i += 1
+    if pair
+      byte += strlen(chars[i])
+      i += 1
+    endif
+  endwhile
+  add(parts, [start, strpart(text, start)])
+  return parts
+enddef
+
+# Whether the statement "text" starts with a command that takes the rest of
+# the line, so that a bar after it does not separate a command.
+def TakesRest(text: string): bool
+  var rest = text
+  while true
+    var word = matchstr(rest, '^\h\w*')
+    var cmd = CommandOf(word)
+    if cmd == 'autocmd'
+      return AutocmdHasPattern(ArgText(rest, 0, word))
+    endif
+    if word == '' || !MODIFIERS->has_key(cmd)
+      return TAKES_REST->has_key(cmd)
+    endif
+    rest = ArgText(rest, 0, word)
+  endwhile
+  return false
+enddef
+
+# Whether the arguments "arg" of ":autocmd" reach the pattern: a bar before
+# it separates a command, as in "autocmd! | augroup END".  The first word is
+# a group unless it names events.
+def AutocmdHasPattern(arg: string): bool
+  var words = split(arg)
+  if words->empty()
+    return false
+  endif
+  var events = words[0] == '*' || split(words[0], ',')
+    ->indexof((_, e) => !exists('##' .. e)) < 0 ? 0 : 1
+  return len(words) > events + 1
+enddef
+
+# The text of "line" after the word at "col": past a "!" and the blanks.
+def ArgText(line: string, col: number, word: string): string
+  var wlen = strlen(word)
+    + (strpart(line, col + strlen(word), 1) == '!' ? 1 : 0)
+  return strpart(line, matchend(line, '\s*', col + wlen))
+enddef
+
+# Handles one statement, "text" from "col" in its line; "word" is its first
+# word and "cmd" the command that is, when it is one.
+def Statement(st: dict<any>, lnum: number, text: string, col: number,
+    is_first: bool, first_word: string, first_cmd: string)
+  var rest = text
+  var offset = col
+  var word = first_word
+  var cmd = first_cmd
+  var arg_text = ArgText(rest, 0, word)
+
+  # Kept for the "def" below, which an "abstract" leaves without a body.
+  var abstract = false
+  # Whether the statement is read the Vim9 way; "legacy" and "vim9cmd" switch.
+  var is_vim9 = InVim9(st)
+  while MODIFIERS->has_key(cmd)
+    abstract = abstract || cmd == 'abstract'
+    if cmd == 'legacy' || cmd == 'vim9cmd'
+      is_vim9 = cmd == 'vim9cmd'
+    endif
+    offset += strlen(rest) - strlen(arg_text)
+    rest = arg_text
+    word = matchstr(rest, '^\h\w*')
+    if word == ''
+      return
+    endif
+    cmd = CommandOf(word)
+    arg_text = ArgText(rest, 0, word)
+  endwhile
+  var name_col = offset + strlen(rest) - strlen(arg_text)
+
+  if cmd == ''
+    # A word after a modifier that is not a command.
+    if is_first && word[0] >= 'a' && word[0] <= 'z' && !is_vim9
+        && (arg_text == '' || stridx(EXPRESSION_CHARS, arg_text[0]) < 0)
+      add(st.diags, Diag(lnum, offset, offset + strlen(word),
+        'E492: Not an editor command: ' .. word, SEVERITY_WARNING))
+    endif
+    return
+  endif
+
+  if DECLARES->has_key(cmd)
+    # In a Vim9 script the checker, when there is one, has Vim report it.
+    if cmd == 'let' && is_vim9 && (!InVim9(st) || !CHECKER)
+      add(st.diags, Diag(lnum, offset, offset + strlen(word),
+        'E1126: Cannot use :let in Vim9 script'))
+    endif
+    # A heredoc holds text, not statements.
+    var marker = matchstr(arg_text, HEREDOC_NAME
+      .. (InVim9(st) ? HEREDOC_VIM9 : HEREDOC))
+    if marker != ''
+      StartLetHeredoc(st, lnum, marker, arg_text)
+    endif
+    var in_class = InKind(st, 'class') || InKind(st, 'enum')
+    var kind = in_class ? KIND_FIELD
+      : cmd == 'var' || cmd == 'let' ? KIND_VARIABLE : KIND_CONSTANT
+    var detail = arg_text !~ ':' ? ''
+      : matchstr(arg_text, '^[^=:]*:\s*\zs[^=]*\ze\%(\s*=\|$\)')->trim()
+    var container = Container(st)
+    for name in VariableNames(arg_text)
+      if cmd == 'let'
+        # ":let" assigns as well as declares; the first one counts.
+        if arg_text !~ '='
+          continue
+        endif
+        var seen = false
+        for s in container
+          if s.name == name
+            seen = true
+            break
+          endif
+        endfor
+        if seen
+          continue
+        endif
+      endif
+      var symbol = NewSymbol(name, kind, lnum, col,
+        name_col + stridx(arg_text, name), detail)
+      add(container, symbol)
+      if !in_class
+        Declared(st, symbol, lnum, is_vim9)
+      endif
+    endfor
+  elseif cmd == 'def' || cmd == 'function'
+    var name = FunctionName(arg_text)
+    if name == ''
+      return
+    endif
+    var in_class = InKind(st, 'class') || InKind(st, 'interface')
+      || InKind(st, 'enum')
+    var symbol = NewSymbol(name, in_class ? KIND_METHOD : KIND_FUNCTION,
+      lnum, col, name_col, matchstr(arg_text, '(.*'))
+    symbol.legacy = cmd == 'function'
+    add(Container(st), symbol)
+    var params = matchstrpos(arg_text, '(\zs.*')
+    if params[1] >= 0
+      var [stop, depth] = HeaderEnd(params[0], 1)
+      AddParams(symbol, strpart(params[0], 0, stop), lnum,
+        name_col + params[1], symbol.legacy)
+      # Without the ")" the header continues on the next line.
+      if depth > 0
+        st.params = symbol
+        st.params_depth = depth
+      endif
+    endif
+    # A method that is only declared has no body to close.
+    if !InKind(st, 'interface') && !abstract
+      Open(st, cmd, symbol, lnum)
+    endif
+  elseif CLOSES->has_key(cmd)
+    Close(st, cmd, lnum, offset, offset + strlen(word),
+      !is_vim9 || !CHECKER || !VIM_REPORTS->has_key(cmd))
+  elseif CONTINUES->has_key(cmd)
+    if !InKind(st, CONTINUES[cmd])
+      if !is_vim9 || !CHECKER
+        add(st.diags, Diag(lnum, offset, offset + strlen(word),
+          END_WITHOUT_START[cmd]))
+      endif
+    else
+      # The other branch is a block of its own.
+      EndScope(st.stack[-1], lnum)
+    endif
+  elseif OPENS->has_key(cmd)
+    Open(st, cmd, null_dict, lnum)
+    if cmd == 'for'
+      # The loop variables, as variables of the block around them, seen in
+      # the loop.
+      var container = Container(st)
+      for name in VariableNames(arg_text)
+        var symbol = NewSymbol(name, KIND_VARIABLE, lnum, col,
+          name_col + stridx(arg_text, name))
+        add(container, symbol)
+        Declared(st, symbol, lnum, is_vim9)
+      endfor
+    endif
+  elseif TYPES->has_key(cmd)
+    var name = matchstr(arg_text, '^\h\w*')
+    if name == ''
+      return
+    endif
+    var symbol = NewSymbol(name, TYPES[cmd], lnum, col, name_col,
+      matchstr(arg_text, '^\h\w*\s*\zs.*'))
+    add(Container(st), symbol)
+    Open(st, cmd, symbol, lnum)
+  elseif cmd == 'vim9script'
+    st.vim9 = true
+  elseif cmd == 'augroup'
+    if rest[strlen(word)] == '!'
+      # ":augroup!" deletes a group, nothing opens.
+      return
+    endif
+    if arg_text =~? '^end\>'
+      # Without a group of its own this ends one that ":execute" opened,
+      # or nothing; Vim does not mind either.
+      if InKind(st, 'augroup')
+        var entry = remove(st.stack, -1)
+        entry.symbol.end_line = lnum
+      endif
+    elseif arg_text =~ '^\S' && arg_text[0] != (is_vim9 ? '#' : '"')
+      var name = matchstr(arg_text, '^\S\+')
+      var symbol = NewSymbol(name, KIND_NAMESPACE, lnum, col, name_col)
+      add(Container(st), symbol)
+      Open(st, 'augroup', symbol, lnum)
+    endif
+  elseif cmd == 'import'
+    var alias = matchstr(arg_text, '\<as\s\+\zs\h\w*$')
+    var file = matchstr(arg_text, '\%(autoload\s\+\)\=[''"]\zs[^''"]*')
+    var name = alias != '' ? alias : fnamemodify(file, ':t:r')
+    if name != ''
+      var symbol = NewSymbol(name, KIND_MODULE, lnum, col,
+        offset + stridx(rest, name), file)
+      symbol.autoload = arg_text =~ '^autoload\s'
+      add(Container(st), symbol)
+    endif
+  elseif cmd == 'command'
+    var name = matchstr(arg_text, '^\%(-\S\+\s\+\)*\zs\u\w*')
+    if name != ''
+      add(Container(st), NewSymbol(name, KIND_FUNCTION, lnum, col,
+        offset + stridx(rest, name), ':command'))
+    endif
+  endif
+enddef
+
+export def Parse(lines: list<string>): dict<any>
+  var st = NewState()
+  for lnum in range(len(lines))
+    var line = lines[lnum]
+    if st.heredoc != ''
+      add(st.heredoc_lines, lnum)
+      if HeredocEnds(st, lines, line)
+        st.heredoc = ''
+        st.heredoc_let = -1
+      endif
+      continue
+    endif
+    if st.params != null_dict
+      # The rest of a function header, up to the ")" that closes it.
+      var head = st.params.legacy ? line : substitute(line, '\s#.*', '', '')
+      var [stop, depth] = HeaderEnd(head, st.params_depth)
+      AddParams(st.params, strpart(head, 0, stop), lnum, 0, st.params.legacy)
+      if depth == 0
+        st.params = null_dict
+      endif
+      st.params_depth = depth
+      continue
+    endif
+    # ":append", ":change" and ":insert" read the lines up to "." as text;
+    # Vim9 rules have none of them.
+    if !InVim9(st) && line =~ APPEND
+      st.heredoc = '.'
+      continue
+    endif
+    # Only a line that starts with a name can be a statement of interest;
+    # this leaves out empty lines, comments, continuations and ranges.
+    var m = matchstrpos(line, '^\s*\%(:\s*\)*\zs\h\w*')
+    if m[1] < 0
+      continue
+    endif
+    var word = m[0]
+    var col = m[1]
+    # A heredoc assigned to a variable that is there already, "x =<< END",
+    # holds text as well.
+    var assigned = stridx(line, '=<<') < 0 ? ''
+      : matchstr(line, '^\s*[[:alnum:]_:.]\+'
+        .. (InVim9(st) ? HEREDOC_VIM9 : HEREDOC))
+    if assigned != ''
+      StartLetHeredoc(st, lnum, assigned, line)
+      continue
+    endif
+    # "end: 1" in a dictionary that goes over lines is a key, not ":endif".
+    if line[m[2]] == ':'
+      continue
+    endif
+    var cmd = CommandOf(word)
+
+    # ":loadkeymap" reads the rest of the script as keymap lines, a heredoc
+    # with a marker that no line has.
+    if cmd == 'loadkeymap'
+      st.heredoc = "\n"
+      continue
+    endif
+
+    # A script in another language, up to its end marker.
+    if LANGUAGES->has_key(cmd) && line =~ '<<'
+      var marker = matchstr(line, '<<\s*\%(trim\s\+\)\=\zs\S*')
+      st.heredoc = marker == '' ? '.' : marker
+      continue
+    endif
+    # Or one that ":execute" runs, 'execute py "<< EOF"': the string ends
+    # with "<<" and the marker, after a command of those, if any.
+    if cmd == 'execute'
+      var ex = matchlist(line,
+        '\(["'']\)\s*\(\h\w*\)\=\s*<<\s*\%(trim\s\+\)\=\(\S*\)\s*\1\s*$')
+      if !ex->empty() && (ex[2] == '' || LANGUAGES->has_key(CommandOf(ex[2])))
+        st.heredoc = ex[3] == '' ? '.' : ex[3]
+        continue
+      endif
+    endif
+
+    # Most lines are expressions or commands that do not shape the script;
+    # they matter only inside an enum, and in legacy script as a typo.  A
+    # command after a "|" may still shape the script: "return 1 | endif".
+    if !SHAPING->has_key(cmd)
+        && (cmd == '' || stridx(line, '|') < 0 || TakesRest(line[col :]))
+      if cmd != ''
+        continue
+      endif
+      if InKind(st, 'enum')
+        if line =~ '^\s*\u\w*\s*\%([,(]\|$\)'
+          add(Container(st), NewSymbol(word, KIND_ENUM_MEMBER, lnum, col,
+            col))
+        endif
+      elseif word[0] >= 'a' && word[0] <= 'z' && !InVim9(st)
+        var arg_text = ArgText(line, col, word)
+        if arg_text == '' || stridx(EXPRESSION_CHARS, arg_text[0]) < 0
+          add(st.diags, Diag(lnum, col, col + strlen(word),
+            'E492: Not an editor command: ' .. word, SEVERITY_WARNING))
+        endif
+      endif
+      continue
+    endif
+
+    if stridx(line, '|') < 0
+      Statement(st, lnum, line[col :], col, true, word, cmd)
+      continue
+    endif
+    var is_first = true
+    for [offset, part] in Parts(line[col :], InVim9(st))
+      var text = substitute(part, '^\s*', '', '')
+      var pword = matchstr(text, '^\h\w*')
+      if pword != ''
+        Statement(st, lnum, text, col + offset + strlen(part) - strlen(text),
+          is_first, pword, CommandOf(pword))
+      endif
+      is_first = false
+      if TakesRest(text)
+        break
+      endif
+    endfor
+  endfor
+
+  for entry in st.stack
+    var line = lines[entry.line]
+    var col = strlen(matchstr(line, '^\s*\%(:\s*\)*'))
+    add(st.diags, Diag(entry.line, col, strlen(line),
+      MISSING_END[entry.kind]))
+    if entry.symbol != null_dict
+      entry.symbol.end_line = len(lines) - 1
+    endif
+    EndScope(entry, len(lines) - 1)
+  endfor
+
+  return {vim9: st.vim9, symbols: st.top, diags: st.diags,
+    heredoc_lines: st.heredoc_lines, blocks: st.blocks}
+enddef
+
+# Every symbol in the tree, flattened.
+export def AllSymbols(symbols: list<dict<any>>): list<dict<any>>
+  var out: list<dict<any>> = []
+  for symbol in symbols
+    add(out, symbol)
+    extend(out, AllSymbols(symbol.children))
+  endfor
+  return out
+enddef
+
+# InVim9At() for each of "count" lines at once.
+export def Vim9Lines(parsed: dict<any>, count: number): list<bool>
+  var out = repeat([parsed.vim9], count)
+  # Parents come before their children, so an inner function overrides.
+  for s in AllSymbols(parsed.symbols)
+    if s.kind == KIND_FUNCTION || s.kind == KIND_METHOD
+      var vim9 = !s->get('legacy', false)
+      for lnum in range(s.line, min([s.end_line, count - 1]))
+        out[lnum] = vim9
+      endfor
+    endif
+  endfor
+  return out
+enddef
+
+# Whether Vim9 rules apply at line "lnum" of a parsed script.
+export def InVim9At(parsed: dict<any>, lnum: number): bool
+  var result: bool = parsed.vim9
+  var innermost = -1
+  for s in AllSymbols(parsed.symbols)
+    if (s.kind == KIND_FUNCTION || s.kind == KIND_METHOD)
+        && s.line <= lnum && lnum <= s.end_line && s.line > innermost
+      innermost = s.line
+      result = !s->get('legacy', false)
+    endif
+  endfor
+  return result
+enddef
+
+# test/run sets this to have every :def compiled as the script is read.
+if $VIM9LS_COMPILE_CHECK != ''
+  defcompile
+endif
+
+# vim: ts=2 sw=0 et

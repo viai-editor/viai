@@ -535,6 +535,23 @@ your terminal.
 Once the package is loaded, read about it at: >
 	:h osc52.txt
 
+------------------------------------------------------------------------------
+Adding the lsp.vim and vim9ls packages	*lsp.vim-install* *package-lsp.vim*
+					*vim9ls-install* *package-vim9ls*
+------------------------------------------------------------------------------
+
+lsp.vim is a client for the Language Server Protocol, vim9ls a language server
+for Vim script.  To check your Vim scripts with them, add these lines to your
+vimrc file: >
+	packadd! lsp.vim
+	packadd! vim9ls
+	let g:lsp_server_list = [#{filetypes: ['vim'], name: 'vim9ls',
+		\ cmd: function('vim9ls#Command')}]
+<
+Once the packages are loaded, read about them at: >
+	:h lsp.txt
+	:h vim9ls.txt
+
 More information about packages can be found here: |packages|.
 
 ==============================================================================

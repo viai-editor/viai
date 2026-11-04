@@ -9015,6 +9015,7 @@ long-lines	version5.txt	/*long-lines*
 love	intro.txt	/*love*
 lowercase	change.txt	/*lowercase*
 lpc.vim	syntax.txt	/*lpc.vim*
+lsp.vim-install	usr_05.txt	/*lsp.vim-install*
 lua	if_lua.txt	/*lua*
 lua-blob	if_lua.txt	/*lua-blob*
 lua-buffer	if_lua.txt	/*lua-buffer*
@@ -9740,6 +9741,7 @@ package-helpcurwin	tips.txt	/*package-helpcurwin*
 package-helptoc	helphelp.txt	/*package-helptoc*
 package-hlyank	usr_05.txt	/*package-hlyank*
 package-justify	usr_25.txt	/*package-justify*
+package-lsp.vim	usr_05.txt	/*package-lsp.vim*
 package-matchit	usr_05.txt	/*package-matchit*
 package-nohlsearch	usr_05.txt	/*package-nohlsearch*
 package-open	eval.txt	/*package-open*
@@ -9747,6 +9749,7 @@ package-osc52	usr_05.txt	/*package-osc52*
 package-termdebug	terminal.txt	/*package-termdebug*
 package-translate_example	repeat.txt	/*package-translate_example*
 package-translation	repeat.txt	/*package-translation*
+package-vim9ls	usr_05.txt	/*package-vim9ls*
 packages	repeat.txt	/*packages*
 packload-two-steps	repeat.txt	/*packload-two-steps*
 page-down	intro.txt	/*page-down*
@@ -11823,6 +11826,7 @@ vim9-variable-arguments	vim9.txt	/*vim9-variable-arguments*
 vim9-white-space	vim9.txt	/*vim9-white-space*
 vim9.txt	vim9.txt	/*vim9.txt*
 vim9class.txt	vim9class.txt	/*vim9class.txt*
+vim9ls-install	usr_05.txt	/*vim9ls-install*
 vim9script	vim9.txt	/*vim9script*
 vim:	options.txt	/*vim:*
 vim_announce	intro.txt	/*vim_announce*

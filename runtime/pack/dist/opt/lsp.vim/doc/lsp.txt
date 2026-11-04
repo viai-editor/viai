@@ -1,0 +1,1498 @@
+*lsp.txt*	A Language Server Protocol client for Vim
+
+Author:  Hirohito Higashi <h.east.727@gmail.com>
+License: Same terms as Vim itself.  See |license|.
+
+==============================================================================
+CONTENTS					*lsp-contents*
+
+1. Introduction			|lsp-introduction|
+2. Requirements			|lsp-requirements|
+3. Configuration		|lsp-configuration|
+4. Commands			|lsp-commands|
+5. Completion			|lsp-completion|
+6. Diagnostics			|lsp-diagnostics|
+7. Signature help		|lsp-signature|
+8. Symbol highlight		|lsp-highlight|
+9. Inlay hints			|lsp-inlay-hint|
+10. Folding			|lsp-folding|
+11. Code lens			|lsp-code-lens|
+12. Document links		|lsp-document-link|
+13. Selecting			|lsp-selection|
+14. Semantic tokens		|lsp-semantic-tokens|
+15. On-type formatting		|lsp-on-type-formatting|
+16. Watched files		|lsp-watched-files|
+17. Limitations			|lsp-limitations|
+18. AI				|lsp-ai|
+
+==============================================================================
+1. Introduction					*lsp-introduction*
+
+This plugin talks to a language server over the Language Server Protocol and
+brings what the server knows into Vim: what a symbol is, and where it is
+defined.
+
+Install it with a plugin manager, with vim-plug for instance: >vim9
+
+	Plug 'h-east/lsp.vim'
+<
+Or put it under a |packages| directory as "pack/*/opt/lsp.vim", which does not
+load on its own, and add this to your |vimrc|: >vim9
+
+	packadd! lsp.vim
+<
+Either way, describe the servers to use in |g:lsp_server_list|.
+
+Vim frames the protocol messages and matches replies to requests itself, see
+|language-server-protocol|, so what is left to the plugin is the conversation
+and what to do with the answers.
+
+Changes are picked up with |listener_add()| and sent on as they are made.
+When the server asks for incremental updates, |listener-text| supplies the
+text of each change, so only the lines that were touched travel.  Writing a
+buffer is reported too, for a server that only looks at a file when it is
+saved; the text goes along only when the server asks for it.
+
+A position in the protocol is counted in units the server picks at startup.
+UTF-8 is asked for first, since that is what Vim counts in anyway and needs no
+working out; UTF-16, which every server has to take, and UTF-32 follow.
+clangd answers under a name of its own, "offsetEncoding", and that is read as
+well as the one the protocol gives.
+
+A server may also want to change what reaches the disk, to sort the includes
+or run its formatter.  It is told a write is coming and asked what to change
+first, and the write waits for the answer; "will_save" in
+|g:lsp_client_config| turns that off.
+
+==============================================================================
+2. Requirements					*lsp-requirements*
+
+ViAI 1.0 or later, with the |+job| and |+channel| features (recommended).
+	https://github.com/viai-editor/viai
+ViAI is a fork of Vim whose main aim is that this plugin and vim9ls work
+well.  With ViAI, vim9ls also reports the errors that Vim gives when
+sourcing a Vim9 script as diagnostics, without running the script.
+
+Vim 9.2.1004 or later, with the |+job| and |+channel| features
+(9.2.1160 or later when the server is vim9ls).
+
+What those patches are for:
+9.2.1160: |getinfo()| names and types the arguments in the signature help of a
+	  builtin
+9.2.1004: |complete_info()| reports in "auto" whether 'autocomplete' or a
+	  typed key called the 'omnifunc' function
+9.2.0997: |ch_sendexpr()| takes a String "id", which answers a request the
+	  server named with a string
+9.2.0970: |listener_add()| takes a "text" option, which gives the callback
+	  the text of each change (|listener-text|)
+
+Without them, or without the features, nothing of the plugin is set up and
+|:LspStatus| is left to report what is missing.
+
+A language server for the language you work in.  It has to be installed
+separately, none is shipped with Vim.
+
+==============================================================================
+3. Configuration				*lsp-configuration*
+
+What follows is written in |Vim9| script, which is what a |vimrc| starting
+with `vim9script` takes; from a legacy one, write `let` in front and |v:true|
+for `true`.
+
+						*g:lsp_server_list*
+g:lsp_server_list
+		A List of Dictionaries, one per server.  Each entry holds:
+
+		name		Name shown by |:LspStatus|.
+		filetypes	List of 'filetype' values the server is used
+				for.
+		cmd		The command to run, as a List, the way
+				|job_start()| takes it, or a Funcref that
+				returns that List.  The Funcref is called when
+				the server starts, so a command that another
+				plugin builds does not need that plugin when
+				the vimrc is read: >
+					cmd: function('vim9ls#Command'),
+<
+		rootPatterns	Optional List of file or directory names.
+				The first one found from the file upwards
+				marks the root of the workspace.  When none is
+				found the directory of the file is used.
+				Default: [".git"]
+		initializationOptions
+				Optional, what the server takes at startup.
+				What goes in here is up to the server, each
+				has its own; read the one you are setting up.
+				It is sent as it was written, so a Dictionary
+				is what a server usually wants.  Left out when
+				it is not there, which is not the same as
+				sending an empty Dictionary.
+		settings	Optional, what the server is handed when it
+				asks with "workspace/configuration".  A server
+				asks by section, which is a path into this
+				Dictionary: "gopls" reads the "gopls" key,
+				"python.analysis" the "analysis" key inside
+				"python".  A section this holds nothing for is
+				answered with a null, which leaves that
+				setting alone.
+		use		Optional Dictionary naming what this server is
+				used for where more than one of them holds the
+				buffer.  Each key is a feature and each value
+				is |true| or |false|; a feature it does not
+				name is one the server is used for.  The names
+				are under |lsp-features| and the rest of it
+				under |lsp-more-than-one-server|.
+
+		A server may keep something turned off until it is asked for
+		one of these two ways.  "gopls" offers the semantic tokens and
+		then turns down every request for them, with "semantictokens
+		are disabled", unless it has been handed {semanticTokens:
+		true}: either as "initializationOptions" at startup, or under
+		"gopls" in "settings" when it asks.
+
+		Such a turn-down is reported once.  What is asked for on its
+		own, with every change or as the cursor moves, is not asked
+		for again after that; what you ask for by command is tried
+		every time.
+
+		Every entry whose "filetypes" holds the 'filetype' of a buffer
+		is started for it, so a buffer can have more than one server;
+		what each of them answers is under
+		|lsp-more-than-one-server|.  A buffer whose 'filetype' is in
+		none of them is left alone, and nothing of this plugin is even
+		loaded for it.
+
+		Example: >vim9
+
+		    g:lsp_server_list = [{
+		      filetypes: ['c', 'cpp'], name: 'clangd',
+		      cmd: ['clangd', '--background-index', '--clang-tidy',
+		        '--header-insertion=never'],
+		      rootPatterns: ['compile_commands.json', '.git'],
+		    }, {
+		      filetypes: ['vim'], name: 'vim9ls',
+		      cmd: function('vim9ls#Command'),
+		    }, {
+		      filetypes: ['python'], name: 'pylsp', cmd: ['pylsp'],
+		      rootPatterns: ['pyproject.toml', '.git'],
+		    }, {
+		      filetypes: ['go'], name: 'gopls', cmd: ['gopls'],
+		      rootPatterns: ['go.work', 'go.mod', '.git'],
+		    }]
+<
+		One server is started per workspace root rather than per
+		buffer, so buffers from the same project share a server.
+
+		A server that supports more than one workspace folder, and
+		that wants to hear about them changing, is given the next root
+		instead of another one of it being started: open a file from a
+		second project and the server that is running is told about
+		it.  What is left of the roots is what a server missing either
+		capability gets, one process each.
+
+						*g:lsp_client_config*
+g:lsp_client_config
+		A Dictionary holding what the client itself does.  A key that
+		is not there takes the default below.
+
+		omnifunc	When true, 'omnifunc' is set in a buffer whose
+				server offers completion.  Set this to |false|
+				to keep whatever the 'filetype' plugin chose.
+				Default: |true|
+
+		completion_timeout
+				How long to wait for a reply to a completion
+				request, in milliseconds.  See
+				|lsp-completion| for why there is a wait at
+				all.  A server that has not finished reading
+				the file yet takes noticeably longer than one
+				that has, so this needs room above what a
+				warmed up server answers in.
+				Default: 2000
+
+		tagjump_timeout	How long to wait for a reply to the request
+				|lsp#TagFunc()| makes, in milliseconds.  See
+				|lsp-tagfunc| for why there is a wait.
+				Default: 2000
+
+		format_timeout	How long |:LspFormat| waits for the formatted
+				text, in milliseconds.  When the time runs
+				out, the buffer is left as it is.
+				Default: 5000
+
+		document_highlight
+				When true, the other places the symbol under
+				the cursor is used are marked once the cursor
+				comes to rest.  See |lsp-highlight|.
+				Default: |true|
+
+		highlight_delay	How long the cursor has to stand still before
+				that happens, in milliseconds.
+				Default: 300
+
+		signature_help	When true, the signature of the call being
+				typed is shown on its own.  Set this to
+				|false| to only ask for it with
+				|:LspSignature|.  See |lsp-signature|.
+				Default: |true|
+
+		snippet		When true, the server is told this client
+				takes snippets, and it answers with them where
+				it has one.  Off by default: what a snippet
+				puts in is of use only with the mappings of
+				|lsp-snippet|, and this client binds none of
+				them for you.
+				Default: |false|
+
+		inlay_hint	When true, the names and types a server fills
+				in are shown in the window.  Off by default:
+				this puts text on screen that the file does
+				not hold.  See |lsp-inlay-hint|.
+				Default: |false|
+
+		code_lens	When true, what the server reports about a
+				line is shown above it, such as how often
+				something is used or what can be run.  Off by
+				default, for the same reason.  See
+				|lsp-code-lens|.
+				Default: |false|
+
+		document_link	When true, the parts of the file that lead
+				somewhere else are underlined.  Off by
+				default, for the same reason.  See
+				|lsp-document-link|.
+				Default: |false|
+
+		folding		When true, the folds are the ones the server
+				works out from the syntax.  Off by default:
+				this takes over 'foldmethod' and 'foldexpr',
+				which are likely set to something already.
+				See |lsp-folding|.
+				Default: |false|
+
+		semantic_tokens	When true, the buffer is colored from what
+				the server parsed.  Off by default: this
+				paints over the syntax highlighting rather
+				than adding to it.  See |lsp-semantic-tokens|.
+				Default: |false|
+
+		on_type_formatting
+				When true, a character the server named as one
+				to act on has it look at the text again while
+				it is being typed, and what it hands back is
+				put in.  Off by default: it changes the text
+				under the cursor as you type.  See
+				|lsp-on-type-formatting|.
+				Default: |false|
+
+		workspace_diagnostics
+				When true, a server that reports on the whole
+				workspace is asked to as soon as it is ready,
+				except for a file where none of "rootPatterns"
+				is found, which is in no project.  Otherwise
+				|:LspWorkspaceDiag| is what asks it.
+				Off by default: it has the server look at
+				every file in the project.  See
+				|lsp-workspace-diagnostics|.
+				Default: |false|
+
+		diagnostics_in_insert
+				When true, a server that waits to be asked for
+				its diagnostics is asked in Insert mode as
+				well, once the typing has stopped for a
+				moment.  Off by default: a server busy working
+				them out answers completion late.  See
+				|lsp-diagnostics|.
+				Default: |false|
+
+		will_save	When true, a server that wants to put the
+				file right on the way to disk is asked what to
+				change first, and the write waits for the
+				answer.  Set this to |false| to write what is
+				in the buffer and nothing else.  A server that
+				has not answered within a second is written
+				without.
+				Default: |true|
+
+		hover_format	Which of the two forms a hover is asked for
+				in, "plaintext" or "markdown".  A server is
+				told the client can show both and which one it
+				prefers, so the other may still arrive; what
+				does arrive is drawn in the filetype it names,
+				"markdown" for markdown.  The markup is not
+				taken out: with "markdown" the "#" of a
+				heading and the backticks of a code span are
+				there to read, colored rather than acted on.
+				This goes out at startup, so a server that is
+				already running keeps what it was told; see
+				|:LspStop|.
+				Default: "plaintext"
+
+		hover_popup
+		menu_popup
+		signature_popup
+		progress_popup
+				How each popup is drawn; see |lsp-popup|.
+				Default: an empty Dictionary
+
+		Example: >vim9
+
+		    g:lsp_client_config = {
+		      highlight_delay: 150,
+		      inlay_hint: true,
+		    }
+<
+		|:LspInlayHint|, |:LspCodeLens|, |:LspFolding| and
+		|:LspSemanticTokens| write into this Dictionary, so what they
+		turn on stays on for the rest of the session.
+
+						*lsp-config-per-filetype*
+		These hold for every server.  A setting worth having for one
+		language and not for another is turned around with a
+		|BufEnter| autocommand: each is read where it is used, so a
+		new value takes hold from there on.  |:LspStop| and
+		|:LspStart| are not needed.
+
+		Example: >vim9
+
+		    autocmd BufEnter * {
+		      g:lsp_client_config.on_type_formatting = &filetype == 'c'
+		    }
+<
+						*g:loaded_lsp_vim*
+g:loaded_lsp_vim
+		Set to 1 while the plugin script is read.  Set it yourself in
+		your |vimrc| to keep the plugin from being loaded at all:
+>vim9
+			g:loaded_lsp_vim = 1
+<
+		It marks the script as read, not that there is anything to
+		use: on a Vim missing what |lsp-requirements| asks for the
+		script stops early, and only |:LspStatus| is defined.  Whether
+		the plugin has something to offer is `exists(':LspStart')`.
+
+						*lsp-popup*
+Four of the things the plugin puts up are popups: what |:LspHover| answers,
+the list |:LspCodeAction| offers, the signature of the call being typed, and
+the work a server reports it is busy with.  Each is asked for on its own,
+under "hover_popup", "menu_popup", "signature_popup" and "progress_popup" in
+|g:lsp_client_config|.  Each takes a Dictionary with:
+
+	opt		A String read the way 'pumopt' is.  Only "border:"
+			and "opacity:" mean anything here; the rest of
+			'pumopt' is about the menu alone.  As with 'pumopt',
+			what is not named goes back to what it is by default,
+			so a String without "border:" in it leaves the popup
+			with no border.
+	highlights	A String read the way 'winhighlight' is.  Name
+			|hl-PopupBorder| in it for the border: a popup draws
+			that one from the group itself rather than through
+			'winhighlight', so what is named for it is handed to
+			|popup_create()| as "borderhighlight" instead.  The
+			rest goes to 'winhighlight' as it stands.
+
+Where "opt" is left out, the border 'pumopt' names is taken, so setting that
+is enough for all five to match.  Where 'pumopt' names none, the popup keeps
+a border of its own; only "opt" naming none takes it away.  Examples: >vim9
+
+	# Everything the same, the completion menu included.
+	set pumopt=border:round
+
+	# The signature with no border, half see-through.
+	g:lsp_client_config = {
+	  signature_popup: {opt: 'opacity:60'},
+	}
+
+	# The hover popup told apart from the rest.
+	g:lsp_client_config = {
+	  hover_popup: {opt: 'border:double',
+			highlights: 'PopupBorder:Question'},
+	}
+<
+A border style drawn with box-drawing characters ("single", "double", "round")
+asks the same of 'encoding' and 'ambiwidth' that 'pumopt' asks; where that is
+not so, "ascii" is drawn instead.
+
+Everything in "opt" is held to meaning something: a key 'pumopt' has no such
+thing as, and a key of it a popup has no use for ("height:", "width:",
+"maxwidth:", "shadow", "margin"), are both reported as the buffer is taken on,
+and the rest of the string is read all the same.  |:LspConfigCheck| repeats
+them at any time.  'pumopt', borrowed where "opt" was left out, is the menu's
+own and is read without a word about what a popup cannot use.
+
+Turning the border off leaves the signature popup room for another line of
+text: it is placed clear of the completion menu, and what the border costs is
+counted before it goes up.
+
+						*lsp-popup-scroll*
+A hover popup with more in it than fits gets a scrollbar, which the mouse
+wheel turns.  From the keyboard it takes the keys the completion info popup
+takes, |popupmenu-keys|:
+
+	CTRL-SHIFT-<Up>		up a line
+	CTRL-SHIFT-<Down>	down a line
+	CTRL-SHIFT-<PageUp>	up a page
+	CTRL-SHIFT-<PageDown>	down a page
+	CTRL-SHIFT-P		up a line
+	CTRL-SHIFT-N		down a line
+
+Nothing is mapped: the popup reads the keys itself while it is up, in Normal
+mode, so what they otherwise do is left alone.  The cursor does not move, so
+the popup stays where it is.
+
+CTRL-SHIFT-P and CTRL-SHIFT-N need the GUI or a terminal that reports
+modifiers for letter keys, which is what 'keyprotocol' asks for; see
+|modifyOtherKeys|.  A terminal that reports no modifiers at all, the Linux
+console among them, leaves the other four out as well.
+
+The popup |:LspInlayHintInfo| and |:LspDocumentLinkInfo| put up is the same
+one and scrolls the same way.
+
+Events ~
+						*lsp-events*
+Two |User| events are fired, one where a buffer gains a server and one where
+it loses one:
+						*LspAttached*
+						*LspDetached*
+	LspAttached	The server is ready and has been told about the
+			buffer.  What it offers is known by then.
+	LspDetached	The buffer is no longer served, whether it was
+			unloaded or |:LspStop| let go of it.
+
+Each is fired for the buffer it is about, which is the current one while the
+autocommand runs, so |:map-<buffer>| and |:setlocal| land where they are meant
+to.  A window in another tab page counts as well.  A buffer no window shows
+gets LspAttached when a window first shows it, and gets no LspDetached;
+neither does a buffer that loses its server before then.
+
+This is where the settings a server makes worth having belong, rather than
+under a |FileType| autocommand: where a server is set up but not installed,
+the buffer is then left as it was: >vim9
+
+	def LspBuffer()
+	  setlocal complete^=o completeopt+=popup signcolumn=yes
+	  # CTRL-] and the other tag commands reach the server, see
+	  # |lsp-tagfunc|.
+	  setlocal tagfunc=lsp#TagFunc
+	  # The Vim filetype points 'keywordprg' at ":help", which offers
+	  # more than a popup of the same text.
+	  if &filetype != 'vim'
+	    setlocal keywordprg=:LspHover
+	  endif
+	  nnoremap <buffer> gd <Cmd>LspDefinition<CR>
+	enddef
+
+	autocmd User LspAttached LspBuffer()
+<
+More than one server for a buffer ~
+						*lsp-more-than-one-server*
+More than one entry of |g:lsp_server_list| can hold the same 'filetype'.  All
+of them are started and each is given the buffer: a server answers from the
+copy it was handed, so one that is not told about the text cannot answer for
+it.
+
+What is asked for goes to one server, the first entry that offers it.  So name
+the server that does a few things well before the general purpose one, and it
+takes what it offers while the rest falls to the other: >vim9
+
+	g:lsp_server_list = [{
+	  filetypes: ['python'], name: 'ruff', cmd: ['ruff', 'server'],
+	}, {
+	  filetypes: ['python'], name: 'pyrefly', cmd: ['pyrefly', 'lsp'],
+	}]
+<
+Reports are the exception: what every server found is drawn, and |:LspDiag|
+lists all of it.  A server is only asked to act on what it reported itself.
+
+What a server is used for can also be set outright, with the "use" key of
+its entry.  It holds a feature name from the table below and |true| or
+|false|: >vim9
+
+	use: {hover: false}	this server is not used for it, the next
+				one offering it is
+	use: {diagnostics: false}
+				what this server reports is not shown
+<
+A feature no "use" names follows the order above.  Naming one the server does
+not offer changes nothing.  |g:lsp_client_config| comes first: a feature
+turned off there is asked of no server, and "use" cannot bring it back.
+
+|:LspStatus| names each server that is running and, with a "!", which of them
+answers for each feature of the current buffer; |:LspLog| shows what each of
+them logged, under a heading of its own.
+
+Completion is answered by one server.  What two of them offer for the same
+text cannot be put in one menu in a sensible order: the protocol has
+"sortText" for the items of one reply and nothing to compare replies with.
+
+Feature names ~
+						*lsp-features*
+These are the names "use" takes.  Each is the capability the server reports,
+without the "Provider" at the end, so that it can be read beside the
+capabilities a server reports.
+
+	callHierarchy		|:LspIncomingCalls|, |:LspOutgoingCalls|
+	codeAction		|:LspCodeAction|
+	codeLens		|:LspCodeLens|
+	completion		'omnifunc'
+	declaration		|:LspDeclaration|
+	definition		|:LspDefinition|
+	diagnostics		|:LspDiag|, the marks in the text
+	documentHighlight	the symbol under the cursor
+	documentLink		|:LspDocumentLink|
+	documentSymbol		|:LspOutline|
+	foldingRange		|:LspFolding|
+	formatting		|:LspFormat|, whole or range
+	hover			|:LspHover|
+	implementation		|:LspImplementation|
+	inlayHint		|:LspInlayHint|
+	onTypeFormatting	formatting as you type
+	references		|:LspReferences|
+	rename			|:LspRename|
+	selectionRange		growing and shrinking the selection
+	semanticTokens		|:LspSemanticTokens|
+	signatureHelp		|:LspSignature|
+	typeDefinition		|:LspTypeDefinition|
+	typeHierarchy		|:LspSuperTypes|, |:LspSubTypes|
+	workspaceSymbol		searching the workspace for a symbol
+
+Nine of them are also turned off for every server at once, with the key of
+|g:lsp_client_config| named here: "code_lens" for codeLens, "omnifunc" for
+completion, "document_highlight" for documentHighlight, "document_link" for
+documentLink, "folding" for foldingRange, "inlay_hint" for inlayHint,
+"on_type_formatting" for onTypeFormatting, "semantic_tokens" for
+semanticTokens and "signature_help" for signatureHelp.
+
+The two are spelled differently because they name different things: the keys
+of an entry in |g:lsp_server_list| are in camelCase, those of
+|g:lsp_client_config| are in snake_case.
+
+==============================================================================
+4. Commands					*lsp-commands*
+
+The server ~
+						*:LspStart*
+:LspStart	Connect the current buffer to the servers for its 'filetype'.
+		This happens on its own when a buffer is opened, the command
+		is for a buffer whose 'filetype' was decided later.  See
+		|lsp-more-than-one-server| where there is more than one.
+
+		A server that exited without having been stopped, shown as
+		"exited" by |:LspStatus|, is started again by this command or
+		when a buffer it had is opened again.  The other buffers it
+		had are left without any server until the same is done for
+		them.
+
+		A buffer holding something other than a local file is passed
+		over: one with a 'buftype', and one named like a URL
+		("fugitive://..."), which has no workspace behind it to root
+		a server at.  Nor is a server started where "rootPatterns"
+		leads to something that is not a directory.
+
+						*:LspStop*
+:LspStop	Shut down every running server.  The buffers they had go back
+		to what they were before, signs, hints and 'omnifunc' among
+		it, and each one fires |LspDetached|.  A buffer is connected
+		again when it is opened again.
+
+						*:LspStatus*
+:LspStatus	Name the version of the plugin and of Vim or ViAI, then
+		list the servers it started, whether each one is "starting",
+		"ready", or "exited" without having been stopped, how many
+		buffers it has, and how many reports of its own are known over
+		all the buffers.  The name and version the server reports for
+		itself follow in parentheses, when it reports them; the name
+		is left out when it is the one the line starts with, and of
+		the version only the number is shown.  A server that was given
+		more than one workspace folder lists them under its own line.
+		Anything in |g:lsp_client_config| that could not be read is
+		listed first; |:LspConfigCheck| goes over it all.
+
+		With a "!", the version is shown the way the server reports
+		it, and the current buffer is named with which server answers
+		each feature of it, which is what to read where more than one
+		of them holds it; see |lsp-more-than-one-server|.  A feature
+		that no server offers is left out.  A feature that is off in
+		|g:lsp_client_config|, whether by its default or as set there,
+		is followed by "(off:" and the key.
+
+						*:LspConfigCheck*
+:LspConfigCheck	Read |g:lsp_client_config| and |g:lsp_server_list| and
+		report what cannot be read, or that the configuration is good.
+		A key there is no such thing as, one holding what it does not
+		take, a server described without a name, a command or a
+		filetype: each is named where it is.  It reports the same
+		every time it is asked, so that a look is worth taking whether
+		or not it has come up already.  What is read is what this Vim
+		holds; a |vimrc| put right is taken in by sourcing it again or
+		by starting over.
+
+						*:LspConfigReload*
+:LspConfigReload
+		Tell every running server that its settings changed, and
+		report how many were told.  Use it after putting a new
+		"settings" into |g:lsp_server_list|, which takes sourcing the
+		|vimrc| again or setting the variable by hand.
+
+		A server that takes its settings by asking
+		("workspace/configuration") asks again when it hears this, and
+		is answered from the entry as it stands then.  One that took
+		them as "initializationOptions" at startup is past listening;
+		that needs |:LspStop| and opening the file again.
+
+						*:LspWorkspaceFolderAdd*
+:LspWorkspaceFolderAdd [{dir}]
+		Hand {dir} to the server of the current buffer as another
+		workspace folder, so that what is there is looked at as part
+		of the same project.  Without {dir} the working directory is
+		used.
+
+		Opening a file is what usually does this: its root goes to a
+		server that takes workspace folders, see |lsp-configuration|.
+		The command is for a directory no file is opened from, such as
+		a library the project is built against.
+
+		Only a server that supports more than one folder, and that
+		wants to hear about them changing, can be given one.
+
+						*:LspWorkspaceFolderRemove*
+:LspWorkspaceFolderRemove {dir}
+		Take {dir} back from the server of the current buffer.
+		Completion offers the folders that can be taken back: the root
+		a server started on is not one of them, that one lasts as long
+		as the server does.
+
+		A buffer under {dir} keeps its server, what is open stays
+		open.  It is what the folder brings with it, such as the
+		symbols of the files that are not open, that goes.
+
+						*:LspExecuteCommand*
+:LspExecuteCommand {command}
+		Have a server of the current buffer run {command}, one of the
+		commands it offers; completion offers them.  What a command
+		does is up to the server, read about it there.  The work it
+		reports while running is shown as described at |:LspLog|.
+
+						*:LspLog*
+:LspLog		Open a scratch buffer holding what the servers for the current
+		buffer have logged, which is where one explains why it is
+		unhappy.  A server logs in two places and both are shown,
+		under a heading each: what it sent as "window/logMessage" and
+		what it wrote to its standard error.  Where more than one
+		server holds the buffer, each is under a heading of its name.
+
+		What a server sends as "window/showMessage" is not kept here;
+		that one is meant to be read at once and goes to the message
+		line as it arrives.  The work a server reports it is busy
+		with, such as indexing a project, is shown in a popup at the
+		bottom right once it has gone on for a second, a line each,
+		with a bar and a number for how far it has got; what is over
+		sooner is not shown at all.  At its end the line stays, as
+		done, until a key is typed, and the key does what it does.
+		Without |+popupwin| the work goes to the message line, cut to
+		fit.
+
+		A server may find that what it told us has gone out of date,
+		because a file it depends on changed, and ask for it to be
+		asked for again.  The semantic tokens, the code lenses, the
+		inlay hints, the folds and the diagnostics can each be asked
+		for that way; whichever of them is turned off stays off.
+
+		A message may come with answers to pick from, and then it goes
+		into a menu rather than onto the message line; closing the
+		menu without picking is an answer of its own.
+
+		A server may also ask for a file to be looked at, which opens
+		it at the place it names.  A URI that is not a file, or one
+		the server marks as external, goes to |:URLOpen|, which hands
+		it to whatever the system opens such a thing with; |g:Openprg|
+		is what decides that.
+
+Asking ~
+						*:LspHover*
+:LspHover	Ask the server about the symbol under the cursor and show the
+		answer in a popup.  <Esc> takes the popup away where it
+		stands.  What it tells is about the place the cursor is in, so
+		it also closes on anything that leaves that place behind: a
+		cursor move, another mode, another window, another buffer, a
+		scroll.  What does not fit is reached with the keys under
+		|lsp-popup-scroll|.
+
+		An argument is taken and left alone, so this can be named in
+		'keywordprg' for |K| to reach: >vim9
+
+			setlocal keywordprg=:LspHover
+<
+		The word |K| hands over is the one under the cursor, which is
+		what the server is asked about anyway.
+
+						*:LspSignature*
+:LspSignature	Show what the call the cursor is in takes, in a popup.  See
+		|lsp-signature|.
+
+Jumping ~
+						*:LspDefinition*
+:LspDefinition	Jump to the definition of the symbol under the cursor.  When
+		the definition is in another file it is opened in the current
+		window.  Where the jump began goes on the |tag-stack| and in
+		the |jumplist|, so CTRL-T and CTRL-O lead back.  A command
+		modifier that names a window splits one for the definition
+		instead, as in ":vertical LspDefinition" or ":tab
+		LspDefinition".  See |:command-modifiers|.
+
+						*:LspDeclaration*
+:LspDeclaration	Jump to the declaration of the symbol under the cursor, which
+		in C is where its prototype is rather than where it is written
+		out.  Otherwise like |:LspDefinition|.
+
+						*:LspTypeDefinition*
+:LspTypeDefinition
+		Jump to the definition of the type of the symbol under the
+		cursor.  Otherwise like |:LspDefinition|.
+
+						*:LspImplementation*
+:LspImplementation
+		Jump to what implements the symbol under the cursor.
+		Otherwise like |:LspDefinition|.
+
+Filling a list ~
+These name a file the way |:ls| does: relative to the current directory when
+it is below it, with "~" for the home directory otherwise.
+
+|:LspReferences|, |:LspIncomingCalls|, |:LspOutgoingCalls|, |:LspSuperTypes|
+and |:LspSubTypes| make <CR> in the quickfix window put where they were run on
+the |tag-stack|, so CTRL-T leads back there from the entry gone to.  Another
+entry of the same list takes the same step, as |:tnext| does, whether CTRL-T
+was used in between or not.  |:cnext| and the like leave the tag stack alone,
+and so does <CR> when the quickfix window has it mapped already.
+
+						*:LspReferences*
+:LspReferences	Put every mention of the symbol under the cursor into the
+		|quickfix| list and open it.  The declaration counts as a
+		mention, so it is in the list too.  A file that is not open is
+		read for the line to show, which is also what places the
+		column.
+
+						*:LspIncomingCalls*
+:LspIncomingCalls
+		Put every place the function under the cursor is called from
+		into the |quickfix| list and open it.  An entry names the
+		function the call sits in, which is what tells this apart from
+		|:LspReferences|: a mention is where the name is written, a
+		call is who is doing the calling.
+
+						*:LspOutgoingCalls*
+:LspOutgoingCalls
+		Put every call the function under the cursor makes into the
+		|quickfix| list and open it.  The places are in this file,
+		since that is where the calls are written, and each is named
+		after the function being called.
+
+						*:LspSuperTypes*
+:LspSuperTypes	Put the types the one under the cursor is derived from into
+		the |quickfix| list and open it.  Only the ones it names
+		itself are listed: to go further up, put the cursor on one of
+		them and ask again.
+
+						*:LspSubTypes*
+:LspSubTypes	Like |:LspSuperTypes|, downwards: the types derived from the
+		one under the cursor.
+
+						*:LspOutline*
+:LspOutline	Put the symbols in the current buffer into its location list
+		and open it.  A symbol inside another, a field of a struct for
+		instance, is shown indented under it.
+
+						*:LspSymbol*
+:LspSymbol {query}
+		Put the symbols in the workspace whose name matches {query}
+		into the |quickfix| list and open it.  What counts as a match
+		is up to the server.  An entry names the kind of symbol and
+		what it is called rather than showing the line it sits on.
+
+		A server may answer with the file a symbol is in but not the
+		place in it, to save working that out for symbols nobody looks
+		at.  Those are asked about again before the list is put
+		together.
+
+						*:LspDiag*
+:LspDiag	Put the diagnostics for the current buffer into its location
+		list and open it.  See |lsp-diagnostics|.
+
+						*:LspWorkspaceDiag*
+:LspWorkspaceDiag
+		Put what the server has reported about the workspace by now
+		into the |quickfix| list and open it.  The server is asked
+		first when that has not been done, and from then on it goes
+		on as with "workspace_diagnostics" in |g:lsp_client_config|.
+		While the server is still reading the workspace a message
+		tells so, with how far it has got when the server reports
+		that, and the list is opened even when empty.  When the
+		server is through, the list is filled in with all that came,
+		as long as it is still the current one, and the entry that
+		was selected stays selected; otherwise run it again for a
+		list that has caught up.  When the server is through with
+		nothing reported, a message tells so.  See
+		|lsp-workspace-diagnostics|.
+
+Changing the text ~
+						*:LspCodeAction*
+:LspCodeAction
+:{range}LspCodeAction
+		Ask what the server can do about the current line, or about
+		the lines in {range}, and put the answers in a menu.  What is
+		picked is applied the way |:LspRename| applies its changes.
+
+		The reports on those lines go with the question, so what comes
+		back is mostly fixes for them.  An action the server would
+		rather carry out itself is handed back to it, and the changes
+		it works out arrive the same way a rename's do.
+
+		An action may arrive without the change it stands for, so that
+		the server works one out only for what is picked.  Picking it
+		is what asks for the rest.
+
+						*:LspRenameFile*
+:LspRenameFile [{name}]
+		Rename the file in the current buffer to {name}, asking for it
+		when there is no argument.  The point of doing it this way
+		rather than by hand is what the server changes elsewhere: the
+		includes and imports that name the file are put right first,
+		and the server is told where the file went afterwards.
+
+		Only a server that names the files it wants to hear about is
+		asked.  Nothing here removes a file, so a server is never told
+		about that.
+
+						*:LspRename*
+:LspRename [{name}]
+		Rename the symbol under the cursor to {name} everywhere the
+		server knows of it.  Without an argument the new name is asked
+		for, starting from the name the server gives.
+
+		A server that offers it is asked first whether there is
+		anything to rename where the cursor is.  Where there is not,
+		it reports so and nothing is sent.  It is also what names the
+		text to start from, which is worth more than the word under
+		the cursor where 'iskeyword' and the language disagree.
+
+		A file that was not open is loaded so it can be changed.
+		Nothing is written: |:wall| is what makes it stick, and an
+		|undo| in each buffer is what takes it back.  A server asking
+		for files to be created, renamed or deleted is turned down,
+		since that is not supported.  The same goes for changes a
+		server sends on its own.
+
+						*:LspFormat*
+:LspFormat
+:{range}LspFormat
+		Ask the server to format the current buffer, or the lines in
+		{range}, wait for the answer and apply it, so that a buffer can
+		be formatted before it is written: >
+			autocmd BufWritePre *.go LspFormat
+<		"format_timeout" in |g:lsp_client_config| bounds the wait.  A
+		single |undo| takes all of it back.
+
+		A server may offer to format a whole buffer without offering
+		to format part of one, or the other way around, so one of the
+		two forms can work while the other is not on offer.
+
+What is shown ~
+						*:LspFolding*
+:LspFolding	Turn the folds from the server on when they are off and off
+		when they are on, and report which it now is.  Turning them
+		off puts 'foldmethod' and 'foldexpr' back the way they were,
+		in every buffer.  See |lsp-folding|.
+
+						*:LspCodeLens*
+:LspCodeLens	Turn the code lenses on when they are off and off when they
+		are on, and report which it now is.  See |lsp-code-lens|.
+
+						*:LspCodeLensRun*
+:LspCodeLensRun
+		Run what the lens above the current line stands for.  When the
+		line has more than one, a menu asks which.
+
+						*:LspDocumentLink*
+:LspDocumentLink
+		Turn the document links on when they are off and off when they
+		are on, and report which it now is.  Turning them off takes
+		away the marks already made, in every buffer.  See
+		|lsp-document-link|.
+
+						*:LspDocumentLinkOpen*
+:LspDocumentLinkOpen
+		Go where the link under the cursor leads.  A file is opened
+		here, anything else is handed to |:URLOpen|.
+
+						*:LspDocumentLinkInfo*
+:LspDocumentLinkInfo
+		Show what the server reports about the link under the cursor,
+		in a popup.
+
+						*:LspInlayHint*
+:LspInlayHint	Turn the inlay hints on when they are off and off when they
+		are on, and report which it now is.  Turning them off takes
+		away the ones already shown, in every buffer.  See
+		|lsp-inlay-hint|.
+
+						*:LspInlayHintInfo*
+:LspInlayHintInfo
+		Show what the server reports about the hint nearest the
+		cursor, in a popup.  Most hints have nothing to add.
+
+						*:LspInlayHintApply*
+:LspInlayHintApply
+		Put what the hint nearest the cursor holds into the file, so
+		that a type it worked out becomes text like any other.  Not
+		every hint has a change to make.
+
+						*:LspSemanticTokens*
+:LspSemanticTokens
+		Turn the coloring from the server on when it is off and off
+		when it is on, and report which it now is.  Turning it off
+		takes the colors away in every buffer.  See
+		|lsp-semantic-tokens|.
+
+Tag function ~
+						*lsp-tagfunc* *lsp#TagFunc()*
+Set 'tagfunc' to "lsp#TagFunc" for the |tag-commands| to reach the
+server: >vim9
+
+	setlocal tagfunc=lsp#TagFunc
+<
+It is not set for you, since a buffer may have tags files worth keeping.
+
+|CTRL-]|, |CTRL-W_]| and |g]| ask the server where the identifier under the
+cursor is defined, the same request |:LspDefinition| makes, and Vim jumps to
+the line and the column that comes back.  More than one answer is a list to
+pick from with |:tselect|.
+
+Everything else is left to the tags files: ":tag name" means the whole name
+and ":tag /pat" a pattern, while what a server answers about a name is
+deliberately loose, so it can say neither.  The same goes for
+|i_CTRL-X_CTRL-]|.  In all of those, and where the server has nothing to say,
+|v:null| goes back where 'tags' has a file to look in, and Vim looks there as
+it would without this.  Where it has none, an empty list goes back instead:
+Vim then says the tag was not found, rather than that there is no tags file.
+
+Vim wants the list on the spot, so this one waits for the server, like the
+completion does.  "tagjump_timeout" in |g:lsp_client_config| bounds the wait.
+
+==============================================================================
+5. Completion					*lsp-completion*
+
+When the server offers completion, 'omnifunc' is set to "lsp#OmniFunc" in the
+buffers it handles, so |i_CTRL-X_CTRL-O| asks the server.  A 'filetype' plugin
+has usually put a function working from tags there; the server knows more, so
+it takes over, and the old value is restored when the buffer is detached.  Set
+"omnifunc" in |g:lsp_client_config| to |false| to keep what the 'filetype'
+plugin chose.
+
+						*lsp#OmniFunc()*
+For 'autocomplete', where Vim asks on its own as the text is typed, put "o"
+in 'complete', which names the 'omnifunc' the plugin has set: >vim9
+
+	setlocal complete^=o
+<
+"Flsp#OmniFunc" names it directly, for a buffer where 'omnifunc' was left to
+the 'filetype' plugin.
+
+Where Vim asked on its own, the server is reached where a word has begun, and
+where the character before the cursor is one the server named as a trigger,
+"." for instance.  Nowhere else: nobody asked for a menu after a bracket or a
+space, and there is nothing to narrow it down with there either.
+
+Where a key asked for the menu, |i_CTRL-X_CTRL-O| or |i_CTRL-N|, the server is
+reached wherever the cursor stands.
+
+The server is told which of the two it was, and which character brought the
+menu on where one did, so that it can answer differently.
+
+The server is given where the cursor is, not the word, so its answer is
+narrowed down here to the items starting with the word, ignoring case, or,
+with "fuzzy" in 'completeopt', to those the word matches the way
+|matchfuzzy()| does.
+
+A server may cut its answer short, marking it with "isIncomplete".  What came
+back then fits the word as it stood, so it is asked for again as each
+character is typed rather than narrowed down here.  clangd cuts one short at a
+hundred items.
+
+Unlike the other requests this one waits for its answer, because a completion
+function has to return the matches itself.  "completion_timeout" bounds how
+long a keystroke can block that way.  When the time runs out a message reports
+it and no matches are offered; raise it if a server needs longer than that
+while it is still reading the file.
+
+The kind of an item is shown as the single letter |complete-items| asks for.
+
+						*lsp-snippet*
+Set "snippet" in |g:lsp_client_config| to |true| for the server to be told
+that snippets are taken; with it off a function comes back as its name and
+nothing else, and what a server offers as a snippet alone, "for" in C for
+instance, is not offered at all.
+
+An item may be a snippet, which is text with tab stops in it: "$1", "${2:a
+name}", and "$0" for where the cursor ends up last of all.  Taking one puts
+the text in with the stops taken out and what they stand for left where it is,
+so "printf(${1:const char *format})" comes out as "printf(const char
+*format)", with the cursor on the first stop.  A snippet reaching over more
+than one line is put in whole.
+
+Stepping from one stop to the next is not bound to anything; these are there
+to bind: >vim9
+
+	imap <F5> <Plug>(lsp-snippet-next)
+	smap <F5> <Plug>(lsp-snippet-next)
+	imap <F6> <Plug>(lsp-snippet-prev)
+	smap <F6> <Plug>(lsp-snippet-prev)
+<
+What a stop stands for is selected in |Select-mode|, so what is typed next
+replaces it; a stop that stands for nothing is only gone to.  The Select mode
+mappings are what lets the same key step on from a stop that is selected.  The
+stops are marked with |text-properties| and so keep up with what is typed
+around them, but one that has been typed over goes with the text it stood for:
+what is left to step through is what has not been filled in yet.
+
+Two stops written under the same number are stepped through one after the
+other; they are not tied to one another.
+
+A server is allowed to leave the documentation of an item out and hand it over
+only for the item that is actually looked at.  That answer arrives long after
+the completion function has returned, so what the item already carries goes
+into the info popup at once and the rest is filled in when the reply to
+"completionItem/resolve" comes.  Include "popup" in 'completeopt' for there to
+be a popup to fill in: >vim9
+
+	set completeopt+=popup
+<
+An item that carries nothing yet gets a blank popup until the reply comes;
+"popuphidden" instead of "popup" keeps the popup out of sight until it has
+something to show, see |complete-popuphidden|.  Only the item that is selected
+is resolved, and only when its documentation is missing.
+
+An item may ask for more than the word before the cursor, "obj->fie" becoming
+"obj.field" for instance, which is all omni completion is able to replace by
+itself.  What the server asked for is put in place of what completion did, as
+part of the same |undo| step.
+
+An item may also ask for changes elsewhere in the file, an include to add for
+the name being completed being the usual case.  Those are applied once the
+item is taken.  A single |undo| does not take those back with the word: they
+are a step of their own.
+
+						*lsp-cmdline-completion*
+Beyond the protocol, a server may answer with "cmdlineCompletion" set to
+|true| for the text before the cursor to be completed the way
+|i_CTRL-X_CTRL-V| does; vim9ls does so in the argument of a command.  The
+current value of an option, file names, buffer names and what a user command
+completes to then come out as they are in this Vim, with the kind "v" of a
+value.  A shell command, after ":!" for instance, is not completed on
+MS-Windows and in WSL, where that is too slow to do as the text is typed.
+
+==============================================================================
+6. Diagnostics					*lsp-diagnostics*
+
+A server reports what it thinks is wrong with a file, either on its own or
+when it is asked; both end up in the same place, so which of the two a server
+does makes no difference here.  What arrives is shown in three ways: a sign in
+the 'signcolumn' on every line that has something, a highlight over the text a
+report covers, and the message itself on the message line while the cursor is
+on that line.  A line without a diagnostic leaves the message line alone
+rather than clearing it, so this does not wipe out other messages.
+
+A server that waits to be asked is asked once the typing has stopped for a
+moment, and not before Insert mode is left: what is typed comes first.  It is
+handed back the "resultId" of its last report, which is how it can answer that
+nothing has changed instead of listing everything again.
+"diagnostics_in_insert" of |g:lsp_client_config| has it asked while typing
+too.  What a server reports on its own is shown in Insert mode either way.
+
+|:LspDiag| collects them into the location list, which is the way to walk
+through them with |:lnext| and |:lprevious|.  They are in the order of the
+lines, whatever order the server sent them in; so is the |quickfix| list of
+|:LspWorkspaceDiag| for each file.
+
+Every report replaces the one before it, so the signs and the highlights
+follow the file as it is edited.
+
+A report may point at other places that explain it, such as where a name was
+declared the first time.  Those follow their report in the location list,
+indented and without a type of their own, and can be in another file.
+
+These highlight groups are used.  Each is linked to an existing group and can
+be given a look of its own with |:highlight|:
+
+	LspDiagError		sign of an error, |hl-ErrorMsg|
+	LspDiagWarning		sign of a warning, |hl-WarningMsg|
+	LspDiagInfo		sign of an information item, |hl-Directory|
+	LspDiagHint		sign of a hint, |group-name|
+	LspDiagErrorText	text an error covers, |hl-SpellBad|
+	LspDiagWarningText	text a warning covers, |hl-SpellCap|
+	LspDiagInfoText		text an info item covers, |hl-SpellRare|
+	LspDiagHintText		text a hint covers, |hl-SpellLocal|
+
+					*lsp-workspace-diagnostics*
+What is above is about the file being edited.  A server may also report on the
+whole workspace, files no buffer holds included, and offers
+"workspaceDiagnostics" when it can.  |:LspWorkspaceDiag| asks it to; set
+"workspace_diagnostics" in |g:lsp_client_config| to |true| to have it asked as
+soon as the server is ready: >vim9
+
+	g:lsp_client_config = {workspace_diagnostics: true}
+<
+It is off by default, since it has the server look at every file in the
+project rather than the one in front of you.
+
+Both ends have to be told.  This is what has the client take the reports; a
+server has its own setting for looking past the files that are open, and
+offers "workspaceDiagnostics" only once it is set.  For pyright and
+basedpyright that is "diagnosticMode" under "python.analysis", which goes in
+the "settings" of |g:lsp_server_list|.  Example: >vim9
+
+	g:lsp_server_list = [{
+	  filetypes: ['python'],
+	  name: 'basedpyright',
+	  cmd: ['basedpyright-langserver', '--stdio'],
+	  settings: {python: {analysis: {diagnosticMode: 'workspace'}}},
+	}]
+<
+The request is made once the server is ready, or by |:LspWorkspaceDiag|, and
+is left open: the protocol lets the server keep it that way for as long as it
+likes and hand over what it works out a piece at a time.  Each piece is taken
+as it arrives rather than at the end, so reports appear while the server is
+still going.  When the server closes the request it is made again, with the
+"resultId" of every report handed back, so that what has not changed need not
+be listed again.  The request carries a token for the work done as well: how
+far a server that reports it has got is shown like any other work it is busy
+with, see |:LspLog|, and |:LspWorkspaceDiag| tells it.
+
+A report about a file that is open is left to the request made for that
+buffer, which the protocol has win over this one.  The rest is kept, and
+|:LspWorkspaceDiag| puts it, the open files included, into the |quickfix|
+list.  Reports keep arriving for as long as Vim is open, so the list is what
+the server had reported by the time it was asked for, the way |:LspReferences|
+and the rest are: ask again for one that has caught up.
+
+Opening a file from the list hands it to the server, which is asked about it
+as any other buffer is: signs and highlights appear, and putting the fault
+right takes them away again without waiting for a write.
+
+==============================================================================
+7. Signature help				*lsp-signature*
+
+While a call is being typed the server is asked what it takes, and the answer
+appears in a popup a line away, with the parameter being filled in
+highlighted.  It stands over the name of the call rather than over the cursor,
+even when the call started on a line above, so the two names read as one;
+where there is no name to line up with, the cursor marks where it goes.  The
+server names the characters that start this, "(" and "," for a C server.  From
+there on every change and every move of the cursor is asked about, and the
+popup goes when the answer holds no signature: that is what a server returns
+once the cursor is out of the call, whether the closing paren was typed, the
+call deleted or the cursor moved away.  Leaving Insert mode closes it as well.
+|:LspSignature| asks at any other moment, and setting "signature_help" to
+|false| leaves the asking to that command alone.
+
+This works while the completion menu is up as well, which is where
+'autocomplete' puts one on every keystroke.  The menu is drawn over popups
+(|popup-menu|), so the signature is given a "zindex" above it and goes on the
+side of the cursor the menu is not using.
+
+The parameter is highlighted with this group, linked to an existing one and
+free to be given a look of its own with |:highlight|:
+
+	LspSignatureActive	the parameter being filled in, |hl-PmenuSel|
+
+What a signature holds is the server's business.  A macro is reported as what
+it expands to, so a call of a macro wrapping a function shows the function.
+
+==============================================================================
+8. Symbol highlight				*lsp-highlight*
+
+Once the cursor has stood still on a symbol for as long as "highlight_delay"
+holds, the server is asked where else that symbol is used in the buffer, and
+those places are marked.  Moving the cursor takes the marks away again, and so
+does an edit or entering Insert mode: they are about the symbol as it was.
+Set "document_highlight" in |g:lsp_client_config| to |false| to leave the
+buffer alone.
+
+Somewhere the symbol is written to is marked differently from somewhere it is
+only read, when the server reports which is which.  These are the groups, each
+linked to an existing one and free to be given a look of its own with
+|:highlight|:
+
+	LspHighlightText	a mention, the server reporting no more
+	LspHighlightRead	where the symbol is read, |hl-CursorColumn|
+	LspHighlightWrite	where it is written to, |hl-Visual|
+
+==============================================================================
+9. Inlay hints					*lsp-inlay-hint*
+
+A server can name what the file leaves unsaid: the parameter an argument is
+being passed as, and the type of something declared without one.  Set
+"inlay_hint" in |g:lsp_client_config| to |true| to have those shown as
+|virtual-text|, that is text in the window the buffer does not hold: >vim9
+
+	g:lsp_client_config = {inlay_hint: true}
+<
+Only the part of the file on screen is asked about, and again whenever the
+buffer changes or the window scrolls.
+
+|:LspInlayHint| turns them on and off without leaving Vim, which is the way to
+have a look at them and then be rid of them again.
+
+A hint carries more than the text it shows: a note about it, and the change
+that puts the hint into the file.  |:LspInlayHintInfo| shows the first,
+|:LspInlayHintApply| makes the second; both act on the hint nearest the cursor
+on its line.  A server is allowed to leave those out of the answer and work
+them out only when a hint is acted on, so acting on one is what asks for the
+rest of it.
+
+These are the groups, each linked to |group-name| so the hints stay quieter
+than the file, and free to be given a look of their own with |:highlight|:
+
+	LspInlayType		the type of something declared without one
+	LspInlayParameter	the name an argument is passed as
+
+==============================================================================
+10. Folding					*lsp-folding*
+
+A server knows where a function or a comment begins and ends, which is more
+than 'foldmethod' set to "indent" or "syntax" can work out.  Set "folding" in
+|g:lsp_client_config| to |true| to fold by the ranges it reports, or turn it
+on for a while with |:LspFolding|.
+
+Doing so sets 'foldmethod' to "expr" and 'foldexpr' to a function of this
+plugin, keeping what was there to put back when the folds are turned off again
+or the buffer is detached.  The ranges are asked for afresh whenever the
+buffer changes, and whenever the server reports the ranges it gave are out of
+date.
+
+Folds made by hand are gone once the folds of the server are turned on: Vim
+drops them as the method changes.  Turning the folds off again leaves none of
+the server's behind.
+
+Only whole lines are folded.  A server able to fold part of a line is told not
+to bother.
+
+What is folded is what the server reports, which is not always what
+'foldmethod' set to "syntax" would have done.  A range ends on the line before
+the closing bracket, for one, so that line stays outside the fold.
+
+==============================================================================
+11. Code lens					*lsp-code-lens*
+
+A server can report something about a line without being asked about it: how
+many places use a function, whether a test can be run from here.  Set
+"code_lens" in |g:lsp_client_config| to |true| to have those shown above the
+line they belong to, as |virtual-text|: >vim9
+
+	g:lsp_client_config = {code_lens: true}
+<
+The whole file is asked about, since the protocol has no way to ask about part
+of one, and again whenever the buffer changes.  |:LspCodeLens| turns them on
+and off without leaving Vim.
+
+A lens may arrive as a place in the file and nothing more, with its text
+worked out only when it is asked for; that is asked for as soon as the lenses
+are in, since a lens without text has nothing to show either.
+
+A lens carries a command the server runs on its side, so it is worth acting on
+rather than only reading.  |:LspCodeLensRun| runs the one above the current
+line; when a line gathered more than one, they are shown side by side
+separated by a bar and the command asks which to run.
+
+The text is put in the group LspCodeLens, linked to |group-name| so it stays
+quieter than the file.
+
+==============================================================================
+12. Document links				*lsp-document-link*
+
+A server knows which parts of a file lead somewhere else: the name of a header
+in an "#include" line, a path in a build file.  Set "document_link" in
+|g:lsp_client_config| to |true| to have those underlined: >vim9
+
+	g:lsp_client_config = {document_link: true}
+<
+The whole file is asked about, the way the code lenses are, and again whenever
+the buffer changes.  |:LspDocumentLink| turns them on and off without leaving
+Vim.
+
+|:LspDocumentLinkOpen| goes where the one under the cursor leads.  A link to a
+file is opened here, anything else is handed to |:URLOpen|.  Nothing is
+bound to that command, so map it where it belongs: >vim9
+
+	nmap gx <Plug>(lsp-document-link)
+<
+A link may arrive as a place in the file and nothing more, with where it leads
+worked out only when it is asked for.  That is left until the link is opened,
+so a file full of them costs one request.
+
+|:LspDocumentLinkInfo| shows what the server reports about the link under the
+cursor, for a server that reports anything.
+
+The mark is the group LspDocumentLink, linked to |group-name|.
+
+==============================================================================
+13. Selecting					*lsp-selection*
+
+A server knows how the file is built: which name is inside which call, which
+call inside which statement.
+						*<Plug>(lsp-selection-expand)*
+"(lsp-selection-expand)" takes the selection out to the next of those, from
+the cursor where there is none yet.
+						*<Plug>(lsp-selection-shrink)*
+"(lsp-selection-shrink)" takes it back in.  In from the innermost is where the
+run began, cursor and selection as they were.
+
+Both are wanted while the selection is up, where a command cannot reach, so
+they come as mappings and nothing is bound to them.  Map them where they
+belong: >vim9
+
+	nmap <C-k> <Plug>(lsp-selection-expand)
+	xmap <C-k> <Plug>(lsp-selection-expand)
+	xmap <C-j> <Plug>(lsp-selection-shrink)
+<
+The whole chain, from the innermost out to the file, arrives in one answer and
+is stepped through from there, so only the first of a run of them costs a
+request.  Stepping all the way in leaves things as they were before the first
+step out.  What is remembered goes when the buffer changes, when another
+buffer is entered, or when the selection is no longer the one it put there.
+
+A server may answer with a range holding nothing, which is what clangd does
+where the cursor is outside anything it can name.  There is nothing to select
+in that, and a message reports it.
+
+The answer is waited for the way every other one is, so the first step follows
+the key rather than going with it.  The rest are as quick as the keys.
+
+==============================================================================
+14. Semantic tokens				*lsp-semantic-tokens*
+
+A server that parsed the file knows what a name stands for, which is more than
+the highlighting worked out from the text alone can tell: a type from a
+variable, a call of a function from a mention of one.  Set "semantic_tokens"
+in |g:lsp_client_config| to |true| to color the buffer that way: >vim9
+
+	g:lsp_client_config = {semantic_tokens: true}
+<
+It is painted on with |text-properties| and is off by default, since it
+recolors the buffer rather than adding to a corner of it.
+|:LspSemanticTokens| turns it on and off without leaving Vim.
+
+The whole buffer is asked about where the server offers that, and only the
+part on screen where it does not.  An answer that comes with a "resultId" is
+followed by a request for a delta, so a change is answered with the tokens
+that moved rather than with all of them again.  A change is asked about once
+the typing has stopped for a moment, in Insert mode as well as out of it.
+
+The group for a token type is "LspSem" and the name the protocol uses,
+capitalized: LspSemFunction for "function", LspSemEnumMember for "enumMember".
+Each is linked to the group Vim already uses for that kind of thing, and free
+to be given a look of its own with |:highlight|.  These are the types this
+client has a group for:
+
+	namespace	typeParameter	function	string
+	type		parameter	method		number
+	class		variable	macro		regexp
+	enum		property	keyword		operator
+	interface	enumMember	modifier	decorator
+	struct		event		comment
+
+A token also carries modifiers, "readonly" and "deprecated" among them.  The
+group it is painted with is the first of these that exists:
+
+	LspSem{Type}{Modifier}	both, LspSemVariableReadonly for one
+	LspSem{Modifier}	the modifier on its own
+	LspSem{Type}		the type on its own
+
+Two modifier groups come with the plugin: LspSemDeprecated, drawn with a line
+through the text so it shows whatever the colors are, and LspSemReadonly,
+linked to |group-name|.  Any other one is yours to make: >vim9
+
+	highlight link LspSemVariableStatic Special
+<
+A server names in its legend the token types and the modifiers it uses.  A
+type this client has no group for is left to the syntax highlighting.
+
+==============================================================================
+15. On-type formatting				*lsp-on-type-formatting*
+
+A server may name characters that make it want to look at the text again as it
+is typed, and hand back what to change.  Set "on_type_formatting" in
+|g:lsp_client_config| to |true| for that to happen: >vim9
+
+	g:lsp_client_config = {on_type_formatting: true}
+<
+It is off by default, since it changes the text under the cursor while you are
+typing rather than when you ask for it.
+
+Which characters those are is the server's to name, and what comes back is put
+in as it stands.  clangd names the newline and answers it with the indent for
+the line it opened, which is |:LspFormat| for one line at the moment it is
+worth having.  Another server names another character and makes of it whatever
+it makes.  A server that names none is never asked.
+
+					*lsp-on-type-formatting-clangd*
+The indent clangd hands back comes from .clang-format, not from 'shiftwidth'
+and 'expandtab'; what the request carries is ignored.  That is what to want
+where .clang-format is what the tree is written to.  Leave this off where it
+is not: clangd reads the first .clang-format it finds above the file and holds
+every file in the tree to it, so one written for a corner of the tree rules
+the rest as well.
+
+The Vim source tree is one of those.  Its .clang-format holds "UseTab: Never"
+and is there for the two files that are kept formatted with it, while the rest
+goes by the |modeline| at the end of each file, "ts=8 sts=4 sw=4 noet": one
+level of indent is four spaces, two is a tab, three is a tab and four spaces.
+
+What comes back is dropped when the buffer changed while it was on its way, so
+a keystroke that lands first wins over a late answer.
+
+This does not take the place of 'autoindent', 'cindent' or 'indentexpr'.
+Those put in what they put in as the line opens, the server is asked about the
+text as it then stands, and what it hands back goes on top.  A server that
+answers nothing leaves the line the way Vim indented it.
+
+==============================================================================
+16. Watched files				*lsp-watched-files*
+
+A server may ask to be told when files it is not being sent change, so that it
+can keep up with what goes on around the one being edited.  It asks at run
+time with "client/registerCapability", naming the patterns it cares about, and
+gives the watch up again with "client/unregisterCapability".
+
+Vim cannot watch a directory, so what reaches the server is what Vim itself
+came across: a file Vim wrote, and a file Vim noticed had changed underneath
+it, which is what 'autoread' and |:checktime| bring about.  A file that
+something else creates, changes or deletes while Vim has no buffer for it goes
+unnoticed.
+
+Diagnostics are the other thing a server may register at run time, and pyright
+is one that does: it waits until it has read the settings before declaring
+whether it answers a pull.  A registration is taken as what the server offers
+from then on, over what it named at startup, and giving it up again puts back
+what was named there.  What is registered for anything else is answered and
+then left alone.
+
+==============================================================================
+17. Limitations					*lsp-limitations*
+
+A code action is asked for by line, never by a range within one, so a server
+with something to offer about the exact text under the cursor is never given
+the chance.  An action the server wants to carry out on its side is turned
+down, as answering that takes a request this client does not serve.
+
+A "textEdit" in a completion item is followed only when it stays within the
+line the cursor is on.  One reaching across lines is left to omni completion,
+which replaces the word before the cursor and no more.
+
+==============================================================================
+18. AI						*lsp-ai*
+
+This plugin is developed with the support of AI (Claude).
+
+==============================================================================
+ vim:tw=78:ts=8:noet:ft=help:norl:

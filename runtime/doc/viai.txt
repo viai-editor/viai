@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 03
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 05
 
 
 		  VIAI REFERENCE MANUAL
@@ -33,7 +33,7 @@ applies to ViAI as well, also where it mentions Vim.
 			https://github.com/h-east/lsp.vim
 	vim9ls		a language server for Vim9 script
 			https://github.com/h-east/vim9ls
-  Bundling them with ViAI is planned.
+  They come with ViAI as optional packages, see |package-lsp.vim|.
 - ViAI is the only editor that can show the errors that Vim gives when
   sourcing a Vim9 script as diagnostics, without running the script, see
   |:source-dryrun|.
@@ -259,6 +259,9 @@ ViAI has these features that Vim does not have:
 |t_Cs| and |t_Ce|
 	When they are empty and the terminal answers that it supports the
 	curly underline, they are set, see |terminalprops()|.
+
+|package-lsp.vim|
+	The lsp.vim and vim9ls packages.
 
 ==============================================================================
 11. License					*viai-license*
