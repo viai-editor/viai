@@ -3,6 +3,9 @@
 # tools/update-included-patches.sh.  The commit is pushed
 # to master directly, so that the nightly build of viai-win32-installer
 # finds the numbers; that workflow waits until this one has finished.
+# After a push it waits ten minutes; a push in that time cancels the wait
+# and starts it again, so that one commit adds the numbers of patches merged
+# one after another.
 
 name: Included patches
 
@@ -14,17 +17,30 @@ on:
 permissions:
   contents: read
 
-# One run at a time, a running one is never cancelled.
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
-
 jobs:
-  update:
+  wait:
     runs-on: ubuntu-latest
 
     # Don't push to master of forks.
     if: ${{ github.repository_owner == 'viai-editor' }}
+
+    concurrency:
+      group: ${{ github.workflow }}-wait
+      cancel-in-progress: true
+
+    steps:
+      - name: Wait for more pushes to master
+        if: github.event_name == 'push'
+        run: sleep 600
+
+  update:
+    needs: wait
+    runs-on: ubuntu-latest
+
+    # One update at a time, a running one is never cancelled.
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: false
 
     permissions:
       contents: write # to push the commit
