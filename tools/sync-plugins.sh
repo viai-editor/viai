@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copy lsp.vim and vim9ls into runtime/pack/dist/opt/.
 #
-# Usage: tools/sync-plugins.sh {lsp.vim-repo} {vim9ls-repo}
+# Usage: tools/sync-plugins.sh [-n | -m {file}] {lsp.vim-repo} {vim9ls-repo}
 #
 # Each argument is a git clone of https://github.com/h-east/lsp.vim or
 # https://github.com/h-east/vim9ls.  The files committed at its HEAD replace
@@ -10,14 +10,36 @@
 # its package.  Nothing is copied unless the tracked files of both clones are
 # as committed and their tests pass with src/viai, which has to be built.
 # Prints the test results, the version and the commit of each plugin, and the
-# subject for the commit of the update, e.g.
+# commit message, whose subject is e.g.
 # "runtime(vim9ls): bundled vim9ls is older than 0.1.039".
+#
+# -n		Only compare the versions: exit 0 when an update is needed
+#		and 1 when it is not.  src/viai is not needed.
+# -m {file}	Also write the commit message to {file}.
 
 set -eu
 
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 {lsp.vim-repo} {vim9ls-repo}" >&2
+usage()
+{
+    echo "Usage: $0 [-n | -m {file}] {lsp.vim-repo} {vim9ls-repo}" >&2
     exit 1
+}
+
+compare_only=0
+msg_file=
+while getopts nm: opt; do
+    case $opt in
+        n) compare_only=1 ;;
+        m) msg_file=$OPTARG ;;
+        *) usage ;;
+    esac
+done
+shift $((OPTIND - 1))
+if [ $# -ne 2 ] || { [ $compare_only -eq 1 ] && [ -n "$msg_file" ]; }; then
+    usage
+fi
+if [ -n "$msg_file" ]; then
+    msg_file=$(cd "$(dirname "$msg_file")" && pwd)/$(basename "$msg_file")
 fi
 
 lsp_repo=$(cd "$1" && pwd)
@@ -51,6 +73,11 @@ if [ "$lsp_version" = "$old_lsp_version" ] \
         && [ "$vim9ls_version" = "$old_vim9ls_version" ]; then
     echo "The versions of lsp.vim $lsp_version and vim9ls $vim9ls_version" \
         "are those of the packages, no update is needed"
+    exit $compare_only
+fi
+if [ $compare_only -eq 1 ]; then
+    echo "lsp.vim $old_lsp_version -> $lsp_version," \
+        "vim9ls $old_vim9ls_version -> $vim9ls_version, an update is needed"
     exit 0
 fi
 
@@ -97,11 +124,34 @@ sync "$lsp_repo" lsp.vim autoload/lsp.vim
 sync "$vim9ls_repo" vim9ls autoload/vim9ls.vim
 
 if [ "$vim9ls_version" = "$old_vim9ls_version" ]; then
-    subject="runtime(lsp.vim): bundled lsp.vim is older than $lsp_version"
+    problem="bundled lsp.vim is older than $lsp_version"
+    prefix="runtime(lsp.vim)"
 elif [ "$lsp_version" = "$old_lsp_version" ]; then
-    subject="runtime(vim9ls): bundled vim9ls is older than $vim9ls_version"
+    problem="bundled vim9ls is older than $vim9ls_version"
+    prefix="runtime(vim9ls)"
 else
-    subject="runtime(lsp.vim,vim9ls): bundled lsp.vim and vim9ls are older"
-    subject="$subject than $lsp_version and $vim9ls_version"
+    problem="bundled lsp.vim and vim9ls are older than $lsp_version"
+    problem="$problem and $vim9ls_version"
+    prefix="runtime(lsp.vim,vim9ls)"
 fi
-echo "Subject: $subject"
+
+# wrap {label} {text}: prints {text} after {label}, folded and indented.
+wrap()
+{
+    echo "$2" | fold -s -w 62 | sed -e 's/^ *//' -e 's/ *$//' \
+        -e "1s/^/$1/" -e '2,$s/^/          /'
+}
+
+message()
+{
+    echo "$prefix: $problem"
+    echo
+    wrap "Problem:  " "The $problem."
+    wrap "Solution: " "Copy lsp.vim $lsp_version and vim9ls $vim9ls_version."
+}
+
+echo
+message
+if [ -n "$msg_file" ]; then
+    message > "$msg_file"
+fi

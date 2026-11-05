@@ -1,0 +1,92 @@
+# Copies lsp.vim and vim9ls into runtime/pack/dist/opt/ with
+# tools/sync-plugins.sh when the version of either plugin went up, and opens
+# a pull request from the branch "sync-plugins", or updates the open one.
+# A pull request opened with GITHUB_TOKEN does not start the CI; the tests of
+# both plugins run here with the ViAI built from master.
+
+name: Sync plugins
+
+on:
+  schedule:
+    - cron: '30 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One run at a time, a running one is never cancelled.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    # Don't open pull requests in forks.
+    if: ${{ github.repository_owner == 'viai-editor' }}
+
+    permissions:
+      contents: write # to push the branch
+      pull-requests: write # to open the pull request
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: master
+
+      - name: Clone lsp.vim and vim9ls
+        run: |
+          git clone --depth 1 https://github.com/h-east/lsp.vim.git \
+            "$RUNNER_TEMP/lsp.vim"
+          git clone --depth 1 https://github.com/h-east/vim9ls.git \
+            "$RUNNER_TEMP/vim9ls"
+
+      - name: Compare the versions
+        id: versions
+        run: |
+          if tools/sync-plugins.sh -n "$RUNNER_TEMP/lsp.vim" \
+              "$RUNNER_TEMP/vim9ls"; then
+            echo "update=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build ViAI
+        if: steps.versions.outputs.update == 'yes'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libncurses-dev
+          ./configure --enable-gui=no --without-x --disable-nls
+          make -j"$(nproc)"
+
+      - name: Copy the plugins and open a pull request
+        if: steps.versions.outputs.update == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          USER_NAME: "github-actions[bot]"
+          USER_EMAIL: "41898282+github-actions[bot]@users.noreply.github.com"
+        run: |
+          git config user.name "$USER_NAME"
+          git config user.email "$USER_EMAIL"
+          msg=$RUNNER_TEMP/msg
+          tools/sync-plugins.sh -m "$msg" "$RUNNER_TEMP/lsp.vim" \
+            "$RUNNER_TEMP/vim9ls"
+          git add -A runtime/pack/dist/opt
+          git commit -F "$msg"
+          # Leave the branch alone when it has the same files already.
+          if git fetch -q origin sync-plugins 2> /dev/null \
+              && git diff --quiet FETCH_HEAD HEAD; then
+            echo "The branch sync-plugins has this update already."
+            exit 0
+          fi
+          git push -f origin HEAD:refs/heads/sync-plugins
+          title=$(head -n 1 "$msg")
+          tail -n +3 "$msg" > "$RUNNER_TEMP/body"
+          pr=$(gh pr list --head sync-plugins --state open \
+            --json number --jq '.[].number')
+          if [ -z "$pr" ]; then
+            gh pr create --head sync-plugins --base master \
+              --title "$title" --body-file "$RUNNER_TEMP/body"
+          else
+            gh pr edit "$pr" --title "$title" \
+              --body-file "$RUNNER_TEMP/body"
+          fi
