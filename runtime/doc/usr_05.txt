@@ -543,11 +543,16 @@ Adding the lsp.vim and vim9ls packages	*lsp.vim-install* *package-lsp.vim*
 lsp.vim is a client for the Language Server Protocol, vim9ls a language server
 for Vim script.  To check your Vim scripts with them, add these lines to your
 vimrc file: >
-	packadd! lsp.vim
-	packadd! vim9ls
-	let g:lsp_server_list = [#{filetypes: ['vim'], name: 'vim9ls',
-		\ cmd: function('vim9ls#Command')}]
+	if has('viai')
+	  packadd! lsp.vim
+	  packadd! vim9ls
+	  let g:lsp_server_list = [#{filetypes: ['vim'], name: 'vim9ls',
+		  \ cmd: function('vim9ls#Command')}]
+	endif
 <
+The check for ViAI avoids an error in Vim, which reads the same vimrc file
+unless ViAI has its own, see |viai-config|.
+
 Once the packages are loaded, read about them at: >
 	:h lsp.txt
 	:h vim9ls.txt
