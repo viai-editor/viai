@@ -268,6 +268,13 @@ Rules:
   the problem statement.  The number is added when merging.
   When it is merged into master, a workflow adds the tag `v1.0.NNNN`; the
   installer of viai-win32-installer is built for the newest tag.
+- **An update of a bundled plugin** in `runtime/pack/dist/opt/`, made with
+  `tools/sync-plugins.sh`, has the subject `runtime(lsp.vim): `,
+  `runtime(vim9ls): ` or `runtime(lsp.vim,vim9ls): ` followed by the
+  problem statement, which the script prints, e.g.
+  `runtime(vim9ls): bundled vim9ls is older than 0.1.039`.  Like an
+  imported Vim patch, it makes a release of the installer without a new
+  tag.
 
 ## C code conventions
 

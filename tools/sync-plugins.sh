@@ -9,7 +9,9 @@
 # Nothing is done when the version of neither plugin differs from the one in
 # its package.  Nothing is copied unless the tracked files of both clones are
 # as committed and their tests pass with src/viai, which has to be built.
-# Prints the test results, and the version and the commit of each plugin.
+# Prints the test results, the version and the commit of each plugin, and the
+# subject for the commit of the update, e.g.
+# "runtime(vim9ls): bundled vim9ls is older than 0.1.039".
 
 set -eu
 
@@ -43,9 +45,10 @@ package_version()
 
 lsp_version=$(head_version "$lsp_repo" autoload/lsp.vim)
 vim9ls_version=$(head_version "$vim9ls_repo" autoload/vim9ls.vim)
-if [ "$lsp_version" = "$(package_version lsp.vim autoload/lsp.vim)" ] \
-        && [ "$vim9ls_version" = \
-            "$(package_version vim9ls autoload/vim9ls.vim)" ]; then
+old_lsp_version=$(package_version lsp.vim autoload/lsp.vim)
+old_vim9ls_version=$(package_version vim9ls autoload/vim9ls.vim)
+if [ "$lsp_version" = "$old_lsp_version" ] \
+        && [ "$vim9ls_version" = "$old_vim9ls_version" ]; then
     echo "The versions of lsp.vim $lsp_version and vim9ls $vim9ls_version" \
         "are those of the packages, no update is needed"
     exit 0
@@ -92,3 +95,13 @@ check "$lsp_repo" lsp.vim
 check "$vim9ls_repo" vim9ls
 sync "$lsp_repo" lsp.vim autoload/lsp.vim
 sync "$vim9ls_repo" vim9ls autoload/vim9ls.vim
+
+if [ "$vim9ls_version" = "$old_vim9ls_version" ]; then
+    subject="runtime(lsp.vim): bundled lsp.vim is older than $lsp_version"
+elif [ "$lsp_version" = "$old_lsp_version" ]; then
+    subject="runtime(vim9ls): bundled vim9ls is older than $vim9ls_version"
+else
+    subject="runtime(lsp.vim,vim9ls): bundled lsp.vim and vim9ls are older"
+    subject="$subject than $lsp_version and $vim9ls_version"
+fi
+echo "Subject: $subject"
