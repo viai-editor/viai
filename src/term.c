@@ -6391,8 +6391,10 @@ handle_dcs(char_u *tp, char_u *argp, int len, char_u *key_name, int *slen)
 	if (tail > 0)
 	{
 #ifdef FEAT_TERMRESPONSE
-	    if (tp[k] == 'm')
-		handle_sgr_response(tp + j + 3, k - j - 3, argp[0] == '1');
+	    // An empty response may also be the one to t_RS.
+	    if (tp[k] == 'm' || rcu_status.tr_progress == STATUS_SENT)
+		handle_sgr_response(tp + j + 3, k - j - 3,
+					      argp[0] == '1' && tp[k] == 'm');
 #endif
 	    LOG_TRN("Received SGR response: %s", tp);
 

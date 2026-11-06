@@ -2063,27 +2063,55 @@ func Test_xx09_undercurl_response()
   call test_option_not_set('t_Cs')
   call test_option_not_set('t_Ce')
 
+  " the request was not sent, an empty response, such as the one to t_RS, is
+  " ignored
+  new
+  let @" = 'x'
+  call feedkeys("\<Esc>P0$r\<Esc>\\", 'Lx!')
+  call assert_equal([''], getline(1, '$'))
+  call assert_equal('u', terminalprops().undercurl)
+  bwipe!
+
+  " the xterm compatibility check and the version response make Vim send the
+  " request
+  let save_ttymouse = &ttymouse
+  set t_RV=x
+  call test_override('term_props', 1)
+  call feedkeys("\<Esc>[3;1R", 'Lx!')
+  call feedkeys("\<Esc>[>41;337;0c", 'Lx!')
+
+  " an empty response to t_RS comes first and the request seems not taken
+  call feedkeys("\<Esc>P0$r\<Esc>\\", 'Lx!')
+  call assert_equal('n', terminalprops().undercurl)
+  call assert_equal('', &t_Cs)
+
+  " the response to the request comes after it, SGR 4:3 is taken
+  call feedkeys("\<Esc>P1$r0;4:3m\<Esc>\\", 'Lx!')
+  call assert_equal('y', terminalprops().undercurl)
+  call assert_equal("\<Esc>[4:3m", &t_Cs)
+  call assert_equal("\<Esc>[4:0m", &t_Ce)
+
+  set t_RV=
+  call test_override('term_props', 0)
+  let &ttymouse = save_ttymouse
+
   " SGR 4:3 is not taken
+  set t_Cs= t_Ce=
+  call test_option_not_set('t_Cs')
+  call test_option_not_set('t_Ce')
   call feedkeys("\<Esc>P1$r0;4m\<Esc>\\", 'Lx!')
   call assert_equal('n', terminalprops().undercurl)
   call assert_equal('', &t_Cs)
   call assert_equal('', &t_Ce)
 
-  " the request is not taken, the responses are not typed
+  " the request is not taken, the response is not typed
   new
   let @" = 'x'
-  call feedkeys("\<Esc>P0$r\<Esc>\\", 'Lx!')
   call feedkeys("\<Esc>P0$r0;4:3m\<Esc>\\", 'Lx!')
   call assert_equal([''], getline(1, '$'))
   call assert_equal('n', terminalprops().undercurl)
   call assert_equal('', &t_Cs)
   bwipe!
-
-  " SGR 4:3 is taken
-  call feedkeys("\<Esc>P1$r0;4:3m\<Esc>\\", 'Lx!')
-  call assert_equal('y', terminalprops().undercurl)
-  call assert_equal("\<Esc>[4:3m", &t_Cs)
-  call assert_equal("\<Esc>[4:0m", &t_Ce)
 
   " t_Cs and t_Ce set by the user are kept
   set t_Cs= t_Ce=
