@@ -290,7 +290,7 @@ Subjects that can be read independently.
 ==============================================================================
 Tuning ViAI ~
 
-Make Vim work as you like it.
+Make ViAI work as you like it.
 
 |usr_40.txt|  Make new commands
 		|40.1|	Key mapping
