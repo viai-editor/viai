@@ -2,7 +2,6 @@
 
 
 		  VIAI REFERENCE MANUAL
-					  and Bram Moolenaar
 
 
 Sign Support Features				*sign-support*

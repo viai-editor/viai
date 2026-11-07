@@ -2,7 +2,6 @@
 
 
 		  VIAI REFERENCE MANUAL
-					  and Matt Gerassimof
 
 
 Perl and Vim				*perl* *Perl*
