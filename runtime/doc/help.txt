@@ -84,7 +84,7 @@ Editing Effectively ~
 |usr_31.txt|  Exploiting the GUI
 |usr_32.txt|  The undo tree
 
-Tuning Vim ~
+Tuning ViAI ~
 |usr_40.txt|  Make new commands
 |usr_41.txt|  Write a Vim script
 |usr_42.txt|  Add new menus
@@ -97,7 +97,7 @@ Writing Vim scripts ~
 |usr_51.txt|  Create a plugin
 |usr_52.txt|  Write plugins using Vim9 script
 
-Making Vim Run ~
+Making ViAI Run ~
 |usr_90.txt|  Installing ViAI
 
 REFERENCE MANUAL: These files explain every detail of Vim.	*reference_toc*

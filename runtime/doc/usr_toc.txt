@@ -38,7 +38,7 @@ Editing Effectively ~
 |usr_31.txt|  Exploiting the GUI
 |usr_32.txt|  The undo tree
 
-Tuning Vim ~
+Tuning ViAI ~
 |usr_40.txt|  Make new commands
 |usr_41.txt|  Write a Vim script
 |usr_42.txt|  Add new menus
@@ -51,7 +51,7 @@ Writing Vim script ~
 |usr_51.txt|  Write plugins
 |usr_52.txt|  Write larger plugins
 
-Making Vim Run ~
+Making ViAI Run ~
 |usr_90.txt|  Installing ViAI
 
 
@@ -288,7 +288,7 @@ Subjects that can be read independently.
 		|32.4|	Time travelling
 
 ==============================================================================
-Tuning Vim ~
+Tuning ViAI ~
 
 Make Vim work as you like it.
 
@@ -365,7 +365,7 @@ Writing Vim script ~
 		|52.6|	Vim9 examples: comment and highlight-yank plugin
 
 ==============================================================================
-Making Vim Run ~
+Making ViAI Run ~
 
 Before you can use ViAI.
 
