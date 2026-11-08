@@ -86,6 +86,11 @@ make install
 Use `:help` in ViAI, or read
 [`runtime/doc/help.txt`](./runtime/doc/help.txt).
 
+The help is also available online in HTML:
+
+* [ViAI help (English)](https://viai-editor.github.io/viai-doc-en/)
+* [ViAI help (Japanese)](https://viai-editor.github.io/viai-doc-ja/)
+
 ## Contributing
 
 Bug reports and feature requests are welcome.  Please open an issue in this
