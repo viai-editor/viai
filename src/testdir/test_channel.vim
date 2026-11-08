@@ -3142,6 +3142,40 @@ func Test_stdio_channel_queued_messages()
   unlet g:stdio_answer
 endfunc
 
+" A line in NL mode that arrives in parts is handled once it is complete.
+func Test_stdio_channel_incomplete_nl_message()
+  if has('win32') && has('gui_running')
+    throw 'Skipped: gvim.exe cannot run without the GUI'
+  endif
+  let lines =<< trim END
+    func OnMessage(ch, msg)
+      call ch_sendraw(a:ch, 'got ' .. a:msg .. "\n")
+    endfunc
+    call ch_open('stdio', #{mode: 'nl', callback: 'OnMessage'})
+  END
+  call writefile(lines, 'Xstdio_incomplete.vim', 'D')
+  let g:stdio_answer = []
+  func! StdioAnswer(ch, msg)
+    call add(g:stdio_answer, a:msg)
+  endfunc
+  let job = job_start([GetVimProg(), '--clean', '--stdio-channel',
+        \ '-S', 'Xstdio_incomplete.vim'], #{mode: 'nl',
+        \ callback: 'StdioAnswer'})
+  call assert_equal('run', job_status(job))
+
+  call ch_sendraw(job, 'hel')
+  sleep 200m
+  call assert_equal([], g:stdio_answer)
+  call ch_sendraw(job, "lo\n")
+  call WaitForAssert({-> assert_equal(['got hello'], g:stdio_answer)})
+
+  call ch_close(job)
+  call WaitForAssert({-> assert_equal('dead', job_status(job))})
+  call job_stop(job)
+  delfunc StdioAnswer
+  unlet g:stdio_answer
+endfunc
+
 func Test_channel_lsp_mode()
   " The channel lsp mode test is flaky and gives the same error.
   let g:giveup_same_error = 0
