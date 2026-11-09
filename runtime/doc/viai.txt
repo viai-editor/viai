@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 05
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 09
 
 
 		  VIAI REFERENCE MANUAL
@@ -255,10 +255,6 @@ ViAI has these features that Vim does not have:
 
 |has()| with "viai"
 	True in ViAI, see |viai-feature|.
-
-|t_Cs| and |t_Ce|
-	When they are empty and the terminal answers that it supports the
-	curly underline, they are set, see |terminalprops()|.
 
 |package-lsp.vim|
 	The lsp.vim and vim9ls packages.
