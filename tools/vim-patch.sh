@@ -222,10 +222,11 @@ main() {
     rm -f "$blob_map"
 
     case $subject in
-        "patch "[0-9]*": "*)
+        "patch "[0-9]*":"*)
             num=${subject#patch }
-            num=${num%%: *}
-            new_subject="vim-patch:$num: ${subject#patch $num: }"
+            num=${num%%:*}
+            rest=${subject#"patch $num:"}
+            new_subject="vim-patch:$num: ${rest# }"
             ;;
         *)
             new_subject="vim-patch:$short: $subject"
