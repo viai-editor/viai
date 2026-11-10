@@ -382,13 +382,27 @@ enddef
 
 # Without the Dictionary, which a dry run does not make, defining
 # "function s:obj.Method()" fails and leaves the body at the script level.
-# Such a function is read under a name of its own.
+# So does "function xlib#{s:name}#new()" without the variable, which a dry
+# run does not set.  Such a function is read under a name of its own.
 const DICT_FUNC =
   '^\s*fu\%[nction]!\=\s\+\zs\%([gs]:\)\=\h\w*\%(\.\h\w*\)\+\ze\s*('
+const CURLY_FUNC = '^\s*fu\%[nction]!\=\s\+\zs\%([gs]:\)\=[[:alnum:]_#]*'
+  .. '\%({.\{-}}[[:alnum:]_#]*\)\+\ze\s*('
 
-def RenameDictFuncs(lines: list<string>): list<string>
+def RenameFuncs(lines: list<string>): list<string>
   return lines->mapnew((i, line) => line =~ DICT_FUNC
-    ? substitute(line, DICT_FUNC, 's:Vim9lsDict' .. (i + 1), '') : line)
+    ? substitute(line, DICT_FUNC, 's:Vim9lsDict' .. (i + 1), '')
+    : line =~ CURLY_FUNC
+    ? substitute(line, CURLY_FUNC, 's:Vim9lsCurly' .. (i + 1), '') : line)
+enddef
+
+# Whether "e", an error of the script level, is E117 for "call Name(": at
+# the script level ":call" finds a global function without "g:", but not in
+# the function that wrap.vim makes of it.
+def GlobalCall(e: dict<any>, lines: list<string>): bool
+  var name = matchstr(e.message, '^E117: Unknown function: \zs\u\w*$')
+  return name != '' && e.line < len(lines)
+    && lines[e.line] =~ '^\s*cal\%[l]\s\+' .. name .. '('
 enddef
 
 # "base" with "wrapped", the script level as a function, appended.
@@ -427,7 +441,7 @@ def Check(path_arg: string, lines: list<string>, wrapped: any,
   endfor
   var made = definitions->empty()
     ? defs.Checks(parse.Parse(lines), lines) : definitions
-  var base = RenameDictFuncs(made.lines)
+  var base = RenameFuncs(made.lines)
   # The range needs the colon: ":execute" from a ":def" reads the Vim9 way.
   const cmd = ':%source ++dryrun'
   origin = made.origin
@@ -475,11 +489,16 @@ def Check(path_arg: string, lines: list<string>, wrapped: any,
         .. '\%(let\|cons\%[t]\)\s\+\%(\[[^]]*\)\=\<s:' .. name .. '\>') < 0
     })
   endif
+  var global_calls: list<dict<any>> = []
   for e in errors
     if e.line > len(lines)
       e.line -= len(lines) + 1
+      if GlobalCall(e, lines)
+        global_calls->add(e)
+      endif
     endif
   endfor
+  errors->filter((_, e) => index(global_calls, e) < 0)
   errors += KeyCallErrors(path, calls)
   ForgetGlobalFunctions(path)
   ForgetPlaceholders()
