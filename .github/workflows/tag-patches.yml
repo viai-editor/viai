@@ -14,11 +14,6 @@ on:
 permissions:
   contents: read
 
-# One run at a time, a running one is never cancelled.
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
-
 jobs:
   tag:
     runs-on: ubuntu-latest
@@ -76,4 +71,15 @@ jobs:
             git tag -a -m "${th%%:*}" "${th%%:*}" "${th#*:}"
             refs="$refs refs/tags/${th%%:*}"
           done
-          git push origin $refs
+          if git push origin $refs; then
+            exit 0
+          fi
+          # Another run may have pushed the same tags.
+          git fetch -q -f origin $(for r in $refs; do echo "+$r:$r"; done)
+          for th in $new; do
+            old=$(git rev-parse -q --verify "refs/tags/${th%%:*}^{commit}")
+            if [ "$old" != "${th#*:}" ]; then
+              echo "Pushing ${th%%:*} failed."
+              exit 1
+            fi
+          done
