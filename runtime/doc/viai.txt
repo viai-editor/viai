@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 09
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 12
 
 
 		  VIAI REFERENCE MANUAL
@@ -7,9 +7,9 @@
 Differences between ViAI and Vim		*viai*
 
 ViAI (Vim Advanced Integrated, pronounced "vee-eye") is a modified version of
-Vim, developed by Hirohito Higashi (h-east), a former Vim maintainer, making
-full use of AI assistance.  This file describes the development policy of
-ViAI and lists where ViAI differs from Vim.  The rest of the documentation
+Vim, being developed by Hirohito Higashi (h-east), a former Vim maintainer,
+making full use of AI assistance.  This file describes the development policy
+of ViAI and lists where ViAI differs from Vim.  The rest of the documentation
 applies to ViAI as well, also where it mentions Vim.
 
 1. Development policy		|viai-policy|
