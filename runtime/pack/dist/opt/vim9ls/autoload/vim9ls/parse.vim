@@ -80,10 +80,12 @@ const DECLARES = {var: 1, const: 1, final: 1, let: 1}
 const LANGUAGES = {python: 1, python3: 1, pythonx: 1, py3: 1, pyx: 1,
   perl: 1, lua: 1, ruby: 1, tcl: 1, mzscheme: 1}
 # Commands that take the rest of the line, bars included; see ":help :bar".
-# A mapping is not one of them.
+# A mapping is not one of them.  ":syntax" is taken as one too: a bar in a
+# pattern does not separate a command, and a command after the pattern that
+# shapes the script is rare.
 const TAKES_REST = {command: 1, autocmd: 1, normal: 1, global: 1, vglobal: 1,
   windo: 1, bufdo: 1, argdo: 1, tabdo: 1, cdo: 1, cfdo: 1, ldo: 1, lfdo: 1,
-  folddoopen: 1, folddoclosed: 1, help: 1, sign: 1, terminal: 1}
+  folddoopen: 1, folddoclosed: 1, help: 1, sign: 1, terminal: 1, syntax: 1}
 const TYPES = {class: KIND_CLASS, interface: KIND_INTERFACE, enum: KIND_ENUM}
 # A line of ":append", ":change" or ":insert", after a range of numbers,
 # marks and the like.
@@ -113,15 +115,21 @@ const SHAPING = extend({
 # fullcommand() costs more than a lookup, and the same words come up again
 # and again.
 var commands: dict<string> = {}
+var vim9_commands: dict<string> = {}
 
 # The command "word" stands for, expanded; empty when it is not one.  A
 # command name has no underscore: for "for_buf" fullcommand() would settle
-# for "for".
-export def CommandOf(word: string): string
-  if !commands->has_key(word)
-    commands[word] = word =~ '_' ? '' : fullcommand(word, false)
+# for "for".  Under Vim9 rules ("vim9") "end" is not ":endif".
+export def CommandOf(word: string, vim9: bool = false): string
+  var cache = vim9 ? vim9_commands : commands
+  if !cache->has_key(word)
+    # fullcommand() gives no error for a short form that Vim9 rules do not
+    # allow, but leaves "E1065" in v:errmsg.
+    var errmsg = v:errmsg
+    cache[word] = word =~ '_' ? '' : fullcommand(word, vim9)
+    v:errmsg = errmsg
   endif
-  return commands[word]
+  return cache[word]
 enddef
 
 # Whether "word" only qualifies the command after it.
@@ -524,7 +532,7 @@ def Statement(st: dict<any>, lnum: number, text: string, col: number,
     if word == ''
       return
     endif
-    cmd = CommandOf(word)
+    cmd = CommandOf(word, is_vim9)
     arg_text = ArgText(rest, 0, word)
   endwhile
   var name_col = offset + strlen(rest) - strlen(arg_text)
@@ -731,7 +739,7 @@ export def Parse(lines: list<string>): dict<any>
     if line[m[2]] == ':'
       continue
     endif
-    var cmd = CommandOf(word)
+    var cmd = CommandOf(word, InVim9(st))
 
     # ":loadkeymap" reads the rest of the script as keymap lines, a heredoc
     # with a marker that no line has.
@@ -795,7 +803,8 @@ export def Parse(lines: list<string>): dict<any>
         # its column.
         var pcol = min([col + offset + strlen(part) - strlen(text),
           strlen(lines[lnum])])
-        Statement(st, lnum, text, pcol, is_first, pword, CommandOf(pword))
+        Statement(st, lnum, text, pcol, is_first, pword,
+          CommandOf(pword, InVim9(st)))
       endif
       is_first = false
       if TakesRest(text)
