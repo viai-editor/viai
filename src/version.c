@@ -745,6 +745,8 @@ static char *(features[]) =
 static int viai_included_patches[] =
 {   /* Add new patch number below this line */
 /**/
+    50,
+/**/
     49,
 /**/
     48,

@@ -3176,6 +3176,111 @@ func Test_stdio_channel_incomplete_nl_message()
   unlet g:stdio_answer
 endfunc
 
+" The server for the "mcp" mode tests: answers "ping" with "pong" and the
+" params, and "notify" with a notification followed by the answer.
+let s:mcp_server_lines =<< trim END
+  func OnMessage(ch, msg)
+    if a:msg.method == 'ping'
+      call ch_sendexpr(a:ch, #{id: a:msg.id, result: 'pong ' .. a:msg.params})
+    elseif a:msg.method == 'notify'
+      call ch_sendexpr(a:ch, #{method: 'note', params: "two\nlines"})
+      call ch_sendexpr(a:ch, #{id: a:msg.id, result: 'done'})
+    endif
+  endfunc
+  call ch_open('stdio', #{mode: 'mcp', callback: 'OnMessage'})
+END
+
+" Two Vims talk to each other in "mcp" mode.
+func Test_channel_mcp_mode()
+  if has('win32') && has('gui_running')
+    throw 'Skipped: gvim.exe cannot run without the GUI'
+  endif
+  call writefile(s:mcp_server_lines, 'Xmcp_server.vim', 'D')
+  let g:mcp_notes = []
+  func! McpNote(ch, msg)
+    call add(g:mcp_notes, a:msg)
+  endfunc
+  let job = job_start([GetVimProg(), '--clean', '--stdio-channel',
+        \ '-S', 'Xmcp_server.vim'], #{mode: 'mcp', callback: 'McpNote'})
+  call assert_equal('run', job_status(job))
+  call assert_equal('MCP', ch_info(job_getchannel(job)).out_mode)
+
+  let resp = ch_evalexpr(job, #{method: 'ping', params: 'x'}, #{timeout: 5000})
+  call assert_equal(#{jsonrpc: '2.0', id: resp.id, result: 'pong x'}, resp)
+
+  " A notification that arrives before the answer goes to the callback.
+  let resp = ch_evalexpr(job, #{method: 'notify'}, #{timeout: 5000})
+  call assert_equal('done', resp.result)
+  call WaitForAssert({-> assert_equal(
+        \ [#{jsonrpc: '2.0', method: 'note', params: "two\nlines"}],
+        \ g:mcp_notes)})
+
+  " With a callback ch_sendexpr() returns the id of the request.
+  let g:mcp_answer = {}
+  let req = ch_sendexpr(job, #{method: 'ping', params: 'y'},
+        \ #{callback: {_, msg -> extend(g:mcp_answer, msg)}})
+  call WaitForAssert({-> assert_equal('pong y', g:mcp_answer->get('result'))})
+  call assert_equal(req.id, g:mcp_answer.id)
+
+  call ch_close(job)
+  call WaitForAssert({-> assert_equal('dead', job_status(job))})
+  call job_stop(job)
+  delfunc McpNote
+  unlet g:mcp_notes g:mcp_answer
+endfunc
+
+" What goes over the wire in "mcp" mode: each message is one line of JSON.
+func Test_channel_mcp_mode_wire()
+  if has('win32') && has('gui_running')
+    throw 'Skipped: gvim.exe cannot run without the GUI'
+  endif
+  call writefile(s:mcp_server_lines, 'Xmcp_wire.vim', 'D')
+  let g:mcp_lines = []
+  func! McpLine(ch, msg)
+    call add(g:mcp_lines, a:msg)
+  endfunc
+  let job = job_start([GetVimProg(), '--clean', '--stdio-channel',
+        \ '-S', 'Xmcp_wire.vim'], #{mode: 'nl', callback: 'McpLine'})
+  call assert_equal('run', job_status(job))
+
+  " The answer is a line without a header and the newline in a string is
+  " escaped.
+  call ch_sendraw(job, '{"jsonrpc":"2.0","id":1,"method":"notify"}' .. "\n")
+  call WaitForAssert({-> assert_equal(2, len(g:mcp_lines))})
+  call assert_equal(
+        \ [#{jsonrpc: '2.0', method: 'note', params: "two\nlines"},
+        \  #{jsonrpc: '2.0', id: 1, result: 'done'}],
+        \ g:mcp_lines->mapnew({_, l -> json_decode(l)}))
+  call assert_match('two\\nlines', g:mcp_lines[0])
+
+  " Two messages in one write, a string id, a message that arrives in parts
+  " and one that is spread over lines.  Something that is not a Dict is
+  " dropped.
+  let g:mcp_lines = []
+  call ch_sendraw(job, '{"jsonrpc":"2.0","id":2,"method":"ping","params":"a"}'
+        \ .. "\n" .. '{"jsonrpc":"2.0","id":"s","method":"ping","params":"b"}'
+        \ .. "\n")
+  call ch_sendraw(job, '{"jsonrpc":"2.0","id":3,')
+  sleep 20m
+  call ch_sendraw(job, '"method":"ping","params":"c"}' .. "\n")
+  call ch_sendraw(job, "[1, 2]\n")
+  call ch_sendraw(job, "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 4,\n"
+        \ .. "  \"method\": \"ping\",\n  \"params\": \"d\"\n}\n")
+  call WaitForAssert({-> assert_equal(4, len(g:mcp_lines))})
+  call assert_equal(
+        \ [#{jsonrpc: '2.0', id: 2, result: 'pong a'},
+        \  #{jsonrpc: '2.0', id: 's', result: 'pong b'},
+        \  #{jsonrpc: '2.0', id: 3, result: 'pong c'},
+        \  #{jsonrpc: '2.0', id: 4, result: 'pong d'}],
+        \ g:mcp_lines->mapnew({_, l -> json_decode(l)}))
+
+  call ch_close(job)
+  call WaitForAssert({-> assert_equal('dead', job_status(job))})
+  call job_stop(job)
+  delfunc McpLine
+  unlet g:mcp_lines
+endfunc
+
 func Test_channel_lsp_mode()
   " The channel lsp mode test is flaky and gives the same error.
   let g:giveup_same_error = 0

@@ -115,6 +115,26 @@ json_encode_lsp_msg(typval_T *val)
     ga_clear(&ga);
     return lspga.ga_data;
 }
+
+/*
+ * Encode "val" into a JSON format string followed by a NL, for MCP.
+ * Returns NULL when encoding fails or out of memory.
+ */
+    char_u *
+json_encode_mcp_msg(typval_T *val)
+{
+    garray_T	ga;
+
+    ga_init2(&ga, 1, 4000);
+    if (json_encode_gap(&ga, val, 0) == FAIL)
+    {
+	ga_clear(&ga);
+	return NULL;
+    }
+    ga_append(&ga, NL);
+    ga_append(&ga, NUL);
+    return ga.ga_data;
+}
 #endif
 
 /*

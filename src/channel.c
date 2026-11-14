@@ -2716,7 +2716,8 @@ channel_parse_json(channel_T *channel, ch_part_T part, bool socketserver)
 	// Only accept the response when it is a list with at least two
 	// items.
 	if (!socketserver && (chanpart->ch_mode == CH_MODE_LSP
-		    || chanpart->ch_mode == CH_MODE_DAP)
+		    || chanpart->ch_mode == CH_MODE_DAP
+		    || chanpart->ch_mode == CH_MODE_MCP)
 		&& listtv.v_type != VAR_DICT)
 	{
 	    ch_error(channel, "Did not receive a LSP dict, discarding");
@@ -2724,6 +2725,7 @@ channel_parse_json(channel_T *channel, ch_part_T part, bool socketserver)
 	}
 	else if (!socketserver && chanpart->ch_mode != CH_MODE_LSP
 		&& chanpart->ch_mode != CH_MODE_DAP
+		&& chanpart->ch_mode != CH_MODE_MCP
 		&& (listtv.v_type != VAR_LIST || listtv.vval.v_list->lv_len < 2))
 	{
 	    if (listtv.v_type != VAR_LIST)
@@ -2955,7 +2957,8 @@ channel_get_json(
 	typval_T    *tv;
 
 	if (channel->ch_part[part].ch_mode != CH_MODE_LSP
-		&& channel->ch_part[part].ch_mode != CH_MODE_DAP)
+		&& channel->ch_part[part].ch_mode != CH_MODE_DAP
+		&& channel->ch_part[part].ch_mode != CH_MODE_MCP)
 	{
 	    l = item->jq_value->vval.v_list;
 	    CHECK_LIST_MATERIALIZE(l);
@@ -2966,7 +2969,7 @@ channel_get_json(
 	    dict_T	*d;
 	    dictitem_T	*di;
 
-	    if (channel->ch_part[part].ch_mode == CH_MODE_LSP)
+	    if (channel->ch_part[part].ch_mode != CH_MODE_DAP)
 	    {
 		// LSP message payload is a JSON-RPC dict. For RPC requests and
 		// responses, the 'id' item will be present. For notifications,
@@ -3392,7 +3395,8 @@ channel_use_json_head(channel_T *channel, ch_part_T part)
 
     return ch_mode == CH_MODE_JSON || ch_mode == CH_MODE_JS
 						     || ch_mode == CH_MODE_LSP
-						     || ch_mode == CH_MODE_DAP;
+						     || ch_mode == CH_MODE_DAP
+						     || ch_mode == CH_MODE_MCP;
 }
 
 /*
@@ -3467,7 +3471,8 @@ may_invoke_callback(channel_T *channel, ch_part_T part)
 		return FALSE;
 	}
 
-	if (ch_mode == CH_MODE_LSP || ch_mode == CH_MODE_DAP)
+	if (ch_mode == CH_MODE_LSP || ch_mode == CH_MODE_DAP
+		|| ch_mode == CH_MODE_MCP)
 	{
 	    dict_T	*d = listtv->vval.v_dict;
 	    dictitem_T	*di;
@@ -3475,7 +3480,7 @@ may_invoke_callback(channel_T *channel, ch_part_T part)
 	    seq_nr = 0;
 	    if (d != NULL)
 	    {
-		if (ch_mode == CH_MODE_LSP)
+		if (ch_mode != CH_MODE_DAP)
 		    di = dict_find(d, (char_u *)"id", -1);
 		else
 		    di = dict_find(d, (char_u *)"request_seq", -1);
@@ -3628,7 +3633,8 @@ may_invoke_callback(channel_T *channel, ch_part_T part)
 
 	// Don't use a LSP/DAP server request message with the same sequence
 	// number as the client request message as the response message.
-	if ((ch_mode == CH_MODE_LSP || ch_mode == CH_MODE_DAP)
+	if ((ch_mode == CH_MODE_LSP || ch_mode == CH_MODE_DAP
+		    || ch_mode == CH_MODE_MCP)
 		&& argv[1].v_type == VAR_DICT
 		&& dict_has_key(argv[1].vval.v_dict, "method"))
 	    lsp_req_msg = TRUE;
@@ -3648,7 +3654,8 @@ may_invoke_callback(channel_T *channel, ch_part_T part)
 	}
     }
 
-    if (seq_nr > 0 && ((ch_mode != CH_MODE_LSP && ch_mode != CH_MODE_DAP)
+    if (seq_nr > 0 && ((ch_mode != CH_MODE_LSP && ch_mode != CH_MODE_DAP
+		    && ch_mode != CH_MODE_MCP)
 		|| called_otc))
     {
 	if (!called_otc)
@@ -3894,6 +3901,9 @@ channel_part_info(channel_T *channel, dict_T *dict, char *name, ch_part_T part)
 	    break;
 	case CH_MODE_DAP:
 	    STR_LITERAL_SET(s, "DAP");
+	    break;
+	case CH_MODE_MCP:
+	    STR_LITERAL_SET(s, "MCP");
 	    break;
 	default:
 	    STR_LITERAL_SET(s, "");
@@ -5281,11 +5291,12 @@ ch_expr_common(typval_T *argvars, typval_T *rettv, int eval)
 	return;
     }
 
-    if (ch_mode == CH_MODE_LSP || ch_mode == CH_MODE_DAP)
+    if (ch_mode == CH_MODE_LSP || ch_mode == CH_MODE_DAP
+	    || ch_mode == CH_MODE_MCP)
     {
 	dict_T		*d;
 	dictitem_T	*di;
-	char		*key = ch_mode == CH_MODE_LSP ? "id" : "seq";
+	char		*key = ch_mode == CH_MODE_DAP ? "seq" : "id";
 
 	// return an empty dict by default
 	if (rettv_dict_alloc(rettv) == FAIL)
@@ -5336,9 +5347,12 @@ ch_expr_common(typval_T *argvars, typval_T *rettv, int eval)
 	    if (di != NULL && di->di_tv.v_type == VAR_NUMBER)
 		id = di->di_tv.vval.v_number;
 	}
-	if (ch_mode == CH_MODE_LSP && !dict_has_key(d, "jsonrpc"))
+	if (ch_mode != CH_MODE_DAP && !dict_has_key(d, "jsonrpc"))
 	    dict_add_string_len(d, "jsonrpc", (char_u *)"2.0", STRLEN_LITERAL("2.0"));
-	text = json_encode_lsp_msg(&argvars[1]);
+	if (ch_mode == CH_MODE_MCP)
+	    text = json_encode_mcp_msg(&argvars[1]);
+	else
+	    text = json_encode_lsp_msg(&argvars[1]);
     }
     else
     {
@@ -5361,7 +5375,8 @@ ch_expr_common(typval_T *argvars, typval_T *rettv, int eval)
 	if (channel_read_json_block(channel, part_read, timeout, id, &listtv)
 									== OK)
 	{
-	    if (ch_mode == CH_MODE_LSP || ch_mode == CH_MODE_DAP)
+	    if (ch_mode == CH_MODE_LSP || ch_mode == CH_MODE_DAP
+		    || ch_mode == CH_MODE_MCP)
 	    {
 		*rettv = *listtv;
 		// Change the type to avoid the value being freed.
@@ -5387,7 +5402,8 @@ ch_expr_common(typval_T *argvars, typval_T *rettv, int eval)
 	if (rettv->vval.v_dict != NULL)
 	    dict_add_number(rettv->vval.v_dict, "seq", id);
     }
-    else if (ch_mode == CH_MODE_LSP && !eval && callback_present)
+    else if ((ch_mode == CH_MODE_LSP || ch_mode == CH_MODE_MCP) && !eval
+							   && callback_present)
     {
 	// if ch_sendexpr() is used to send a LSP message and a callback
 	// function is specified, then return the generated identifier for the

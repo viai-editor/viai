@@ -27,6 +27,7 @@ The Netbeans interface also uses a channel. |netbeans|
 14. Using a prompt buffer		|prompt-buffer|
 15. Language Server Protocol		|language-server-protocol|
 16. Debug Adapter Protocol		|debug-adapter-protocol|
+17. Model Context Protocol		|model-context-protocol|
 
 							*E1277*
 {only when compiled with the |+channel| feature for channel stuff}
@@ -58,6 +59,7 @@ JSON	JSON encoding |json_encode()|
 JS	JavaScript style JSON-like encoding |js_encode()|
 LSP	Language Server Protocol encoding |language-server-protocol|
 DAP	Debug Adapter Protocol encoding |debug-adapter-protocol|
+MCP	Model Context Protocol encoding |model-context-protocol|
 
 Common combination are:
 - Using a job connected through pipes in NL mode.  E.g., to run a style
@@ -151,6 +153,8 @@ And in server.vim: >
 	endfunc
 	let ch = ch_open('stdio', #{mode: 'lsp', callback: 'OnMessage'})
 <
+Use the "mcp" mode instead of "lsp" for an MCP server, see
+|model-context-protocol|.
 							*E1582* *E1583*
 The address "stdio" can only be used when Vim was started with
 |--stdio-channel|, and only once.  The stdin and stdout of Vim are then
@@ -192,6 +196,7 @@ unreachable on the network.
 	"blob" - Use raw messages and pass callback data as a |Blob|
 	"lsp"  - Use language server protocol encoding
 	"dap"  - Use debug adapter protocol encoding
+	"mcp"  - Use model context protocol encoding
 						*channel-callback* *E921*
 "callback"	A function that is called when a message is received that is
 		not handled otherwise (e.g. a JSON message with ID zero).  It
@@ -202,9 +207,9 @@ unreachable on the network.
 	endfunc
 	let channel = ch_open("localhost:8765", {"callback": "Handle"})
 <
-		When "mode" is any of "json", "js", "lsp" or "dap" the "msg"
-		argument is the body of the received message, converted to Vim
-		types.
+		When "mode" is any of "json", "js", "lsp", "dap" or "mcp" the
+		"msg" argument is the body of the received message, converted
+		to Vim types.
 		When "mode" is "nl" the "msg" argument is one message,
 		excluding the NL.
 		When "mode" is "raw" the "msg" argument is the whole message
@@ -589,8 +594,8 @@ ch_evalexpr({handle}, {expr} [, {options}])			*ch_evalexpr()*
 		according to the type of channel.  The function cannot be used
 		with a raw channel.  See |channel-use|.
 		{handle} can be a Channel or a Job that has a Channel.
-		When using the "lsp" or "dap" channel mode, {expr} must be a
-		|Dict|.
+		When using the "lsp", "dap" or "mcp" channel mode, {expr} must
+		be a |Dict|.
 								*E917*
 		{options} must be a Dictionary.  It must not have a "callback"
 		entry.  It can have a "timeout" entry to specify the timeout
@@ -598,8 +603,8 @@ ch_evalexpr({handle}, {expr} [, {options}])			*ch_evalexpr()*
 
 		ch_evalexpr() waits for a response and returns the decoded
 		expression.  When there is an error or timeout it returns an
-		empty |String| or, when using the "lsp" or "dap" channel mode,
-		returns an empty |Dict|.
+		empty |String| or, when using the "lsp", "dap" or "mcp"
+		channel mode, returns an empty |Dict|.
 
 		Note that while waiting for the response, Vim handles other
 		messages.  You need to make sure this doesn't cause trouble.
@@ -680,6 +685,7 @@ ch_info({handle})						*ch_info()*
 		   "err_timeout"  timeout in msec
 		   "in_status"	  "open" or "closed"
 		   "in_mode"	  "NL", "RAW", "JSON", "JS" or "LSP" or "DAP"
+				  or "MCP"
 		   "in_io"	  "null", "pipe", "file" or "buffer"
 		   "in_timeout"	  timeout in msec
 
@@ -818,10 +824,11 @@ ch_sendexpr({handle}, {expr} [, {options}])			*ch_sendexpr()*
 		with a raw channel.
 		See |channel-use|.				*E912*
 		{handle} can be a Channel or a Job that has a Channel.
-		When using the "lsp" or "dap" channel mode, {expr} must be a
-		|Dict|.
+		When using the "lsp", "dap" or "mcp" channel mode, {expr} must
+		be a |Dict|.
 
-		If the channel mode is "lsp" or "dap", then returns a Dict.
+		If the channel mode is "lsp", "dap" or "mcp", then returns a
+		Dict.
 		Otherwise returns an empty String.  If the "callback" item is
 		present in {options}, then the returned Dict contains the ID
 		of the request message.  The ID can be used to send a
@@ -1728,5 +1735,40 @@ the "request_seq" field as well for responses. However it will not add the
 
 Otherwise the behaviour is the same as how Vim handles the "lsp" channel mode
 |language-server-protocol|.
+
+==============================================================================
+17. Model Context Protocol			*model-context-protocol*
+
+{only in |ViAI|}
+
+The model context protocol specification is available at:
+
+    https://modelcontextprotocol.io/specification
+
+An MCP message is a JSON-RPC message, like a LSP message, but it is sent
+without a header: each message is one line of JSON that ends in a NL.  This is
+the stdio transport of MCP, the HTTP transport is not supported.
+
+To send and receive MCP messages, set the |channel-mode| to "mcp".  Otherwise
+the messages are handled like in the "lsp" channel mode, see
+|language-server-protocol|.  A received message ends where the JSON value
+ends, thus JSON spread over lines is also accepted.  Something that is not a
+JSON object, such as a JSON-RPC batch, is dropped.
+
+To be an MCP server, start Vim with |--stdio-channel| and open the channel in
+the "mcp" mode, see |channel-stdio|: >
+	func OnMessage(ch, msg)
+	  if a:msg.method == 'ping'
+	    call ch_sendexpr(a:ch, #{id: a:msg.id, result: {}})
+	  endif
+	endfunc
+	let ch = ch_open('stdio', #{mode: 'mcp', callback: 'OnMessage'})
+<
+To talk to an MCP server, start it as a job: >
+	let job = job_start(cmd, #{in_mode: 'mcp', out_mode: 'mcp'})
+	let resp = ch_evalexpr(job, #{method: 'tools/list', params: {}})
+<
+Vim does not handle the messages of the protocol itself, such as "initialize",
+the script has to.
 
  vim:tw=78:ts=8:noet:ft=help:norl:

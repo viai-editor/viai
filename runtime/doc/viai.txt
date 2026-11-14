@@ -4,7 +4,7 @@
 		  VIAI REFERENCE MANUAL
 
 
-Differences between ViAI and Vim		*viai*
+Differences between ViAI and Vim		*viai* *ViAI*
 
 ViAI (Vim Advanced Integrated, pronounced "vee-eye") is a modified version of
 Vim, being developed by Hirohito Higashi (h-east), a former Vim maintainer,
@@ -258,6 +258,9 @@ ViAI has these features that Vim does not have:
 
 |package-lsp.vim|
 	The lsp.vim and vim9ls packages.
+
+|model-context-protocol|
+	The "mcp" channel mode.
 
 ==============================================================================
 11. License					*viai-license*

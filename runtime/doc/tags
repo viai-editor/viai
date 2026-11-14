@@ -6013,6 +6013,7 @@ V	visual.txt	/*V*
 VIMINIT	starting.txt	/*VIMINIT*
 VMS	os_vms.txt	/*VMS*
 Vi	intro.txt	/*Vi*
+ViAI	viai.txt	/*ViAI*
 Vietnamese	vietnamese.txt	/*Vietnamese*
 View	starting.txt	/*View*
 Vim9	vim9.txt	/*Vim9*
@@ -9187,6 +9188,7 @@ mode-cmdline	cmdline.txt	/*mode-cmdline*
 mode-ins-repl	insert.txt	/*mode-ins-repl*
 mode-replace	insert.txt	/*mode-replace*
 mode-switching	intro.txt	/*mode-switching*
+model-context-protocol	channel.txt	/*model-context-protocol*
 modeless-and-clipboard	version6.txt	/*modeless-and-clipboard*
 modeless-selection	gui.txt	/*modeless-selection*
 modeline	options.txt	/*modeline*
