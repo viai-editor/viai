@@ -1,0 +1,119 @@
+*viaimcp.txt*	A Model Context Protocol server for ViAI help and Vim script
+
+Author:  Hirohito Higashi <h.east.727@gmail.com>
+License: Vim license, see |license|
+
+==============================================================================
+CONTENTS					*viaimcp-contents*
+
+1. Introduction				|viaimcp-introduction|
+2. Requirements				|viaimcp-requirements|
+3. Setup				|viaimcp-setup|
+4. Tools				|viaimcp-tools|
+5. Development				|viaimcp-development|
+
+==============================================================================
+1. Introduction					*viaimcp-introduction*
+
+viai.mcp is a server of the Model Context Protocol (MCP) that gives an AI tool
+the help files of ViAI and a check of Vim script.  It is written in Vim9
+script and runs in a ViAI of its own, which talks MCP on its stdin and stdout
+with the "mcp" channel mode, see |model-context-protocol|.
+
+The answers come from that ViAI: its help files, the help files of the
+plugins on the 'runtimepath' it is given, see |viaimcp-runtimepath|, and
+what it reports when it reads a script.
+
+==============================================================================
+2. Requirements					*viaimcp-requirements*
+
+ViAI 1.0.0050 or later, which has the "mcp" channel mode.  Vim itself does
+not have it.
+
+==============================================================================
+3. Setup					*viaimcp-setup*
+
+Put viai.mcp on 'runtimepath' for this help and |viaimcp#Command()|, with a
+plugin manager, vim-plug for instance: >
+	Plug 'viai-editor/viai.mcp'
+<There is no plugin/ directory in it, so ViAI runs none of it at startup.
+
+The server is started by the MCP client.  The command is in bin/: >
+	bin/viaimcp		(Unix)
+	bin\viaimcp.cmd		(MS-Windows)
+<It runs "viai" from $PATH; $VIAIMCP_VIM names another ViAI.
+
+For Claude Code: >
+	claude mcp add viaimcp -- /path/to/viai.mcp/bin/viaimcp
+<
+						*viaimcp#Command()*
+viaimcp#Command()
+		Returns the command that starts the server as a |List|: the
+		console program of this ViAI with "--clean", "--stdio-channel",
+		the 'runtimepath' of this ViAI, see |viaimcp-runtimepath|, and
+		"-S" with the script of the server.  Throws an error when this
+		is not ViAI 1.0.0050 or later.
+
+						*viaimcp-runtimepath*
+The server is started with "--clean", which reads no vimrc and no plugin,
+thus the plugins of the user are not on 'runtimepath'.  The environment
+variable $VIAIMCP_RUNTIMEPATH gives the 'runtimepath' to use: the help files
+of the plugins on it are found and so are the scripts that a checked script
+imports by name.  Nothing on it is run.  The help files of the ViAI of the
+server are always found.
+
+Get the value from your ViAI with your vimrc, for Claude Code on Unix: >
+	claude mcp add viaimcp \
+		-e VIAIMCP_RUNTIMEPATH="$(viai -u ~/.vimrc -i NONE -es \
+		-c 'call writefile([&rtp], "/dev/stdout")' -c 'qa!')" \
+		-- /path/to/viai.mcp/bin/viaimcp
+<"-es" reads no vimrc, thus "-u" names it.  After changing the plugins, run
+"claude mcp remove viaimcp" and the command again.  On other systems get the
+value with ":echo &rtp" in your ViAI.
+
+==============================================================================
+4. Tools					*viaimcp-tools*
+
+						*viaimcp-viai_help_search*
+viai_help_search {pattern}
+		Lists the help tags that match the Vim regular expression
+		{pattern}, with the help file each is in, at most 50.  The
+		tags are those of the "doc/tags" files in 'runtimepath'.
+
+						*viaimcp-viai_help_read*
+viai_help_read {tag}
+		Returns the help text of {tag}: from the line of the tag to
+		the line before the next tag that follows an empty line.  For
+		the tag of a section heading, after a line of "=", it is the
+		whole section, and for the tag of a help file, such as
+		"channel.txt", the whole file.  At most 300 lines are
+		returned.  The first line is the help file and the line
+		number where the text starts.  {tag} is matched exactly.
+
+						*viaimcp-viai_vimscript_check*
+viai_vimscript_check {path}
+viai_vimscript_check {source}
+		Checks a Vim script without running it: another ViAI reads it
+		with ":source ++dryrun", see |:source-dryrun|, and the errors
+		it reports are returned, or "No errors found".  Only the
+		definitions take effect: other commands at the script level
+		are not run or checked.  To check Vim9 script commands, put
+		them in a |:def| function.  Give either {path}, the file of
+		the script, or {source}, the text of the script.  For {source}
+		the name of the script in the errors is "<source>"; a relative
+		"import" in it is not found.
+
+A tool that cannot do its work returns the reason with "isError" set: an
+argument missing or of the wrong type, an invalid pattern, a tag or a file
+that is not found.
+
+==============================================================================
+5. Development					*viaimcp-development*
+
+The tests are in test/.  They start the server with the ViAI that runs
+them: >
+	test/run
+	VIMPROG=/path/to/viai test/run
+	TEST_FILTER=help test/run
+<
+ vim:tw=78:ts=8:noet:ft=help:norl:

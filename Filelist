@@ -886,6 +886,13 @@ RT_ALL =	\
 		runtime/pack/dist/opt/shellmenu/plugin/shellmenu.vim \
 		runtime/pack/dist/opt/swapmouse/plugin/swapmouse.vim \
 		runtime/pack/dist/opt/termdebug/plugin/termdebug.vim \
+		runtime/pack/dist/opt/viai.mcp/LICENSE \
+		runtime/pack/dist/opt/viai.mcp/autoload/*.vim \
+		runtime/pack/dist/opt/viai.mcp/autoload/viaimcp/*.vim \
+		runtime/pack/dist/opt/viai.mcp/bin/viaimcp \
+		runtime/pack/dist/opt/viai.mcp/bin/viaimcp.cmd \
+		runtime/pack/dist/opt/viai.mcp/doc/tags \
+		runtime/pack/dist/opt/viai.mcp/doc/viaimcp.txt \
 		runtime/pack/dist/opt/vim9ls/LICENSE \
 		runtime/pack/dist/opt/vim9ls/autoload/*.vim \
 		runtime/pack/dist/opt/vim9ls/autoload/vim9ls/*.vim \

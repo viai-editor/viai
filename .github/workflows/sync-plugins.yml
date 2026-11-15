@@ -1,8 +1,8 @@
-# Copies lsp.vim and vim9ls into runtime/pack/dist/opt/ with
-# tools/sync-plugins.sh when the version of either plugin went up, and opens
+# Copies lsp.vim, vim9ls and viai.mcp into runtime/pack/dist/opt/ with
+# tools/sync-plugins.sh when the version of any plugin went up, and opens
 # a pull request from the branch "sync-plugins", or updates the open one.
 # A pull request opened with GITHUB_TOKEN does not start the CI; the tests of
-# both plugins run here with the ViAI built from master.
+# the plugins run here with the ViAI built from master.
 
 name: Sync plugins
 
@@ -35,18 +35,20 @@ jobs:
         with:
           ref: master
 
-      - name: Clone lsp.vim and vim9ls
+      - name: Clone the plugins
         run: |
           git clone --depth 1 https://github.com/h-east/lsp.vim.git \
             "$RUNNER_TEMP/lsp.vim"
           git clone --depth 1 https://github.com/h-east/vim9ls.git \
             "$RUNNER_TEMP/vim9ls"
+          git clone --depth 1 https://github.com/viai-editor/viai.mcp.git \
+            "$RUNNER_TEMP/viai.mcp"
 
       - name: Compare the versions
         id: versions
         run: |
           if tools/sync-plugins.sh -n "$RUNNER_TEMP/lsp.vim" \
-              "$RUNNER_TEMP/vim9ls"; then
+              "$RUNNER_TEMP/vim9ls" "$RUNNER_TEMP/viai.mcp"; then
             echo "update=yes" >> "$GITHUB_OUTPUT"
           fi
 
@@ -69,7 +71,7 @@ jobs:
           git config user.email "$USER_EMAIL"
           msg=$RUNNER_TEMP/msg
           tools/sync-plugins.sh -m "$msg" "$RUNNER_TEMP/lsp.vim" \
-            "$RUNNER_TEMP/vim9ls"
+            "$RUNNER_TEMP/vim9ls" "$RUNNER_TEMP/viai.mcp"
           git add -A runtime/pack/dist/opt
           git commit -F "$msg"
           # Leave the branch alone when it has the same files already.

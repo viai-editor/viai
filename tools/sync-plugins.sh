@@ -1,14 +1,16 @@
 #!/bin/bash
-# Copy lsp.vim and vim9ls into runtime/pack/dist/opt/.
+# Copy lsp.vim, vim9ls and viai.mcp into runtime/pack/dist/opt/.
 #
 # Usage: tools/sync-plugins.sh [-n | -m {file}] {lsp.vim-repo} {vim9ls-repo}
+#		{viai.mcp-repo}
 #
-# Each argument is a git clone of https://github.com/h-east/lsp.vim or
-# https://github.com/h-east/vim9ls.  The files committed at its HEAD replace
-# the package directory, except those only needed to develop the plugin.
-# Nothing is done when the version of neither plugin differs from the one in
-# its package.  Nothing is copied unless the tracked files of both clones are
-# as committed and their tests pass with src/viai, which has to be built.
+# Each argument is a git clone of https://github.com/h-east/lsp.vim,
+# https://github.com/h-east/vim9ls or https://github.com/viai-editor/viai.mcp.
+# The files committed at its HEAD replace the package directory, except those
+# only needed to develop the plugin.  Nothing is done when the versions of
+# all plugins are those of their packages.  Nothing is copied unless the
+# tracked files of all clones are as committed and their tests pass with
+# src/viai, which has to be built.
 # Prints the test results, the version and the commit of each plugin, and the
 # commit message, whose subject is e.g.
 # "runtime(vim9ls): bundled vim9ls is older than 0.1.039".
@@ -21,7 +23,8 @@ set -eu
 
 usage()
 {
-    echo "Usage: $0 [-n | -m {file}] {lsp.vim-repo} {vim9ls-repo}" >&2
+    echo "Usage: $0 [-n | -m {file}] {lsp.vim-repo} {vim9ls-repo}" \
+        "{viai.mcp-repo}" >&2
     exit 1
 }
 
@@ -35,15 +38,20 @@ while getopts nm: opt; do
     esac
 done
 shift $((OPTIND - 1))
-if [ $# -ne 2 ] || { [ $compare_only -eq 1 ] && [ -n "$msg_file" ]; }; then
+if [ $# -ne 3 ] || { [ $compare_only -eq 1 ] && [ -n "$msg_file" ]; }; then
     usage
 fi
 if [ -n "$msg_file" ]; then
     msg_file=$(cd "$(dirname "$msg_file")" && pwd)/$(basename "$msg_file")
 fi
 
-lsp_repo=$(cd "$1" && pwd)
-vim9ls_repo=$(cd "$2" && pwd)
+# The package of each plugin and its script with VERSION.
+packages=(lsp.vim vim9ls viai.mcp)
+scripts=(autoload/lsp.vim autoload/vim9ls.vim autoload/viaimcp.vim)
+repos=()
+for arg in "$@"; do
+    repos+=("$(cd "$arg" && pwd)")
+done
 
 cd "$(dirname "$0")/.."
 
@@ -65,19 +73,42 @@ package_version()
     version 2>/dev/null < "runtime/pack/dist/opt/$1/$2" || true
 }
 
-lsp_version=$(head_version "$lsp_repo" autoload/lsp.vim)
-vim9ls_version=$(head_version "$vim9ls_repo" autoload/vim9ls.vim)
-old_lsp_version=$(package_version lsp.vim autoload/lsp.vim)
-old_vim9ls_version=$(package_version vim9ls autoload/vim9ls.vim)
-if [ "$lsp_version" = "$old_lsp_version" ] \
-        && [ "$vim9ls_version" = "$old_vim9ls_version" ]; then
-    echo "The versions of lsp.vim $lsp_version and vim9ls $vim9ls_version" \
-        "are those of the packages, no update is needed"
+# join {item}...: prints "a", "a and b" or "a, b and c".
+join()
+{
+    local out=$1
+    shift
+    while [ $# -gt 1 ]; do
+        out="$out, $1"
+        shift
+    done
+    if [ $# -eq 1 ]; then
+        out="$out and $1"
+    fi
+    echo "$out"
+}
+
+all=()
+changed=()
+changed_versions=()
+updates=()
+for i in "${!packages[@]}"; do
+    new=$(head_version "${repos[i]}" "${scripts[i]}")
+    old=$(package_version "${packages[i]}" "${scripts[i]}")
+    all+=("${packages[i]} $new")
+    if [ "$new" != "$old" ]; then
+        changed+=("${packages[i]}")
+        changed_versions+=("$new")
+        updates+=("${packages[i]} $old -> $new")
+    fi
+done
+if [ ${#changed[@]} -eq 0 ]; then
+    echo "The versions of $(join "${all[@]}") are those of the packages," \
+        "no update is needed"
     exit $compare_only
 fi
 if [ $compare_only -eq 1 ]; then
-    echo "lsp.vim $old_lsp_version -> $lsp_version," \
-        "vim9ls $old_vim9ls_version -> $vim9ls_version, an update is needed"
+    echo "$(join "${updates[@]}"), an update is needed"
     exit 0
 fi
 
@@ -118,22 +149,20 @@ sync()
         "$(cd "$repo" && git rev-parse --short=7 HEAD)"
 }
 
-check "$lsp_repo" lsp.vim
-check "$vim9ls_repo" vim9ls
-sync "$lsp_repo" lsp.vim autoload/lsp.vim
-sync "$vim9ls_repo" vim9ls autoload/vim9ls.vim
+for i in "${!packages[@]}"; do
+    check "${repos[i]}" "${packages[i]}"
+done
+for i in "${!packages[@]}"; do
+    sync "${repos[i]}" "${packages[i]}" "${scripts[i]}"
+done
 
-if [ "$vim9ls_version" = "$old_vim9ls_version" ]; then
-    problem="bundled lsp.vim is older than $lsp_version"
-    prefix="runtime(lsp.vim)"
-elif [ "$lsp_version" = "$old_lsp_version" ]; then
-    problem="bundled vim9ls is older than $vim9ls_version"
-    prefix="runtime(vim9ls)"
+if [ ${#changed[@]} -eq 1 ]; then
+    problem="bundled ${changed[0]} is older than ${changed_versions[0]}"
 else
-    problem="bundled lsp.vim and vim9ls are older than $lsp_version"
-    problem="$problem and $vim9ls_version"
-    prefix="runtime(lsp.vim,vim9ls)"
+    problem="bundled $(join "${changed[@]}") are older than"
+    problem="$problem $(join "${changed_versions[@]}")"
 fi
+prefix="runtime($(IFS=,; echo "${changed[*]}"))"
 
 # wrap {label} {text}: prints {text} after {label}, folded and indented.
 wrap()
@@ -147,7 +176,7 @@ message()
     echo "$prefix: $problem"
     echo
     wrap "Problem:  " "The $problem."
-    wrap "Solution: " "Copy lsp.vim $lsp_version and vim9ls $vim9ls_version."
+    wrap "Solution: " "Copy $(join "${all[@]}")."
 }
 
 echo

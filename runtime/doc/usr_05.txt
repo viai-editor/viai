@@ -557,6 +557,27 @@ Once the packages are loaded, read about them at: >
 	:h lsp.txt
 	:h vim9ls.txt
 
+------------------------------------------------------------------------------
+Adding the viai.mcp package		*viaimcp-install* *package-viai.mcp*
+------------------------------------------------------------------------------
+
+viai.mcp is a server of the Model Context Protocol (MCP), which gives an AI
+tool the ViAI help and a check of Vim scripts.  The AI tool starts the server
+with the command in the package, thus the package does not need to be loaded
+for that.  For Claude Code: >
+	claude mcp add viaimcp -- {runtime}/pack/dist/opt/viai.mcp/bin/viaimcp
+<{runtime} is the value of |$VIMRUNTIME| in ViAI.  On MS-Windows the command
+is bin\viaimcp.cmd.  The server runs "viai" from $PATH.  To run another ViAI,
+set $VIAIMCP_VIM to its name.
+
+To read its help, add these lines to your vimrc file: >
+	if has('viai')
+	  packadd! viai.mcp
+	endif
+<
+Once the package is loaded, read about it at: >
+	:h viaimcp.txt
+
 More information about packages can be found here: |packages|.
 
 ==============================================================================
