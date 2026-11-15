@@ -2506,6 +2506,8 @@ installpack: $(DEST_VIM) $(DEST_RT) $(DEST_PACK)
 	$(INSTALL_DATA_R) $(PACKSOURCE)/* $(DEST_PACK)
 	chmod $(DIRMOD) `find $(DEST_PACK) -type d -print`
 	chmod $(FILEMOD) `find $(DEST_PACK) -type f -print`
+	find $(DEST_PACK) -path '*/bin/*' -type f ! -name '*.cmd' \
+		-exec chmod $(SCRIPTMOD) {} +
 
 # install the tutor files
 installtutor: $(DEST_RT) $(DEST_TUTOR)/en $(DEST_TUTOR)/it $(DEST_TUTOR)/sr $(DEST_TUTOR)/sv $(DEST_TUTOR)/ru
