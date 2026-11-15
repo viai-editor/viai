@@ -1745,7 +1745,7 @@ The model context protocol specification is available at:
 
     https://modelcontextprotocol.io/specification
 
-An MCP message is a JSON-RPC message, like a LSP message, but it is sent
+An MCP message is a JSON-RPC message, like an LSP message, but it is sent
 without a header: each message is one line of JSON that ends in a NL.  This is
 the stdio transport of MCP, the HTTP transport is not supported.
 
