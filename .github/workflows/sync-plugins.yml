@@ -1,9 +1,10 @@
 # Copies lsp.vim, vim9ls and viai.mcp into runtime/pack/dist/opt/ with
 # tools/sync-plugins.sh when the version of any plugin went up, and opens
 # a pull request from the branch "sync-plugins", or updates the open one.
-# The tests of the plugins run here with the ViAI built from master.  A pull
-# request opened with GITHUB_TOKEN does not start the CI, so this starts it
-# and merges the pull request when it passes.
+# The tests of the plugins run here with the ViAI built from master.  The CI
+# of a pull request opened with GITHUB_TOKEN waits for an approval, so this
+# starts the CI itself, runs failed jobs again up to twice, and merges the
+# pull request when it passes.
 
 name: Sync plugins
 
@@ -31,6 +32,7 @@ jobs:
       contents: write # to push the branch
       pull-requests: write # to open the pull request
       actions: write # to start the CI
+      statuses: write # to show the result of the CI
 
     steps:
       - uses: actions/checkout@v7.0.1
@@ -108,7 +110,26 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ steps.sync.outputs.pr }}
           SHA: ${{ steps.sync.outputs.sha }}
+          REPO: ${{ github.repository }}
         run: |
+          # Each push of the bot leaves runs waiting for an approval, which
+          # the CI started here makes needless.
+          drop_waiting_runs()
+          {
+            gh api -X GET "repos/$REPO/actions/runs" -f branch=sync-plugins \
+              -f event=pull_request -f status=action_required \
+              --jq '.workflow_runs[].id' | while read -r id; do
+              gh api -X DELETE "repos/$REPO/actions/runs/$id"
+            done
+          }
+          # The pull request shows a commit status, not the run started here.
+          set_status()
+          {
+            gh api -X POST "repos/$REPO/statuses/$SHA" -f state="$1" \
+              -f context='Sync plugins / CI' -f description="$2" \
+              -f target_url="$GITHUB_SERVER_URL/$REPO/actions/runs/$run" \
+              > /dev/null
+          }
           gh workflow run ci.yml --ref sync-plugins
           # The run is listed a little after it is asked for.
           run=
@@ -124,7 +145,28 @@ jobs:
             echo "No CI run was found for $SHA."
             exit 1
           fi
-          gh run watch "$run" --interval 60 --exit-status
+          drop_waiting_runs
+          set_status pending 'The CI is running.'
+          tries=0
+          until gh run watch "$run" --interval 60 --exit-status; do
+            tries=$((tries + 1))
+            if [ "$tries" -gt 2 ]; then
+              set_status failure 'The CI failed.'
+              drop_waiting_runs
+              exit 1
+            fi
+            gh run rerun "$run" --failed
+            # The run shows as completed until the jobs start again.
+            for i in $(seq 30); do
+              sleep 10
+              if [ "$(gh run view "$run" --json status --jq .status)" \
+                  != completed ]; then
+                break
+              fi
+            done
+          done
+          set_status success 'The CI passed.'
+          drop_waiting_runs
           # A branch moved while the CI ran is not merged.
           gh pr merge "$PR" --rebase --delete-branch \
             --match-head-commit "$SHA"
