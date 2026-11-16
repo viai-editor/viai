@@ -197,11 +197,14 @@ g:lsp_client_config
 		A Dictionary holding what the client itself does.  A key that
 		is not there takes the default below.
 
+		Completion, and how long a request is waited for ~
+						*g:lsp_client_config.omnifunc*
 		omnifunc	When true, 'omnifunc' is set in a buffer whose
 				server offers completion.  Set this to |false|
 				to keep whatever the 'filetype' plugin chose.
 				Default: |true|
 
+				*g:lsp_client_config.completion_timeout*
 		completion_timeout
 				How long to wait for a reply to a completion
 				request, in milliseconds.  See
@@ -212,32 +215,39 @@ g:lsp_client_config
 				warmed up server answers in.
 				Default: 2000
 
+					*g:lsp_client_config.tagjump_timeout*
 		tagjump_timeout	How long to wait for a reply to the request
 				|lsp#TagFunc()| makes, in milliseconds.  See
 				|lsp-tagfunc| for why there is a wait.
 				Default: 2000
 
+					*g:lsp_client_config.format_timeout*
 		format_timeout	How long |:LspFormat| waits for the formatted
 				text, in milliseconds.  When the time runs
 				out, the buffer is left as it is.
 				Default: 5000
 
+		Features a server can offer ~
+				*g:lsp_client_config.document_highlight*
 		document_highlight
 				When true, the other places the symbol under
 				the cursor is used are marked once the cursor
 				comes to rest.  See |lsp-highlight|.
 				Default: |true|
 
+					*g:lsp_client_config.highlight_delay*
 		highlight_delay	How long the cursor has to stand still before
 				that happens, in milliseconds.
 				Default: 300
 
+					*g:lsp_client_config.signature_help*
 		signature_help	When true, the signature of the call being
 				typed is shown on its own.  Set this to
 				|false| to only ask for it with
 				|:LspSignature|.  See |lsp-signature|.
 				Default: |true|
 
+						*g:lsp_client_config.snippet*
 		snippet		When true, the server is told this client
 				takes snippets, and it answers with them where
 				it has one.  Off by default: what a snippet
@@ -246,12 +256,14 @@ g:lsp_client_config
 				them for you.
 				Default: |false|
 
+					*g:lsp_client_config.inlay_hint*
 		inlay_hint	When true, the names and types a server fills
 				in are shown in the window.  Off by default:
 				this puts text on screen that the file does
 				not hold.  See |lsp-inlay-hint|.
 				Default: |false|
 
+					*g:lsp_client_config.code_lens*
 		code_lens	When true, what the server reports about a
 				line is shown above it, such as how often
 				something is used or what can be run.  Off by
@@ -259,12 +271,14 @@ g:lsp_client_config
 				|lsp-code-lens|.
 				Default: |false|
 
+					*g:lsp_client_config.document_link*
 		document_link	When true, the parts of the file that lead
 				somewhere else are underlined.  Off by
 				default, for the same reason.  See
 				|lsp-document-link|.
 				Default: |false|
 
+						*g:lsp_client_config.folding*
 		folding		When true, the folds are the ones the server
 				works out from the syntax.  Off by default:
 				this takes over 'foldmethod' and 'foldexpr',
@@ -272,12 +286,14 @@ g:lsp_client_config
 				See |lsp-folding|.
 				Default: |false|
 
+					*g:lsp_client_config.semantic_tokens*
 		semantic_tokens	When true, the buffer is colored from what
 				the server parsed.  Off by default: this
 				paints over the syntax highlighting rather
 				than adding to it.  See |lsp-semantic-tokens|.
 				Default: |false|
 
+				*g:lsp_client_config.on_type_formatting*
 		on_type_formatting
 				When true, a character the server named as one
 				to act on has it look at the text again while
@@ -287,6 +303,8 @@ g:lsp_client_config
 				|lsp-on-type-formatting|.
 				Default: |false|
 
+		Diagnostics ~
+				*g:lsp_client_config.workspace_diagnostics*
 		workspace_diagnostics
 				When true, a server that reports on the whole
 				workspace is asked to as soon as it is ready,
@@ -298,6 +316,7 @@ g:lsp_client_config
 				|lsp-workspace-diagnostics|.
 				Default: |false|
 
+				*g:lsp_client_config.diagnostics_in_insert*
 		diagnostics_in_insert
 				When true, a server that waits to be asked for
 				its diagnostics is asked in Insert mode as
@@ -307,6 +326,8 @@ g:lsp_client_config
 				|lsp-diagnostics|.
 				Default: |false|
 
+		Writing the file ~
+					*g:lsp_client_config.will_save*
 		will_save	When true, a server that wants to put the
 				file right on the way to disk is asked what to
 				change first, and the write waits for the
@@ -316,6 +337,17 @@ g:lsp_client_config
 				without.
 				Default: |true|
 
+		How what comes back is shown ~
+					*g:lsp_client_config.location_list*
+		location_list
+				When true, |:LspDiag| and |:LspOutline| put
+				what they list into the location list of the
+				window they are run in.  Off by default: every
+				such window would get a location window of
+				its own.
+				Default: |false|
+
+					*g:lsp_client_config.hover_format*
 		hover_format	Which of the two forms a hover is asked for
 				in, "plaintext" or "markdown".  A server is
 				told the client can show both and which one it
@@ -330,6 +362,10 @@ g:lsp_client_config
 				|:LspStop|.
 				Default: "plaintext"
 
+					*g:lsp_client_config.hover_popup*
+					*g:lsp_client_config.menu_popup*
+					*g:lsp_client_config.signature_popup*
+					*g:lsp_client_config.progress_popup*
 		hover_popup
 		menu_popup
 		signature_popup
@@ -801,9 +837,11 @@ and so does <CR> when the quickfix window has it mapped already.
 		one under the cursor.
 
 						*:LspOutline*
-:LspOutline	Put the symbols in the current buffer into its location list
-		and open it.  A symbol inside another, a field of a struct for
-		instance, is shown indented under it.
+:LspOutline	Put the symbols in the current buffer into the |quickfix|
+		list and open it.  A symbol inside another, a field of a
+		struct for instance, is shown indented under it.  See
+		"location_list" in |g:lsp_client_config| for the location
+		list.
 
 						*:LspSymbol*
 :LspSymbol {query}
@@ -818,8 +856,8 @@ and so does <CR> when the quickfix window has it mapped already.
 		together.
 
 						*:LspDiag*
-:LspDiag	Put the diagnostics for the current buffer into its location
-		list and open it.  See |lsp-diagnostics|.
+:LspDiag	Put the diagnostics for the current buffer into the
+		|quickfix| list and open it.  See |lsp-diagnostics|.
 
 						*:LspWorkspaceDiag*
 :LspWorkspaceDiag
@@ -889,8 +927,8 @@ Changing the text ~
 :LspFormat
 :{range}LspFormat
 		Ask the server to format the current buffer, or the lines in
-		{range}, wait for the answer and apply it, so that a buffer can
-		be formatted before it is written: >
+		{range}, wait for the answer and apply it, so that a buffer
+		can be formatted before it is written: >
 			autocmd BufWritePre *.go LspFormat
 <		"format_timeout" in |g:lsp_client_config| bounds the wait.  A
 		single |undo| takes all of it back.
@@ -1111,8 +1149,9 @@ nothing has changed instead of listing everything again.
 "diagnostics_in_insert" of |g:lsp_client_config| has it asked while typing
 too.  What a server reports on its own is shown in Insert mode either way.
 
-|:LspDiag| collects them into the location list, which is the way to walk
-through them with |:lnext| and |:lprevious|.  They are in the order of the
+|:LspDiag| collects them into the |quickfix| list, which is the way to walk
+through them with |:cnext| and |:cprevious|, or into the location list with
+"location_list" in |g:lsp_client_config|.  They are in the order of the
 lines, whatever order the server sent them in; so is the |quickfix| list of
 |:LspWorkspaceDiag| for each file.
 
@@ -1120,8 +1159,8 @@ Every report replaces the one before it, so the signs and the highlights
 follow the file as it is edited.
 
 A report may point at other places that explain it, such as where a name was
-declared the first time.  Those follow their report in the location list,
-indented and without a type of their own, and can be in another file.
+declared the first time.  Those follow their report in the list, indented and
+without a type of their own, and can be in another file.
 
 These highlight groups are used.  Each is linked to an existing group and can
 be given a look of its own with |:highlight|:

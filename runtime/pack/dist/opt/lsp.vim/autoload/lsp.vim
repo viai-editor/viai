@@ -15,7 +15,7 @@ import autoload './lsp/select.vim'
 import autoload './lsp/semtok.vim'
 import autoload './lsp/util.vim'
 
-const VERSION = '0.2.052'
+const VERSION = '0.2.054'
 
 # Values of the "textDocumentSync" server capability.
 const SYNC_NONE = 0
@@ -49,10 +49,12 @@ const BORDER_STYLES = {
 
 # What can be asked for in g:lsp_client_config, and what it is when it is not.
 const DEFAULTS = {
+  # Completion, and how long a request is waited for.
   omnifunc: true,
   completion_timeout: 2000,
   tagjump_timeout: 2000,
   format_timeout: 5000,
+  # Features a server can offer.
   document_highlight: true,
   highlight_delay: 300,
   signature_help: true,
@@ -63,9 +65,13 @@ const DEFAULTS = {
   folding: false,
   semantic_tokens: false,
   on_type_formatting: false,
+  # Diagnostics.
   workspace_diagnostics: false,
   diagnostics_in_insert: false,
+  # Writing the file.
   will_save: true,
+  # How what comes back is shown.
+  location_list: false,
   hover_format: 'plaintext',
   hover_popup: {},
   menu_popup: {},
@@ -3185,9 +3191,8 @@ export def Outline()
         util.WarningMsg('the server found no symbols here')
         return
       endif
-      setloclist(0, [], ' ', {title: 'LSP symbols in this file',
-        items: items, quickfixtextfunc: util.ListText})
-      lopen
+      util.ShowList(Setting('location_list'), 'LSP symbols in this file',
+        items)
     })
 enddef
 
@@ -4373,7 +4378,7 @@ export def Diagnostics()
     util.WarningMsg('no server for this buffer')
     return
   endif
-  diag.ToLocList(bufnr('%'))
+  diag.ToList(bufnr('%'), Setting('location_list'))
 enddef
 
 # The workspace pull runs on its own; this is what shows what it has

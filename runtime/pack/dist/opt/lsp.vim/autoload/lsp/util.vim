@@ -105,6 +105,19 @@ export def ListText(info: dict<any>): list<string>
   return out
 enddef
 
+# Puts "items" into a new list titled "title" and opens it: the location list
+# of the current window when "loclist" is true, the quickfix list otherwise.
+export def ShowList(loclist: bool, title: string, items: list<dict<any>>)
+  var what = {title: title, items: items, quickfixtextfunc: ListText}
+  if loclist
+    setloclist(0, [], ' ', what)
+    lopen
+  else
+    setqflist([], ' ', what)
+    copen
+  endif
+enddef
+
 # LSP counts a position the way the server chose at startup, Vim
 # counts bytes.  "utf-8" is the same thing and needs no conversion; the other
 # two count a composing character on its own.  Every direction rounds down to

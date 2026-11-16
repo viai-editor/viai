@@ -380,7 +380,7 @@ export def Entries(path: string, items: list<any>,
   return entries
 enddef
 
-export def ToLocList(bufnr: number)
+export def ToList(bufnr: number, loclist: bool)
   var reported = Reported(bufnr)
   var entries: list<dict<any>> = []
   for server in Servers(bufnr)
@@ -391,9 +391,7 @@ export def ToLocList(bufnr: number)
     echo 'lsp: the server reported nothing for this buffer'
     return
   endif
-  setloclist(0, [], ' ', {title: 'LSP diagnostics', items: entries,
-    quickfixtextfunc: util.ListText})
-  lopen
+  util.ShowList(loclist, 'LSP diagnostics', entries)
 enddef
 
 export def Count(bufnr: number): number
