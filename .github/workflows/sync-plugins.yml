@@ -1,8 +1,9 @@
 # Copies lsp.vim, vim9ls and viai.mcp into runtime/pack/dist/opt/ with
 # tools/sync-plugins.sh when the version of any plugin went up, and opens
 # a pull request from the branch "sync-plugins", or updates the open one.
-# A pull request opened with GITHUB_TOKEN does not start the CI; the tests of
-# the plugins run here with the ViAI built from master.
+# The tests of the plugins run here with the ViAI built from master.  A pull
+# request opened with GITHUB_TOKEN does not start the CI, so this starts it
+# and merges the pull request when it passes.
 
 name: Sync plugins
 
@@ -29,6 +30,7 @@ jobs:
     permissions:
       contents: write # to push the branch
       pull-requests: write # to open the pull request
+      actions: write # to start the CI
 
     steps:
       - uses: actions/checkout@v7.0.1
@@ -61,6 +63,7 @@ jobs:
           make -j"$(nproc)"
 
       - name: Copy the plugins and open a pull request
+        id: sync
         if: steps.versions.outputs.update == 'yes'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -86,9 +89,42 @@ jobs:
           pr=$(gh pr list --head sync-plugins --state open \
             --json number --jq '.[].number')
           if [ -z "$pr" ]; then
-            gh pr create --head sync-plugins --base master \
-              --title "$title" --body-file "$RUNNER_TEMP/body"
+            url=$(gh pr create --head sync-plugins --base master \
+              --title "$title" --body-file "$RUNNER_TEMP/body")
+            pr=${url##*/}
           else
             gh pr edit "$pr" --title "$title" \
               --body-file "$RUNNER_TEMP/body"
           fi
+          printf '\ncloses: #%s\n' "$pr" >> "$msg"
+          git commit --amend -F "$msg"
+          git push -f origin HEAD:refs/heads/sync-plugins
+          echo "pr=$pr" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Run the CI and merge the pull request
+        if: steps.sync.outputs.pr != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.sync.outputs.pr }}
+          SHA: ${{ steps.sync.outputs.sha }}
+        run: |
+          gh workflow run ci.yml --ref sync-plugins
+          # The run is listed a little after it is asked for.
+          run=
+          for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
+            sleep 10
+            run=$(gh run list --workflow ci.yml --event workflow_dispatch \
+              --commit "$SHA" --json databaseId --jq '.[0].databaseId')
+            if [ -n "$run" ]; then
+              break
+            fi
+          done
+          if [ -z "$run" ]; then
+            echo "No CI run was found for $SHA."
+            exit 1
+          fi
+          gh run watch "$run" --interval 60 --exit-status
+          # A branch moved while the CI ran is not merged.
+          gh pr merge "$PR" --rebase --delete-branch \
+            --match-head-commit "$SHA"
