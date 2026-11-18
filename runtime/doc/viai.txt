@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 15
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 18
 
 
 		  VIAI REFERENCE MANUAL
@@ -241,6 +241,10 @@ messages from Vim keep their numbers.
 
 ==============================================================================
 9. Function interface				*viai-functions*
+
+When every line of a buffer is deleted, |listener_add()| reports the empty
+line that remains as changed: "added" is one more than in Vim and "text"
+holds that line.
 
 ==============================================================================
 10. Additional features				*viai-additional-features*
