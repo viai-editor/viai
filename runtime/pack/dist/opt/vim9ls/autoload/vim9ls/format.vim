@@ -6,10 +6,13 @@ vim9script
 import autoload './util.vim'
 
 # The indent file of $VIMRUNTIME is what does the work; it is read once.
+# The indent file finds comments by their syntax items, and syntax
+# highlighting is off in the server, which has no terminal.
 var ready = false
 
 def Ready()
   if !ready
+    syntax enable
     filetype indent on
     ready = true
   endif
