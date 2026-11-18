@@ -28,12 +28,12 @@ applies to ViAI as well, also where it mentions Vim.
 ==============================================================================
 1. Development policy				*viai-policy*
 
-- The main aim of ViAI is that these plugins work well:
+- ViAI comes with these plugins and aims to make them work well:
 	lsp.vim		an LSP client
 			https://github.com/h-east/lsp.vim
 	vim9ls		a language server for Vim9 script
 			https://github.com/h-east/vim9ls
-  They come with ViAI as optional packages, see |package-lsp.vim|.
+  They are optional packages, see |package-lsp.vim|.
 - ViAI is the only editor that can show the errors that Vim gives when
   sourcing a Vim9 script as diagnostics, without running the script, see
   |:source-dryrun|.

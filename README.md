@@ -10,7 +10,8 @@ full use of AI assistance.
 
 ## What is ViAI?
 
-ViAI is a text editor whose main aim is that these plugins work well:
+ViAI is a text editor that **comes with** these plugins and aims to make
+them work well:
   * [lsp.vim](https://github.com/h-east/lsp.vim): an LSP client
   * [vim9ls](https://github.com/h-east/vim9ls): a language server for Vim9
     script
@@ -26,10 +27,9 @@ released in 1988, the year in which Bram Moolenaar started writing Vim.
 
 ## Development policy
 
-* The two plugins above come with ViAI as optional packages, see
-  `:help package-lsp.vim`.  So does
-  [viai.mcp](https://github.com/viai-editor/viai.mcp), a server of the Model
-  Context Protocol, see `:help package-viai.mcp`.
+* The two plugins above are optional packages, see `:help package-lsp.vim`.\
+  So is [viai.mcp](https://github.com/viai-editor/viai.mcp), a server of the
+  Model Context Protocol, see `:help package-viai.mcp`.
 * ViAI adds features of its own, while keeping compatibility with Vim as far
   as possible.
 * The patches of Vim are imported into ViAI as a rule.
