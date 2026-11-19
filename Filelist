@@ -30,12 +30,10 @@ SRC_ALL =	\
 		.codecov.yml \
 		.editorconfig \
 		ci/config.mk*.sed \
-		ci/ddebs.list \
 		ci/gen_testset.py \
 		ci/if_feat_check.vim \
 		ci/if_ver*.vim \
 		ci/lychee.toml \
-		ci/pinned-pkgs \
 		ci/remove_snap.sh \
 		ci/setup-weston.sh \
 		ci/setup-xvfb.sh \
