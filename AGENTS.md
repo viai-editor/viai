@@ -189,11 +189,13 @@ types, script reloading or error paths should be checked for memory errors
   makes the same change when there is one.  When a declined commit is
   imported later, its line is removed.
 - **A bug that also occurs in Vim is fixed in ViAI** and reported to Vim
-  with an issue, not with a pull request.  The ViAI patch refers to the
-  issue with `related: vim/vim#NNNNN`.  Documentation fixes are handled the
-  same way.  When Vim fixes the bug later, its patch is imported and the
-  fix of ViAI is replaced with the one of Vim; a short paragraph after the
-  URL describes the replacement.  When the fix of ViAI added an error
+  with an issue or a pull request.  The ViAI patch refers to it with
+  `related: vim/vim#NNNNN`.  Documentation fixes are handled the same
+  way.  When the pull request is merged into Vim, its patch is listed as
+  N/A in `tools/vim-patch-not-imported.txt`.  When Vim fixes the bug in
+  another way, its patch is imported and the fix of ViAI is replaced with
+  the one of Vim; a short paragraph after the URL describes the
+  replacement.  When the fix of ViAI added an error
   message, the replacement also takes the error number of Vim.  The ViAI
   number stays in `src/errors_viai.h` as a comment, so that it is not given
   to another message: `// E8NNN unused` when Vim took another number, or
