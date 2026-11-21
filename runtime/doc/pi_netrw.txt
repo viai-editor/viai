@@ -1,7 +1,7 @@
 *netrw.txt*	*pi_netrw.txt*
 
 	    ------------------------------------------------
-	    NETRW REFERENCE MANUAL    by Charles E. Campbell
+	    NETRW REFERENCE MANUAL
 	    ------------------------------------------------
 Original Author:  Charles E. Campbell
 

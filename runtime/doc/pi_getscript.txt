@@ -1,6 +1,6 @@
 *pi_getscript.txt*  For ViAI version 1.0.  Last change: 2026 Aug 17
 >
-		GETSCRIPT REFERENCE MANUAL  by Charles E. Campbell
+		GETSCRIPT REFERENCE MANUAL
 <
 Original Author:  Charles E. Campbell  <NcampObell@SdrPchip.AorgM-NOSPAM>
 	 (remove NOSPAM from the email address)
