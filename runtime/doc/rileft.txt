@@ -2,7 +2,6 @@
 
 
 		  VIAI REFERENCE MANUAL
-					  updated by Nadim Shaikli
 
 
 Right to Left display mode for Vim				*rileft*
