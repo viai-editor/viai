@@ -9,3 +9,5 @@ vim-patch:9.2.1276: au! grp | aug! grp" in an autocmd block deletes script varia
 vim-patch:9.2.1277: Vim9: line continuation with dot fails after skipped expr -- N/A #186
 vim-patch:9.2.1317: Compile warning with wayland.c -- N/A #246
 vim-patch:9.2.1375: Light-background flash on startup in dark terminals -- Declined #348
+vim-patch:581ce33: runtime(doc): setting t_Cs and t_Ce for undercurl is not documented -- N/A #372
+vim-patch:cc82314: runtime(help): Update syntax, disable Vim comment strings -- Declined #372
