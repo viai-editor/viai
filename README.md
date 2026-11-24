@@ -4,6 +4,8 @@
 
 # ViAI - Vim Advanced Integrated
 
+[![GitHub CI](https://github.com/viai-editor/viai/actions/workflows/ci.yml/badge.svg)](https://github.com/viai-editor/viai/actions/workflows/ci.yml)
+
 ViAI (pronounced "vee-eye") is a fork of [Vim](https://github.com/vim/vim),
 being developed by Hirohito Higashi (h-east), a former Vim maintainer.
 
