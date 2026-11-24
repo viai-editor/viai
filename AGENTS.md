@@ -186,7 +186,9 @@ types, script reloading or error paths should be checked for memory errors
   request is created.  The commit that adds lines is titled
   `Vim patches that are not imported`.  Its message names each commit by
   its number or hash, not as a range, together with the ViAI patch that
-  makes the same change when there is one.  When a declined commit is
+  makes the same change when there is one, so that
+  `git log --grep=<number or hash>` finds the reason.  The comment at the
+  top of the file shows this command.  When a declined commit is
   imported later, its line is removed.
 - **A bug that also occurs in Vim is fixed in ViAI** and reported to Vim
   with an issue or a pull request.  The ViAI patch refers to it with
