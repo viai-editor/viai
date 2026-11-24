@@ -34,7 +34,9 @@ released in 1988, the year in which Bram Moolenaar started writing Vim.
   Model Context Protocol, see `:help package-viai.mcp`.
 * ViAI adds features of its own, while keeping compatibility with Vim as far
   as possible.
-* The patches of Vim are imported into ViAI as a rule.
+* The patches of Vim are imported into ViAI as a rule.  The ones that are
+  not imported are listed in
+  [`tools/vim-patch-not-imported.txt`](./tools/vim-patch-not-imported.txt).
 
 ## Use of AI tools
 

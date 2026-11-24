@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 21
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 24
 
 
 		  VIAI REFERENCE MANUAL
@@ -41,7 +41,9 @@ where it mentions Vim.
   |viai-config|.
 - ViAI adds features of its own, while keeping compatibility with Vim as far
   as possible.
-- The patches of Vim are imported into ViAI as a rule.
+- The patches of Vim are imported into ViAI as a rule.  The ones that are
+  not imported are listed in:
+  https://github.com/viai-editor/viai/blob/master/tools/vim-patch-not-imported.txt
 
 							*viai-ai-tools*
 Use of AI tools ~
