@@ -9753,6 +9753,7 @@ package-osc52	usr_05.txt	/*package-osc52*
 package-termdebug	terminal.txt	/*package-termdebug*
 package-translate_example	repeat.txt	/*package-translate_example*
 package-translation	repeat.txt	/*package-translation*
+package-viai.mcp	usr_05.txt	/*package-viai.mcp*
 package-vim9ls	usr_05.txt	/*package-vim9ls*
 packages	repeat.txt	/*packages*
 packload-two-steps	repeat.txt	/*packload-two-steps*
@@ -11715,6 +11716,7 @@ viai-vimruntime	viai.txt	/*viai-vimruntime*
 viai.txt	viai.txt	/*viai.txt*
 viai_version-variable	eval.txt	/*viai_version-variable*
 viai_versionlong-variable	eval.txt	/*viai_versionlong-variable*
+viaimcp-install	usr_05.txt	/*viaimcp-install*
 vib	motion.txt	/*vib*
 vietnamese	vietnamese.txt	/*vietnamese*
 vietnamese-ime_diff	vietnamese.txt	/*vietnamese-ime_diff*
