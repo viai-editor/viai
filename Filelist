@@ -17,6 +17,7 @@ SRC_ALL =	\
 		.github/workflows/ci.yml \
 		.github/workflows/codeql-analysis.yml \
 		.github/workflows/coverity.yml \
+		.github/workflows/helptags.yml \
 		.github/workflows/included-patches.yml \
 		.github/workflows/sync-plugins.yml \
 		.github/workflows/tag-patches.yml \

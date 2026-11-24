@@ -1,0 +1,42 @@
+# Checks the help files in runtime/doc: ":helptags" fails on a duplicate
+# tag, and runtime/doc/tags must be the same as the file it generates.
+# Taken from tsuyoshicho/action-vimhelp-tagname-check, which only works on
+# a "doc" directory at the top of the repository.
+
+name: Help tags
+on:
+  push:
+    branches: ["**"]
+    paths: ["runtime/doc/**", ".github/workflows/helptags.yml"]
+  pull_request:
+    paths: ["runtime/doc/**", ".github/workflows/helptags.yml"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  helptags:
+    name: Check help tags
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      # The same Vim image as tsuyoshicho/action-vimhelp-tagname-check.
+      - name: Generate runtime/doc/tags
+        run: |
+          docker run --rm -v "$PWD/runtime:/work" -w /work \
+            thinca/vim:latest@sha256:ce58d586abf554ef688acfc26172934a39c9693d08a8f6d8fb272edd3b1b6095 \
+            --clean --not-a-term \
+            --cmd "try | helptags ++t doc | catch | echo v:exception | cquit | endtry" \
+            --cmd quit
+
+      - name: Check that runtime/doc/tags is up to date
+        run: |
+          if ! git diff --exit-code runtime/doc/tags; then
+            echo "::error file=runtime/doc/tags::runtime/doc/tags is outdated, run \"make vimtags\" in runtime/doc"
+            exit 1
+          fi
