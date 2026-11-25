@@ -14,3 +14,4 @@ vim-patch:9.2.1277: Vim9: line continuation with dot fails after skipped expr --
 vim-patch:9.2.1317: Compile warning with wayland.c -- N/A #246
 vim-patch:9.2.1375: Light-background flash on startup in dark terminals -- Declined #348
 vim-patch:cc82314: runtime(help): Update syntax, disable Vim comment strings -- Declined #372
+vim-patch:325febb: CI: Linux jobs fail when ddebs.ubuntu.com is out of sync -- N/A #382
