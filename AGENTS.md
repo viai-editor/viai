@@ -42,9 +42,13 @@ See `runtime/doc/develop.txt` for the high level design goals.
     make proto
 
     # Run a single test file:
-    cd src/testdir && make test_name.res
+    cd src/testdir && make test_name
 
-Output is in testdir/messages and testdir/test.log
+Output is in testdir/messages and testdir/test.log.  Don't use
+`make test_name.res`: it does not re-run the test while the `.res` file
+from an earlier passing run is newer than the test file and the ViAI
+binary (e.g. after changing `TEST_FILTER` or a runtime file), and it
+appends to old output.
 
 The program is built as `src/viai` (`viai.exe` and `gviai.exe` on
 MS-Windows).
@@ -70,7 +74,7 @@ types, script reloading or error paths should be checked for memory errors
   `valgrind -q`), leaks are not reported in detail:
 
       cd src/testdir
-      make test_name.res VALGRIND="valgrind --tool=memcheck \
+      make test_name VALGRIND="valgrind --tool=memcheck \
           --leak-check=full --errors-for-leak-kinds=definite \
           --num-callers=45 --log-file=valgrind.test_name"
 
@@ -378,7 +382,8 @@ Further rules, not spelled out here, live in `runtime/doc/develop.txt`:
 
 ## Test conventions
 
-- Tests are in `src/testdir/test_*.vim`.
+- Tests are in `src/testdir/test_*.vim`.  See `src/testdir/AGENTS.md` for
+  detailed conventions for writing them.
 - Reproducible tests beat "it doesn't crash" tests. If a patch fixes
   a rendering bug, add a screendump test. If it fixes incorrect output,
   assert the output.
@@ -421,6 +426,10 @@ Further rules, not spelled out here, live in `runtime/doc/develop.txt`:
   overview of the differences from Vim.
 - Bump the `Last change:` header only of ViAI's own help files, such as
   `viai.txt`.
+- After adding, renaming or removing a `*tag*` in a help file, regenerate
+  `runtime/doc/tags` with `make vimtags` (or `make tags` without a built
+  ViAI) from `runtime/doc`; do not edit `tags` by hand.  CI fails when
+  `tags` differs from the generated file.
 - The header of every help file in `runtime/doc/` names ViAI, also in the
   files imported from Vim: the first line has the ViAI version ("For ViAI
   version 1.0."), and the title in the third or fourth line is "VIAI
