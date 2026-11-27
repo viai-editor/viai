@@ -37,8 +37,7 @@ jobs:
       - name: Install packages
         if: matrix.features == 'huge'
         run: |
-          brew install lua libtool
-          echo "LUA_PREFIX=$(brew --prefix)" >> $GITHUB_ENV
+          brew install libtool
 
       - name: Set up environment
         run: |
@@ -52,7 +51,7 @@ jobs:
           normal)
             ;;
           huge)
-            echo "CONFOPT=--enable-perlinterp --enable-python3interp --enable-rubyinterp --enable-luainterp --enable-tclinterp"
+            echo "CONFOPT=--enable-python3interp"
             ;;
           esac
           ) >> $GITHUB_ENV
@@ -84,7 +83,7 @@ jobs:
           if ${{ matrix.features == 'huge' }}; then
             # Also check that optional and dynamic features are configured and working
             "${SRCDIR}"/viai -u NONE -i NONE --not-a-term -esNX -V1 \
-              -c "let g:required=['sound', 'perl', 'python3', 'lua', 'ruby', 'tcl']" \
+              -c "let g:required=['sound', 'python3']" \
               -S ci/if_feat_check.vim -c quit
           fi
 

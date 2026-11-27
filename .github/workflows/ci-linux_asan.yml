@@ -49,9 +49,6 @@ jobs:
           features: huge
           compiler: clang
           extra: '["asan"]'
-          # Lua5.1 is the most widely used version (since it's what LuaJIT is
-          # compatible with), so ensure it works
-          lua_ver: "5.1"
 
       - name: Test (tinytests)
         if: matrix.testset == 'tinytests'

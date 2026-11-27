@@ -267,6 +267,33 @@ ARCH := $(shell $(CC) -dumpmachine | sed -e "s/-.*//" -e "s/_/-/" -e "s/^mingw32
  endif
 endif
 
+# Of the language interfaces, ViAI can only be built with the Python 3
+# interface.
+ifdef LUA
+$(warning LUA is ignored, ViAI only supports PYTHON3)
+override undefine LUA
+endif
+ifdef MZSCHEME
+$(warning MZSCHEME is ignored, ViAI only supports PYTHON3)
+override undefine MZSCHEME
+endif
+ifdef PERL
+$(warning PERL is ignored, ViAI only supports PYTHON3)
+override undefine PERL
+endif
+ifdef PYTHON
+$(warning PYTHON is ignored, ViAI only supports PYTHON3)
+override undefine PYTHON
+endif
+ifdef RUBY
+$(warning RUBY is ignored, ViAI only supports PYTHON3)
+override undefine RUBY
+endif
+ifdef TCL
+$(warning TCL is ignored, ViAI only supports PYTHON3)
+override undefine TCL
+endif
+
 
 #	Perl interface:
 #	  PERL=[Path to Perl directory] (Set inside Make_cyg.mak or Make_ming.mak)

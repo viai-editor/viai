@@ -6,6 +6,9 @@
 
 The MzScheme Interface to Vim				*mzscheme* *MzScheme*
 
+NOTE: ViAI cannot be built with the MzScheme interface, see
+|viai-interfaces|.
+
 1. Commands				|mzscheme-commands|
 2. Examples				|mzscheme-examples|
 3. Threads				|mzscheme-threads|

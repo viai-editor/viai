@@ -6,6 +6,8 @@
 
 The Lua Interface to Vim				*lua* *Lua*
 
+NOTE: ViAI cannot be built with the Lua interface, see |viai-interfaces|.
+
 1. Commands			|lua-commands|
 2. The vim module		|lua-vim|
 3. List userdata		|lua-list|

@@ -5955,6 +5955,15 @@ printf "%s\n" "enabled" >&6; }
 
 fi
 
+for viai_interp in lua mzscheme perl python ruby tcl; do
+  eval "viai_enable=\$enable_${viai_interp}interp"
+  if test -n "$viai_enable" -a "$viai_enable" != "no"; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: --enable-${viai_interp}interp is ignored, ViAI only supports --enable-python3interp" >&5
+printf "%s\n" "$as_me: WARNING: --enable-${viai_interp}interp is ignored, ViAI only supports --enable-python3interp" >&2;}
+    eval "enable_${viai_interp}interp=no"
+  fi
+done
+
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking --enable-luainterp argument" >&5
 printf %s "checking --enable-luainterp argument... " >&6; }
 # Check whether --enable-luainterp was given.

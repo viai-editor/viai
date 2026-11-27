@@ -223,6 +223,33 @@ VIAI_PATCHLEVEL = 0
 !MESSAGE Vim version: $(MAJOR).$(MINOR).$(PATCHLEVEL)
 !MESSAGE ViAI patchlevel: $(VIAI_PATCHLEVEL)
 
+# Of the language interfaces, ViAI can only be built with the Python 3
+# interface.
+!IFDEF LUA
+! MESSAGE WARNING: LUA is ignored, ViAI only supports PYTHON3
+! UNDEF LUA
+!ENDIF
+!IFDEF MZSCHEME
+! MESSAGE WARNING: MZSCHEME is ignored, ViAI only supports PYTHON3
+! UNDEF MZSCHEME
+!ENDIF
+!IFDEF PERL
+! MESSAGE WARNING: PERL is ignored, ViAI only supports PYTHON3
+! UNDEF PERL
+!ENDIF
+!IFDEF PYTHON
+! MESSAGE WARNING: PYTHON is ignored, ViAI only supports PYTHON3
+! UNDEF PYTHON
+!ENDIF
+!IFDEF RUBY
+! MESSAGE WARNING: RUBY is ignored, ViAI only supports PYTHON3
+! UNDEF RUBY
+!ENDIF
+!IFDEF TCL
+! MESSAGE WARNING: TCL is ignored, ViAI only supports PYTHON3
+! UNDEF TCL
+!ENDIF
+
 !IF "$(VIMDLL)" == "yes"
 GUI = yes
 !ENDIF

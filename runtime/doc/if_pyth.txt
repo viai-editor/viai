@@ -6,6 +6,9 @@
 
 The Python Interface to Vim				*python* *Python*
 
+NOTE: ViAI cannot be built with the Python 2 interface, only with the
+Python 3 interface, see |viai-interfaces|.
+
 1. Commands					|python-commands|
 2. The vim module				|python-vim|
 3. Buffer objects				|python-buffer|

@@ -23,7 +23,8 @@ them work well:
 ViAI is the only editor that can show the errors that Vim gives when sourcing
 a Vim9 script as diagnostics, without running the script.
 
-Your Vim configuration and plugins work in ViAI as they are.
+Your Vim configuration and plugins work in ViAI as they are, except for those
+that use a language interface other than Python 3.
 
 The name stands for "Vim Advanced Integrated".  It happens to be the same
 words as the "AI synthesis" (Advanced Integrated) of the KORG M1 synthesizer,

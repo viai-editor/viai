@@ -6,6 +6,8 @@
 
 Perl and Vim				*perl* *Perl*
 
+NOTE: ViAI cannot be built with the Perl interface, see |viai-interfaces|.
+
 1. Editing Perl files			|perl-editing|
 2. Compiling Vim with Perl interface	|perl-compiling|
 3. Using the Perl interface		|perl-using|

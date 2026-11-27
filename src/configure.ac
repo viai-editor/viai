@@ -631,6 +631,17 @@ else
   AC_SUBST(XDIFF_OBJS_USED)
 fi
 
+dnl Of the language interfaces, ViAI can only be built with the Python 3
+dnl interface.  Setting the others to "no" here makes the checks below skip
+dnl them.
+for viai_interp in lua mzscheme perl python ruby tcl; do
+  eval "viai_enable=\$enable_${viai_interp}interp"
+  if test -n "$viai_enable" -a "$viai_enable" != "no"; then
+    AC_MSG_WARN([--enable-${viai_interp}interp is ignored, ViAI only supports --enable-python3interp])
+    eval "enable_${viai_interp}interp=no"
+  fi
+done
+
 dnl Check for Lua feature.
 AC_MSG_CHECKING(--enable-luainterp argument)
 AC_ARG_ENABLE(luainterp,

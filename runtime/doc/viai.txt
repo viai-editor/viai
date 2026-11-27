@@ -1,4 +1,4 @@
-*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 24
+*viai.txt*	For ViAI version 1.0.  Last change: 2026 Nov 27
 
 
 		  VIAI REFERENCE MANUAL
@@ -22,8 +22,9 @@ where it mentions Vim.
 8. Default values		|viai-defaults|
 9. Function interface		|viai-functions|
 10. Additional features		|viai-additional-features|
-11. License			|viai-license|
-12. Sponsoring			|viai-sponsor|
+11. Language interfaces		|viai-interfaces|
+12. License			|viai-license|
+13. Sponsoring			|viai-sponsor|
 
 ==============================================================================
 1. Development policy				*viai-policy*
@@ -38,7 +39,8 @@ where it mentions Vim.
   sourcing a Vim9 script as diagnostics, without running the script, see
   |:source-dryrun|.
 - Your Vim configuration and plugins work in ViAI as they are, see
-  |viai-config|.
+  |viai-config|, except for those that use a language interface other than
+  Python 3, see |viai-interfaces|.
 - ViAI adds features of its own, while keeping compatibility with Vim as far
   as possible.
 - The patches of Vim are imported into ViAI as a rule.  The ones that are
@@ -65,6 +67,9 @@ These places in the help files that come from Vim are about ViAI:
 	|viai-bugs|	how bugs are reported and handled
 	|credits|	the maintainer of ViAI
 	|usr_90.txt|	how ViAI is installed
+	|if_lua.txt|	the interfaces that ViAI cannot be built with, also
+			in |if_mzsch.txt|, |if_perl.txt|, |if_pyth.txt|,
+			|if_ruby.txt| and |if_tcl.txt|
 
 In all help files that come from Vim the first line has the ViAI version and
 the "Last change" date from Vim, and the title names ViAI without an author.
@@ -272,7 +277,17 @@ ViAI has these features that Vim does not have:
 	The "mcp" channel mode.
 
 ==============================================================================
-11. License					*viai-license*
+11. Language interfaces				*viai-interfaces*
+
+Of the language interfaces, ViAI can only be built with the Python 3
+interface |python3|: configure and the makefiles for MS-Windows ignore the
+Lua, MzScheme, Perl, Python 2, Ruby and Tcl interfaces with a warning.
+|has()| returns zero for "lua", "mzscheme", "perl", "python", "ruby" and
+"tcl", and their commands, such as |:lua|, give error E319.  |:pyx| always
+uses Python 3.
+
+==============================================================================
+12. License					*viai-license*
 
 Changes made in ViAI after the initial import are licensed under the Apache
 License 2.0.  Code imported from Vim is licensed under the Vim license, see
@@ -292,7 +307,7 @@ To contact the ViAI maintainer, open an issue at:
 	https://github.com/viai-editor/viai/issues
 
 ==============================================================================
-12. Sponsoring					*viai-sponsor*
+13. Sponsoring					*viai-sponsor*
 
 If you find ViAI useful, you can sponsor its maintainer, Hirohito Higashi,
 on GitHub Sponsors:

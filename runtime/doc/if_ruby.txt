@@ -6,6 +6,8 @@
 
 The Ruby Interface to Vim				*ruby* *Ruby*
 
+NOTE: ViAI cannot be built with the Ruby interface, see |viai-interfaces|.
+
 
 1. Commands			|ruby-commands|
 2. The Vim module		|ruby-vim|

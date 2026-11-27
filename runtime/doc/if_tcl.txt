@@ -6,6 +6,8 @@
 
 The Tcl Interface to Vim				*tcl* *Tcl* *TCL*
 
+NOTE: ViAI cannot be built with the Tcl interface, see |viai-interfaces|.
+
 1. Commands				|tcl-ex-commands|
 2. Tcl commands				|tcl-commands|
 3. Tcl variables			|tcl-variables|

@@ -102,7 +102,6 @@ jobs:
           extra: ${{ toJSON(matrix.extra) }}
           shadow: ${{ matrix.shadow }}
           interface: ${{ matrix.interface }}
-          lua_ver: ${{ matrix.lua_ver }}
           python3: ${{ matrix.python3 }}
           coverage: ${{ matrix.coverage }}
 
