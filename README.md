@@ -14,8 +14,8 @@ script for errors before running it.
 
 ## What is ViAI?
 
-ViAI is a text editor that **comes with** these plugins and aims to make
-them work well:
+ViAI is a text editor that **comes with** these plugins and keeps them
+working well:
   * [lsp.vim](https://github.com/h-east/lsp.vim): an LSP client
   * [vim9ls](https://github.com/h-east/vim9ls): a language server for Vim9
     script
