@@ -10,7 +10,7 @@ ViAI (pronounced "vee-eye") is a fork of [Vim](https://github.com/vim/vim),
 being developed by Hirohito Higashi (h-east), a former Vim maintainer.
 
 ViAI has no generative AI built in.  What it offers is checking a Vim9
-script for errors before running it.
+script for errors before the script runs.
 
 ## What is ViAI?
 
